@@ -1,0 +1,819 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Azoria — La plateforme de Social Commerce & Vente Directe{% endblock %}
+
+{% block content %}
+<!-- Hero Section with Mesh Gradient Background -->
+<section class="relative pt-32 pb-20 md:pt-40 md:pb-28 mesh-gradient-hero overflow-hidden">
+    <!-- Background Glow Spheres -->
+    <div class="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[650px] h-[650px] bg-brand-400/15 rounded-full blur-3xl pointer-events-none -z-10"></div>
+    <div class="absolute top-1/3 left-10 w-[350px] h-[350px] bg-pink-400/10 rounded-full blur-3xl pointer-events-none -z-10"></div>
+    <div class="absolute top-1/3 right-10 w-[350px] h-[350px] bg-indigo-400/10 rounded-full blur-3xl pointer-events-none -z-10"></div>
+
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <!-- Top Pill Badge -->
+        <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-brand-50 border border-brand-200/70 text-brand-700 text-xs sm:text-sm font-semibold mb-6 shadow-sm shadow-brand-500/10">
+            <span class="flex h-2 w-2 relative">
+                <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-brand-400 opacity-75"></span>
+                <span class="relative inline-flex rounded-full h-2 w-2 bg-brand-600"></span>
+            </span>
+            <span>✨ La plateforme #1 de Social Commerce</span>
+        </div>
+
+        <!-- Main Hero Title -->
+        <h1 class="font-heading text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold text-slate-900 tracking-tight leading-[1.15] max-w-4xl mx-auto">
+            Boostez vos ventes directes avec
+            <span class="relative inline-block px-4 py-1 mt-1 sm:mt-0 text-white rounded-2xl bg-gradient-to-r from-brand-600 via-brand-500 to-indigo-600 shadow-lg shadow-brand-500/30">
+                Azoria
+                <!-- Floating mini tag -->
+                <span class="absolute -top-3 -right-3 hidden sm:inline-flex items-center text-[10px] font-bold px-2 py-0.5 bg-pink-500 text-white rounded-full shadow-md animate-pulse">
+                    Nouveau
+                </span>
+            </span>
+        </h1>
+
+        <!-- Floating Pills keywords around subtitle -->
+        <div class="flex flex-wrap items-center justify-center gap-2 mt-4 text-xs font-medium text-slate-600">
+            <span class="px-3 py-1 rounded-full bg-white/80 border border-purple-200/80 shadow-sm flex items-center gap-1.5">
+                <i data-lucide="video" class="w-3.5 h-3.5 text-pink-500"></i> TikTok Bio & Live
+            </span>
+            <span class="px-3 py-1 rounded-full bg-white/80 border border-purple-200/80 shadow-sm flex items-center gap-1.5">
+                <i data-lucide="message-circle" class="w-3.5 h-3.5 text-emerald-500"></i> WhatsApp Direct
+            </span>
+            <span class="px-3 py-1 rounded-full bg-white/80 border border-purple-200/80 shadow-sm flex items-center gap-1.5">
+                <i data-lucide="qr-code" class="w-3.5 h-3.5 text-brand-600"></i> QR Code & Flyers
+            </span>
+            <span class="px-3 py-1 rounded-full bg-white/80 border border-purple-200/80 shadow-sm flex items-center gap-1.5">
+                <i data-lucide="sparkles" class="w-3.5 h-3.5 text-amber-500"></i> Azoria AI Fiches
+            </span>
+        </div>
+
+        <!-- Subtitle -->
+        <p class="mt-6 text-base sm:text-lg text-slate-600 max-w-2xl mx-auto leading-relaxed">
+            Créez votre boutique mobile en 2 minutes. Vos clients commandent en 3 clics sans va-et-vient WhatsApp interminables, avec paiement à la livraison sécurisé.
+        </p>
+
+        <!-- CTA Action Buttons -->
+        <div class="mt-8 flex flex-col sm:flex-row items-center justify-center gap-4">
+            <a href="#simulator" class="btn-primary-glow w-full sm:w-auto text-white font-semibold text-base px-8 py-3.5 rounded-full inline-flex items-center justify-center gap-2.5 group">
+                <span>Créer ma boutique gratuite</span>
+                <i data-lucide="arrow-right" class="w-4 h-4 group-hover:translate-x-1 transition-transform"></i>
+            </a>
+            <a href="#demo-preview" class="w-full sm:w-auto px-7 py-3.5 rounded-full bg-white/90 hover:bg-white text-slate-700 font-semibold text-sm border border-slate-200 shadow-sm hover:shadow transition-all inline-flex items-center justify-center gap-2">
+                <i data-lucide="play-circle" class="w-4 h-4 text-brand-600"></i>
+                <span>Voir la démonstration</span>
+            </a>
+        </div>
+
+        <!-- Value Guarantees -->
+        <div class="mt-6 flex flex-wrap items-center justify-center gap-6 text-xs font-semibold text-slate-600">
+            <span class="flex items-center gap-1.5">
+                <i data-lucide="check-circle-2" class="w-4 h-4 text-emerald-500"></i> Sans carte bancaire
+            </span>
+            <span class="flex items-center gap-1.5">
+                <i data-lucide="check-circle-2" class="w-4 h-4 text-emerald-500"></i> Prêt en 2 minutes
+            </span>
+            <span class="flex items-center gap-1.5">
+                <i data-lucide="check-circle-2" class="w-4 h-4 text-emerald-500"></i> 100% Mobile First
+            </span>
+        </div>
+
+        <!-- HERO SHOWCASE: Smartphone Mockup & Floating Glass Cards (Matching Reference Visual) -->
+        <div id="demo-preview" class="relative mt-14 max-w-4xl mx-auto pt-6 pb-10">
+            
+            <!-- Floating Left Card: Orders / History -->
+            <div class="hidden md:block absolute -left-6 top-16 z-20 w-72 glass-card rounded-2xl p-4 text-left animate-float-1">
+                <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+                    <div class="flex items-center gap-2">
+                        <div class="w-7 h-7 rounded-lg bg-brand-100 text-brand-600 flex items-center justify-center">
+                            <i data-lucide="shopping-bag" class="w-4 h-4"></i>
+                        </div>
+                        <span class="font-heading font-bold text-xs text-slate-900">Commandes du jour</span>
+                    </div>
+                    <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-700">+8 Nouvelles</span>
+                </div>
+                
+                <div class="flex gap-2 text-[10px] font-semibold text-slate-500 mt-2.5 pb-2">
+                    <span class="text-brand-600 bg-brand-50 px-2 py-0.5 rounded">Direct</span>
+                    <span>Semaine</span>
+                    <span>Mois</span>
+                </div>
+
+                <div class="space-y-2.5 mt-2">
+                    <div class="p-2 rounded-xl bg-slate-50/80 border border-slate-100 flex items-center justify-between">
+                        <div class="flex items-center gap-2">
+                            <div class="w-6 h-6 rounded-full bg-indigo-500 text-white text-[10px] font-bold flex items-center justify-center">
+                                A
+                            </div>
+                            <div>
+                                <div class="font-bold text-xs text-slate-800">Aïcha (Cocody)</div>
+                                <div class="text-[10px] text-slate-600">Robe Saharienne • 18 500 F</div>
+                            </div>
+                        </div>
+                        <span class="text-[10px] font-bold text-emerald-600 bg-emerald-50 px-1.5 py-0.5 rounded">Confirmé</span>
+                    </div>
+
+                    <div class="p-2 rounded-xl bg-slate-50/80 border border-slate-100 flex items-center justify-between">
+                        <div class="flex items-center gap-2">
+                            <div class="w-6 h-6 rounded-full bg-pink-500 text-white text-[10px] font-bold flex items-center justify-center">
+                                K
+                            </div>
+                            <div>
+                                <div class="font-bold text-xs text-slate-800">Koffi (Bouaké)</div>
+                                <div class="text-[10px] text-slate-600">Transport UTB • 32 000 F</div>
+                            </div>
+                        </div>
+                        <span class="text-[10px] font-bold text-indigo-600 bg-indigo-50 px-1.5 py-0.5 rounded">Expédié</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Floating Right Card: Revenue / Stats -->
+            <div class="hidden md:block absolute -right-6 top-24 z-20 w-64 glass-card rounded-2xl p-4 text-left animate-float-2">
+                <div class="flex items-center gap-2 pb-2">
+                    <div class="w-7 h-7 rounded-lg bg-emerald-100 text-emerald-600 flex items-center justify-center">
+                        <i data-lucide="trending-up" class="w-4 h-4"></i>
+                    </div>
+                    <div>
+                        <div class="text-[11px] text-slate-600 font-medium">Chiffre d'Affaires</div>
+                        <div class="font-heading font-extrabold text-base text-slate-900">485 000 FCFA</div>
+                    </div>
+                </div>
+
+                <div class="mt-3">
+                    <div class="flex justify-between text-[10px] font-semibold text-slate-600 mb-1">
+                        <span>Objectif Mensuel</span>
+                        <span class="text-brand-600 font-bold">85%</span>
+                    </div>
+                    <div class="w-full bg-slate-100 h-2 rounded-full overflow-hidden">
+                        <div class="bg-gradient-to-r from-brand-600 to-indigo-500 h-2 rounded-full w-[85%]"></div>
+                    </div>
+                </div>
+
+                <div class="mt-3 pt-2.5 border-t border-slate-100 flex items-center justify-between text-[11px]">
+                    <span class="text-slate-600">Croissance</span>
+                    <span class="font-bold text-emerald-600 flex items-center gap-0.5">
+                        <i data-lucide="arrow-up-right" class="w-3 h-3"></i> +34.2%
+                    </span>
+                </div>
+            </div>
+
+            <!-- Floating Bottom-Right Pill: Azoria AI Badge -->
+            <div class="hidden sm:inline-flex items-center gap-2 absolute -bottom-2 right-12 z-20 px-4 py-2 rounded-2xl glass-card border border-brand-200 shadow-lg text-left animate-float-3">
+                <div class="w-7 h-7 rounded-xl bg-gradient-to-tr from-pink-500 to-purple-600 text-white flex items-center justify-center text-xs">
+                    <i data-lucide="sparkles" class="w-3.5 h-3.5"></i>
+                </div>
+                <div>
+                    <div class="text-[11px] font-bold text-slate-900">Azoria AI activé</div>
+                    <div class="text-[10px] text-slate-600">Fiche produit rédigée en 2.4s</div>
+                </div>
+            </div>
+
+            <!-- Central iPhone Mockup -->
+            <div class="mockup-iphone w-[290px] sm:w-[320px] mx-auto overflow-hidden text-left relative shadow-2xl">
+                <!-- Top Notch -->
+                <div class="iphone-notch flex items-center justify-center gap-3">
+                    <div class="w-3 h-3 rounded-full bg-slate-800 border border-slate-700"></div>
+                    <div class="w-2.5 h-2.5 rounded-full bg-slate-800"></div>
+                </div>
+
+                <!-- Phone Status Bar -->
+                <div class="px-5 pt-1.5 pb-2 flex items-center justify-between text-[11px] font-semibold text-slate-800">
+                    <span>9:41</span>
+                    <div class="flex items-center gap-1.5">
+                        <i data-lucide="wifi" class="w-3 h-3"></i>
+                        <i data-lucide="battery" class="w-3 h-3"></i>
+                    </div>
+                </div>
+
+                <!-- Mobile Store View Inside Phone -->
+                <div class="p-3.5 bg-slate-50/50 min-h-[460px] flex flex-col justify-between">
+                    <div>
+                        <!-- Store Top Bar -->
+                        <div class="flex items-center justify-between p-2.5 rounded-2xl bg-white shadow-sm border border-slate-100">
+                            <div class="flex items-center gap-2">
+                                <div class="w-8 h-8 rounded-xl bg-gradient-to-tr from-brand-600 to-pink-500 text-white font-heading font-black text-xs flex items-center justify-center shadow-sm">
+                                    MK
+                                </div>
+                                <div>
+                                    <div class="font-heading font-bold text-xs text-slate-900 flex items-center gap-1">
+                                        Maison Kente
+                                        <i data-lucide="badge-check" class="w-3.5 h-3.5 text-brand-600"></i>
+                                    </div>
+                                    <div class="text-[9px] text-slate-600">Abidjan • Mode & Luxe</div>
+                                </div>
+                            </div>
+                            <span class="text-[9px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full">
+                                Ouvert 🟢
+                            </span>
+                        </div>
+
+                        <!-- Product Showcase Preview -->
+                        <div class="mt-3 bg-white rounded-2xl p-2.5 border border-slate-100 shadow-sm">
+                            <div class="relative w-full h-36 rounded-xl bg-gradient-to-br from-purple-100 via-pink-50 to-indigo-100 flex flex-col items-center justify-center overflow-hidden">
+                                <!-- Stylized Product Graphic -->
+                                <div class="w-16 h-16 rounded-2xl bg-gradient-to-tr from-brand-600 to-indigo-600 text-white flex items-center justify-center shadow-lg shadow-brand-500/20">
+                                    <i data-lucide="sparkles" class="w-8 h-8 text-white"></i>
+                                </div>
+                                <span class="text-[10px] font-bold text-slate-700 mt-2">Collection Wax Royale</span>
+                                <span class="absolute top-2 right-2 bg-black/70 text-white text-[9px] font-bold px-2 py-0.5 rounded-full backdrop-blur-sm">
+                                    -20% Promo
+                                </span>
+                            </div>
+
+                            <div class="mt-2.5">
+                                <div class="flex items-center justify-between">
+                                    <h4 class="font-bold text-xs text-slate-900">Robe Saharienne Chic</h4>
+                                    <span class="font-extrabold text-xs text-brand-700">18 500 F</span>
+                                </div>
+                                <p class="text-[10px] text-slate-600 mt-0.5 line-clamp-1">Tissu wax haute qualité, coupe fluide adaptée à vos cérémonies.</p>
+                                
+                                <!-- Variant Pills -->
+                                <div class="flex items-center gap-1.5 mt-2">
+                                    <span class="text-[9px] font-bold px-2 py-0.5 rounded-md bg-brand-50 text-brand-700 border border-brand-200">Taille: M</span>
+                                    <span class="text-[9px] font-bold px-2 py-0.5 rounded-md bg-slate-100 text-slate-600">L</span>
+                                    <span class="text-[9px] font-bold px-2 py-0.5 rounded-md bg-slate-100 text-slate-600">XL</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- One Click Order Button -->
+                        <div class="mt-3 p-2.5 rounded-2xl bg-gradient-to-r from-brand-700 to-indigo-700 text-white text-center shadow-md">
+                            <div class="text-[11px] font-bold flex items-center justify-center gap-1.5">
+                                <i data-lucide="zap" class="w-3.5 h-3.5 text-amber-300"></i>
+                                Commander en 1 Clic
+                            </div>
+                            <div class="text-[8px] text-white/80">Paiement sécurisé à la livraison</div>
+                        </div>
+                    </div>
+
+                    <!-- Micro Social Links Inside Mockup -->
+                    <div class="pt-2 text-center border-t border-slate-100 flex items-center justify-around text-[9px] text-slate-600">
+                        <span class="flex items-center gap-1"><i data-lucide="truck" class="w-3 h-3 text-brand-600"></i> Livraison 24h</span>
+                        <span class="flex items-center gap-1"><i data-lucide="shield-check" class="w-3 h-3 text-emerald-600"></i> Vendeur Vérifié</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Supported Channels / Trusted Social Networks Section -->
+<section class="py-12 bg-white border-y border-slate-100">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <p class="text-xs font-bold text-slate-600 uppercase tracking-widest mb-6">
+            Optimisé pour transformer vos abonnés en acheteurs sur tous vos canaux
+        </p>
+
+        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4">
+            {% for channel in channels %}
+            <div class="p-4 rounded-2xl bg-slate-50/80 hover:bg-white border border-slate-200/60 hover:border-brand-200 transition-all duration-300 flex flex-col items-center gap-2 group hover:shadow-md">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr {{ channel.color }} text-white flex items-center justify-center shadow-sm group-hover:scale-110 transition-transform">
+                    <i data-lucide="{{ channel.icon }}" class="w-5 h-5"></i>
+                </div>
+                <span class="font-heading font-bold text-sm text-slate-900">{{ channel.name }}</span>
+                <span class="text-[10px] text-slate-600 font-medium">{{ channel.badge }}</span>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- Key Stats Counter -->
+<section class="py-14 bg-[#FAF9FF]">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
+            {% for stat in stats %}
+            <div class="p-6 rounded-2xl bg-white border border-purple-100/70 shadow-sm">
+                <div class="font-heading font-extrabold text-3xl sm:text-4xl text-brand-700 tracking-tight">{{ stat.value }}</div>
+                <div class="text-xs sm:text-sm font-medium text-slate-600 mt-1">{{ stat.label }}</div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- Features Grid (Matching the 2-Column UI Component Style in Reference) -->
+<section id="features" class="py-20 bg-white">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <!-- Section Header -->
+        <div class="text-center max-w-3xl mx-auto mb-16">
+            <div class="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-brand-50 text-brand-700 text-xs font-bold uppercase tracking-wider mb-3">
+                <i data-lucide="layers" class="w-3.5 h-3.5"></i>
+                <span>Fonctionnalités Clés</span>
+            </div>
+            <h2 class="font-heading text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">
+                Comment notre plateforme simplifie votre <span class="text-brand-600">quotidien</span>
+            </h2>
+            <p class="mt-3 text-base text-slate-600 leading-relaxed">
+                Une suite complète d'outils pensée pour le vendeur moderne, du partage de lien jusqu'à l'encaissement à la livraison.
+            </p>
+        </div>
+
+        <!-- 2x2 Rich Feature Cards Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            
+            <!-- Card 1: Sign up & Customize -->
+            <div class="glass-card glass-card-hover rounded-3xl p-8 flex flex-col justify-between">
+                <div>
+                    <div class="w-12 h-12 rounded-2xl bg-brand-100 text-brand-600 flex items-center justify-center mb-5">
+                        <i data-lucide="store" class="w-6 h-6"></i>
+                    </div>
+                    <span class="text-xs font-bold uppercase tracking-wider text-brand-600">Étape 1</span>
+                    <h3 class="font-heading text-2xl font-bold text-slate-900 mt-1">Créez et personnalisez votre boutique</h3>
+                    <p class="text-sm text-slate-600 mt-2.5 leading-relaxed">
+                        Indiquez votre nom de marque, ajoutez votre logo et commencez à publier vos articles avec variantes (tailles, couleurs) en quelques instants.
+                    </p>
+                </div>
+
+                <!-- Micro UI preview: Store Setup Progress -->
+                <div class="mt-6 p-4 rounded-2xl bg-slate-50 border border-slate-200/70 space-y-3">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center gap-2">
+                            <div class="w-7 h-7 rounded-lg bg-brand-600 text-white flex items-center justify-center text-xs font-bold">
+                                <i data-lucide="sparkles" class="w-3.5 h-3.5"></i>
+                            </div>
+                            <span class="text-xs font-bold text-slate-900">Boutique Prête</span>
+                        </div>
+                        <span class="text-[10px] font-bold text-brand-600 bg-brand-50 px-2 py-0.5 rounded">100% Configuré</span>
+                    </div>
+
+                    <div class="p-2.5 rounded-xl bg-white border border-slate-200 flex items-center justify-between text-xs">
+                        <span class="font-mono text-slate-600">azoria.link/votre-nom</span>
+                        <span class="text-[10px] font-bold text-brand-700 bg-brand-50 px-2 py-0.5 rounded">Actif</span>
+                    </div>
+
+                    <div class="flex items-center justify-between text-[11px] text-slate-600 pt-1">
+                        <span class="flex items-center gap-1"><i data-lucide="smartphone" class="w-3 h-3 text-brand-600"></i> Optimisé Mobile</span>
+                        <span class="flex items-center gap-1"><i data-lucide="users" class="w-3 h-3 text-emerald-600"></i> 20k+ Visiteurs</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card 2: Link & Channels -->
+            <div class="glass-card glass-card-hover rounded-3xl p-8 flex flex-col justify-between">
+                <div>
+                    <div class="w-12 h-12 rounded-2xl bg-indigo-100 text-indigo-600 flex items-center justify-center mb-5">
+                        <i data-lucide="share-2" class="w-6 h-6"></i>
+                    </div>
+                    <span class="text-xs font-bold uppercase tracking-wider text-indigo-600">Étape 2</span>
+                    <h3 class="font-heading text-2xl font-bold text-slate-900 mt-1">Partagez sur tous vos réseaux & QR Codes</h3>
+                    <p class="text-sm text-slate-600 mt-2.5 leading-relaxed">
+                        Diffusez votre boutique en bio TikTok, stories Instagram, statuts WhatsApp ou téléchargez votre QR Code haute résolution pour vos packagings.
+                    </p>
+                </div>
+
+                <!-- Micro UI preview: Channel Network Hub -->
+                <div class="mt-6 p-4 rounded-2xl bg-slate-50 border border-slate-200/70">
+                    <div class="flex items-center justify-center gap-4 py-2">
+                        <div class="w-10 h-10 rounded-xl bg-pink-500 text-white flex items-center justify-center shadow-sm">
+                            <i data-lucide="video" class="w-5 h-5"></i>
+                        </div>
+                        <div class="w-8 border-t-2 border-dashed border-brand-300"></div>
+                        <div class="w-12 h-12 rounded-2xl bg-brand-600 text-white flex items-center justify-center shadow-lg shadow-brand-500/30">
+                            <i data-lucide="shopping-bag" class="w-6 h-6"></i>
+                        </div>
+                        <div class="w-8 border-t-2 border-dashed border-brand-300"></div>
+                        <div class="w-10 h-10 rounded-xl bg-emerald-500 text-white flex items-center justify-center shadow-sm">
+                            <i data-lucide="message-circle" class="w-5 h-5"></i>
+                        </div>
+                    </div>
+                    <div class="text-center mt-2">
+                        <span class="text-[11px] font-semibold text-slate-600">Connecté avec vos canaux préférés</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card 3: Azoria AI -->
+            <div id="ai" class="glass-card glass-card-hover rounded-3xl p-8 flex flex-col justify-between">
+                <div>
+                    <div class="w-12 h-12 rounded-2xl bg-pink-100 text-pink-600 flex items-center justify-center mb-5">
+                        <i data-lucide="bot" class="w-6 h-6"></i>
+                    </div>
+                    <span class="text-xs font-bold uppercase tracking-wider text-pink-600">Intelligence Artificielle</span>
+                    <h3 class="font-heading text-2xl font-bold text-slate-900 mt-1">Azoria AI — Vos fiches générées en 1 clic</h3>
+                    <p class="text-sm text-slate-600 mt-2.5 leading-relaxed">
+                        Plus besoin d'hésiter pour trouver les bons mots. Donnez les mots-clés de votre article et laissez notre IA rédiger des fiches produits captivantes.
+                    </p>
+                </div>
+
+                <!-- Micro UI preview: AI Generator -->
+                <div class="mt-6 p-4 rounded-2xl bg-slate-50 border border-slate-200/70 space-y-2.5">
+                    <div class="flex items-center justify-between text-xs">
+                        <span class="font-bold text-slate-800 flex items-center gap-1"><i data-lucide="sparkles" class="w-3.5 h-3.5 text-pink-500"></i> Suggestion IA</span>
+                        <span class="text-[10px] text-pink-700 bg-pink-50 px-2 py-0.5 rounded font-bold">Généré en 2s</span>
+                    </div>
+                    <div class="p-3 rounded-xl bg-white border border-pink-100 text-xs text-slate-700 leading-relaxed italic">
+                        "Robe longue chic en soie glacée. Finition haute couture et confort absolu pour vos cérémonies et soirées distinguées."
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card 4: Local Delivery & Cities -->
+            <div class="glass-card glass-card-hover rounded-3xl p-8 flex flex-col justify-between">
+                <div>
+                    <div class="w-12 h-12 rounded-2xl bg-emerald-100 text-emerald-600 flex items-center justify-center mb-5">
+                        <i data-lucide="truck" class="w-6 h-6"></i>
+                    </div>
+                    <span class="text-xs font-bold uppercase tracking-wider text-emerald-600">Logistique Intégrée</span>
+                    <h3 class="font-heading text-2xl font-bold text-slate-900 mt-1">Livraison locale & Expéditions nationales</h3>
+                    <p class="text-sm text-slate-600 mt-2.5 leading-relaxed">
+                        Frais de livraison calculés automatiquement par zone (Cocody, Yopougon, Marcory...) et prise en charge des expéditions par transporteurs vers l'intérieur.
+                    </p>
+                </div>
+
+                <!-- Micro UI preview: Order Tracking Flow -->
+                <div class="mt-6 p-4 rounded-2xl bg-slate-50 border border-slate-200/70">
+                    <div class="grid grid-cols-4 gap-1 text-center">
+                        <div class="p-2 rounded-lg bg-emerald-100 text-emerald-800 text-[10px] font-bold">1. Reçue</div>
+                        <div class="p-2 rounded-lg bg-emerald-100 text-emerald-800 text-[10px] font-bold">2. Confirmée</div>
+                        <div class="p-2 rounded-lg bg-brand-100 text-brand-800 text-[10px] font-bold">3. En route</div>
+                        <div class="p-2 rounded-lg bg-slate-200 text-slate-600 text-[10px] font-bold">4. Livrée</div>
+                    </div>
+                    <div class="mt-2.5 flex items-center justify-between text-[11px] text-slate-600">
+                        <span>Paiement à la livraison</span>
+                        <span class="font-bold text-slate-800">17 000 FCFA</span>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+<!-- Interactive Live Store Simulator Section -->
+<section id="simulator" class="py-20 bg-[#FAF9FF] border-t border-purple-100/60" x-data="storeSimulator()">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center max-w-2xl mx-auto mb-12">
+            <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-brand-100 text-brand-700 text-xs font-bold uppercase tracking-wider mb-3">
+                <i data-lucide="play" class="w-3.5 h-3.5"></i>
+                <span>Simulateur Interactif</span>
+            </div>
+            <h2 class="font-heading text-3xl sm:text-4xl font-extrabold text-slate-900">
+                Essayez votre future boutique en <span class="text-brand-600">temps réel</span>
+            </h2>
+            <p class="mt-2 text-sm sm:text-base text-slate-600">
+                Tapez le nom de votre marque et voyez immédiatement à quoi ressemblera votre lien et votre vitrine client.
+            </p>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+            <!-- Left Controls Form -->
+            <div class="lg:col-span-6 glass-card rounded-3xl p-6 sm:p-8 space-y-5">
+                <div>
+                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-2">
+                        Nom de votre boutique :
+                    </label>
+                    <div class="relative">
+                        <input type="text" x-model="storeName" class="w-full px-4 py-3 rounded-2xl bg-white border border-slate-200 focus:outline-none focus:ring-2 focus:ring-brand-500 text-slate-900 font-medium shadow-sm" placeholder="Ex: Maison Kente, Abidjan Sneakers...">
+                        <div class="absolute right-3.5 top-3.5 text-slate-600">
+                            <i data-lucide="store" class="w-5 h-5"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-2">
+                        Catégorie principale :
+                    </label>
+                    <select x-model="category" class="w-full px-4 py-3 rounded-2xl bg-white border border-slate-200 focus:outline-none focus:ring-2 focus:ring-brand-500 text-slate-900 font-medium shadow-sm">
+                        <option value="Mode & Habillement">Mode & Habillement</option>
+                        <option value="Beauté & Cosmétiques">Beauté & Cosmétiques</option>
+                        <option value="Électronique & Accessoires">Électronique & Accessoires</option>
+                        <option value="Maison & Décoration">Maison & Décoration</option>
+                        <option value="Alimentation & Épicerie">Alimentation & Épicerie</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-2">
+                        Premier Produit de Démo :
+                    </label>
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                        <input type="text" x-model="productName" class="sm:col-span-2 px-4 py-2.5 rounded-2xl bg-white border border-slate-200 text-slate-900 text-sm" placeholder="Nom du produit">
+                        <input type="text" x-model="productPrice" class="px-4 py-2.5 rounded-2xl bg-white border border-slate-200 text-slate-900 text-sm" placeholder="Prix (FCFA)">
+                    </div>
+                </div>
+
+                <!-- Live Generated Store URL -->
+                <div class="p-4 rounded-2xl bg-brand-50/80 border border-brand-200/80">
+                    <div class="text-[11px] font-bold text-brand-900 uppercase tracking-wider mb-1">Votre lien public généré :</div>
+                    <div class="flex items-center justify-between gap-2">
+                        <span class="font-mono text-xs sm:text-sm font-bold text-brand-700 truncate" x-text="fullUrl"></span>
+                        <button @click="copyLink()" class="px-3 py-1.5 rounded-xl bg-white text-brand-700 hover:bg-brand-100 font-semibold text-xs border border-brand-200 flex items-center gap-1 shadow-sm transition-colors">
+                            <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+                            <span x-text="copied ? 'Copié !' : 'Copier'"></span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- AI Generation Test Button -->
+                <div>
+                    <button @click="generateAI()" class="w-full py-3 px-4 rounded-2xl bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 text-white font-semibold text-sm flex items-center justify-center gap-2 shadow-md transition-all">
+                        <i data-lucide="sparkles" class="w-4 h-4"></i>
+                        <span>Tester la rédaction Azoria AI pour ce produit</span>
+                    </button>
+                </div>
+
+                <!-- AI Output Box -->
+                <div x-show="aiGenerated" x-transition class="p-4 rounded-2xl bg-pink-50/90 border border-pink-200 text-xs text-slate-800 space-y-2">
+                    <div class="font-bold text-pink-900 flex items-center gap-1.5">
+                        <i data-lucide="bot" class="w-4 h-4 text-pink-600"></i>
+                        <span x-text="aiTitle"></span>
+                    </div>
+                    <p class="text-slate-700 leading-relaxed italic" x-text="aiDesc"></p>
+                </div>
+            </div>
+
+            <!-- Right Interactive Live Mobile Simulator Display -->
+            <div class="lg:col-span-6 flex justify-center">
+                <div class="w-full max-w-[340px] rounded-[38px] p-3 bg-slate-900 shadow-2xl border-4 border-slate-800">
+                    <div class="bg-white rounded-[30px] p-4 min-h-[480px] flex flex-col justify-between text-left">
+                        <!-- Simulated App Bar -->
+                        <div>
+                            <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+                                <div class="flex items-center gap-2">
+                                    <div class="w-8 h-8 rounded-xl bg-brand-600 text-white font-black text-xs flex items-center justify-center" x-text="storeName ? storeName.charAt(0).toUpperCase() : 'A'">
+                                    </div>
+                                    <div>
+                                        <div class="font-bold text-xs text-slate-900 truncate max-w-[140px]" x-text="storeName || 'Ma Boutique'"></div>
+                                        <div class="text-[9px] text-slate-600" x-text="category"></div>
+                                    </div>
+                                </div>
+                                <span class="text-[9px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full">
+                                    En Ligne 🟢
+                                </span>
+                            </div>
+
+                            <!-- Live Product Card -->
+                            <div class="mt-4 p-3 rounded-2xl bg-slate-50 border border-slate-100">
+                                <div class="w-full h-32 rounded-xl bg-gradient-to-tr from-brand-100 to-indigo-100 flex flex-col items-center justify-center">
+                                    <i data-lucide="package" class="w-10 h-10 text-brand-600"></i>
+                                    <span class="text-[10px] font-bold text-slate-700 mt-1" x-text="category"></span>
+                                </div>
+                                <div class="mt-3">
+                                    <div class="flex justify-between items-start">
+                                        <div class="font-bold text-xs text-slate-900" x-text="productName || 'Article Vedette'"></div>
+                                        <div class="font-extrabold text-xs text-brand-700" x-text="(productPrice || '15 000') + ' FCFA'"></div>
+                                    </div>
+                                    <p class="text-[10px] text-slate-600 mt-1 line-clamp-2" x-text="aiGenerated ? aiDesc : 'Produit disponible en plusieurs variantes. Cliquez ci-dessous pour commander directement avec paiement à la livraison.'"></p>
+                                </div>
+                            </div>
+
+                            <!-- Fast Checkout Preview -->
+                            <div class="mt-3 p-3 rounded-2xl bg-brand-50/60 border border-brand-100 text-xs">
+                                <div class="font-bold text-brand-900 text-[11px] mb-1">Livraison & Paiement :</div>
+                                <div class="flex justify-between text-[10px] text-slate-600">
+                                    <span>Abidjan (Cocody / Yopougon)</span>
+                                    <span class="font-bold text-slate-900">2 000 FCFA</span>
+                                </div>
+                                <div class="flex justify-between text-[10px] text-slate-600 mt-0.5">
+                                    <span>Intérieur (Compagnie Transport)</span>
+                                    <span class="font-bold text-slate-900">3 500 FCFA</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Action Button inside Simulator -->
+                        <div class="pt-3">
+                            <button class="w-full py-2.5 rounded-xl bg-brand-600 hover:bg-brand-700 text-white font-bold text-xs flex items-center justify-center gap-1.5 shadow-md">
+                                <i data-lucide="check" class="w-3.5 h-3.5"></i>
+                                <span>Commander avec Paiement à la Livraison</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- The Problem vs The Solution Section -->
+<section id="workflow" class="py-20 bg-white">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center max-w-3xl mx-auto mb-16">
+            <h2 class="font-heading text-3xl sm:text-4xl font-extrabold text-slate-900">
+                Pourquoi remplacer la prise de commande manuelle ?
+            </h2>
+            <p class="mt-3 text-slate-600">
+                Comparez le calvaire des messages WhatsApp dispersés avec l'efficacité d'Azoria.
+            </p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <!-- The Old Way (Frustrating) -->
+            <div class="p-8 rounded-3xl bg-rose-50/50 border border-rose-100 relative">
+                <div class="flex items-center gap-3 mb-6">
+                    <div class="w-10 h-10 rounded-xl bg-rose-100 text-rose-600 flex items-center justify-center">
+                        <i data-lucide="x-circle" class="w-5 h-5"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-heading font-bold text-lg text-rose-950">Avant : Commandes par WhatsApp</h3>
+                        <p class="text-xs text-rose-700 font-medium">Lent, chronophage et source d'erreurs</p>
+                    </div>
+                </div>
+
+                <ul class="space-y-3.5 text-xs sm:text-sm text-slate-700">
+                    <li class="flex items-start gap-2.5">
+                        <i data-lucide="x" class="w-4 h-4 text-rose-500 mt-0.5 shrink-0"></i>
+                        <span>15 allers-retours de messages pour demander nom, ville, taille et adresse.</span>
+                    </li>
+                    <li class="flex items-start gap-2.5">
+                        <i data-lucide="x" class="w-4 h-4 text-rose-500 mt-0.5 shrink-0"></i>
+                        <span>Clients perdus qui abandonnent avant d'avoir finalisé.</span>
+                    </li>
+                    <li class="flex items-start gap-2.5">
+                        <i data-lucide="x" class="w-4 h-4 text-rose-500 mt-0.5 shrink-0"></i>
+                        <span>Erreurs de stock et oublis d'adresses dans les discussions.</span>
+                    </li>
+                    <li class="flex items-start gap-2.5">
+                        <i data-lucide="x" class="w-4 h-4 text-rose-500 mt-0.5 shrink-0"></i>
+                        <span>Suivi impossible des commandes expédiées à l'intérieur du pays.</span>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- The Azoria Way (Seamless) -->
+            <div class="p-8 rounded-3xl bg-brand-50/50 border border-brand-200 relative shadow-sm">
+                <div class="flex items-center gap-3 mb-6">
+                    <div class="w-10 h-10 rounded-xl bg-brand-600 text-white flex items-center justify-center">
+                        <i data-lucide="check-circle" class="w-5 h-5"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-heading font-bold text-lg text-brand-950">Avec Azoria : Fluidité totale</h3>
+                        <p class="text-xs text-brand-700 font-medium">Simple, automatisé et professionnel</p>
+                    </div>
+                </div>
+
+                <ul class="space-y-3.5 text-xs sm:text-sm text-slate-700">
+                    <li class="flex items-start gap-2.5">
+                        <i data-lucide="check" class="w-4 h-4 text-emerald-600 mt-0.5 shrink-0"></i>
+                        <span>1 seul lien ou QR Code partagé sur TikTok, Instagram ou WhatsApp.</span>
+                    </li>
+                    <li class="flex items-start gap-2.5">
+                        <i data-lucide="check" class="w-4 h-4 text-emerald-600 mt-0.5 shrink-0"></i>
+                        <span>Formulaire de commande express : panier, adresse et ville en 30 secondes.</span>
+                    </li>
+                    <li class="flex items-start gap-2.5">
+                        <i data-lucide="check" class="w-4 h-4 text-emerald-600 mt-0.5 shrink-0"></i>
+                        <span>Calcul automatique des frais de livraison et paiement à la réception.</span>
+                    </li>
+                    <li class="flex items-start gap-2.5">
+                        <i data-lucide="check" class="w-4 h-4 text-emerald-600 mt-0.5 shrink-0"></i>
+                        <span>Tableau de bord clair avec statuts : Confirmée, Expédiée, Livrée.</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Pricing Plans Section -->
+<section id="pricing" class="py-20 bg-[#FAF9FF] border-t border-purple-100/60">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center max-w-2xl mx-auto mb-14">
+            <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-brand-100 text-brand-700 text-xs font-bold uppercase tracking-wider mb-3">
+                <i data-lucide="tag" class="w-3.5 h-3.5"></i>
+                <span>Tarifs Transparents</span>
+            </div>
+            <h2 class="font-heading text-3xl sm:text-4xl font-extrabold text-slate-900">
+                Démarrez gratuitement, payez quand vous grandissez
+            </h2>
+            <p class="mt-2 text-slate-600">
+                Aucun frais caché, aucun engagement. Tout pour lancer et développer votre commerce.
+            </p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+            <!-- Free Plan -->
+            <div class="glass-card rounded-3xl p-8 flex flex-col justify-between">
+                <div>
+                    <div class="text-xs font-bold uppercase tracking-wider text-slate-600">Pour débuter</div>
+                    <h3 class="font-heading text-2xl font-bold text-slate-900 mt-1">Plan Starter</h3>
+                    <div class="mt-4 flex items-baseline gap-1">
+                        <span class="font-heading text-4xl font-extrabold text-slate-900">0 FCFA</span>
+                        <span class="text-xs text-slate-600">/ toujours</span>
+                    </div>
+                    <p class="text-xs text-slate-600 mt-2">Parfait pour lancer votre boutique et tester la vente en ligne.</p>
+
+                    <ul class="space-y-3 mt-6 text-xs text-slate-700 border-t border-slate-100 pt-6">
+                        <li class="flex items-center gap-2">
+                            <i data-lucide="check" class="w-4 h-4 text-emerald-500"></i> Jusqu'à 15 produits
+                        </li>
+                        <li class="flex items-center gap-2">
+                            <i data-lucide="check" class="w-4 h-4 text-emerald-500"></i> Lien unique personnalisé
+                        </li>
+                        <li class="flex items-center gap-2">
+                            <i data-lucide="check" class="w-4 h-4 text-emerald-500"></i> QR Code boutique téléchargeable
+                        </li>
+                        <li class="flex items-center gap-2">
+                            <i data-lucide="check" class="w-4 h-4 text-emerald-500"></i> Gestion des commandes & statuts
+                        </li>
+                        <li class="flex items-center gap-2">
+                            <i data-lucide="check" class="w-4 h-4 text-emerald-500"></i> 10 générations Azoria AI / mois
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="mt-8">
+                    <a href="#simulator" class="w-full py-3 rounded-2xl bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold text-xs flex items-center justify-center transition-colors">
+                        Commencer Gratuitement
+                    </a>
+                </div>
+            </div>
+
+            <!-- Pro Plan -->
+            <div class="glass-card rounded-3xl p-8 border-2 border-brand-500 relative flex flex-col justify-between shadow-xl shadow-brand-500/10">
+                <div class="absolute -top-3.5 right-6 px-3 py-1 rounded-full bg-brand-600 text-white text-[10px] font-bold uppercase tracking-wider shadow-sm">
+                    Recommandé
+                </div>
+                <div>
+                    <div class="text-xs font-bold uppercase tracking-wider text-brand-600">Pour les vendeurs sérieux</div>
+                    <h3 class="font-heading text-2xl font-bold text-slate-900 mt-1">Plan Vendeur Pro</h3>
+                    <div class="mt-4 flex items-baseline gap-1">
+                        <span class="font-heading text-4xl font-extrabold text-slate-900">5 000 FCFA</span>
+                        <span class="text-xs text-slate-600">/ mois</span>
+                    </div>
+                    <p class="text-xs text-slate-600 mt-2">Pour booster votre volume de vente et automatiser votre activité.</p>
+
+                    <ul class="space-y-3 mt-6 text-xs text-slate-700 border-t border-slate-100 pt-6">
+                        <li class="flex items-center gap-2">
+                            <i data-lucide="check" class="w-4 h-4 text-brand-600"></i> <strong>Produits illimités</strong>
+                        </li>
+                        <li class="flex items-center gap-2">
+                            <i data-lucide="check" class="w-4 h-4 text-brand-600"></i> <strong>Azoria AI illimité</strong> pour vos fiches
+                        </li>
+                        <li class="flex items-center gap-2">
+                            <i data-lucide="check" class="w-4 h-4 text-brand-600"></i> QR Codes par produit & campagnes promo
+                        </li>
+                        <li class="flex items-center gap-2">
+                            <i data-lucide="check" class="w-4 h-4 text-brand-600"></i> Frais de transport multi-villes configurables
+                        </li>
+                        <li class="flex items-center gap-2">
+                            <i data-lucide="check" class="w-4 h-4 text-brand-600"></i> Support prioritaire par WhatsApp 7j/7
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="mt-8">
+                    <a href="#simulator" class="btn-primary-glow w-full py-3 rounded-2xl text-white font-bold text-xs flex items-center justify-center">
+                        Créer ma boutique Pro
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- FAQ Section -->
+<section id="faq" class="py-20 bg-white">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-12">
+            <h2 class="font-heading text-3xl font-extrabold text-slate-900">Foire Aux Questions</h2>
+            <p class="mt-2 text-sm text-slate-600">Tout ce que vous devez savoir pour démarrer sereinement.</p>
+        </div>
+
+        <div class="space-y-4" x-data="{ openFaq: null }">
+            {% for faq in faqs %}
+            <div class="border border-slate-200/80 rounded-2xl overflow-hidden transition-colors" :class="openFaq === {{ forloop.counter0 }} ? 'bg-brand-50/40 border-brand-200' : 'bg-white'">
+                <button @click="openFaq = openFaq === {{ forloop.counter0 }} ? null : {{ forloop.counter0 }}" class="w-full p-5 text-left font-heading font-bold text-sm sm:text-base text-slate-900 flex items-center justify-between gap-4">
+                    <span>{{ faq.q }}</span>
+                    <i data-lucide="chevron-down" class="w-4 h-4 text-slate-500 transition-transform duration-200" :class="openFaq === {{ forloop.counter0 }} ? 'rotate-180 text-brand-600' : ''"></i>
+                </button>
+                <div x-show="openFaq === {{ forloop.counter0 }}" x-transition class="px-5 pb-5 text-xs sm:text-sm text-slate-600 leading-relaxed border-t border-slate-100 pt-3">
+                    {{ faq.a }}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- Final CTA Banner (with Deep Violet Mesh Gradient) -->
+<section class="py-20 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-6xl mx-auto rounded-[36px] mesh-gradient-cta p-10 sm:p-16 text-center text-white relative overflow-hidden shadow-2xl">
+        <!-- Background Light Circles -->
+        <div class="absolute -top-24 -left-24 w-72 h-72 bg-white/10 rounded-full blur-2xl"></div>
+        <div class="absolute -bottom-24 -right-24 w-72 h-72 bg-pink-500/20 rounded-full blur-2xl"></div>
+
+        <div class="relative z-10 max-w-3xl mx-auto">
+            <span class="inline-block px-3.5 py-1 rounded-full bg-white/20 backdrop-blur-md text-xs font-bold uppercase tracking-wider mb-4">
+                🚀 Rejoignez plus de 2 400 vendeurs
+            </span>
+            <h2 class="font-heading text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight leading-tight">
+                Prêt à faire décoller vos ventes dès aujourd'hui ?
+            </h2>
+            <p class="mt-4 text-sm sm:text-base text-purple-100 max-w-xl mx-auto leading-relaxed">
+                Créez votre boutique gratuitement en 2 minutes depuis votre téléphone et commencez à recevoir vos premières commandes.
+            </p>
+
+            <div class="mt-8 flex flex-col sm:flex-row items-center justify-center gap-4">
+                <a href="#simulator" class="w-full sm:w-auto px-8 py-4 rounded-full bg-white hover:bg-slate-50 text-brand-900 font-extrabold text-sm shadow-xl hover:scale-105 transition-all">
+                    Créer ma boutique gratuite maintenant
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
