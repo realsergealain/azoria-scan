@@ -6,22 +6,23 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}Azoria — La plateforme de Social Commerce & Vente Directe{% endblock %}</title>
     <meta name="description" content="{% block meta_description %}Créez votre boutique mobile en 2 minutes. Vendez sur TikTok, WhatsApp et Instagram, générez des QR Codes et encaissez à la livraison facilement.{% endblock %}">
-    
+
     <!-- Open Graph / Social Meta -->
-    <meta property="og:type" content="website">
-    <meta property="og:title" content="Azoria — Vendez sur TikTok, WhatsApp & Instagram">
+    <meta property="og:type"        content="website">
+    <meta property="og:title"       content="Azoria — Vendez sur TikTok, WhatsApp & Instagram">
     <meta property="og:description" content="Transformez vos abonnés en clients. Boutique mobile en 2 minutes, QR Code, gestion des commandes et paiement à la livraison.">
-    <meta property="og:image" content="{% static 'images/og-azoria.png' %}">
+    <meta property="og:image"       content="{% static 'images/og-azoria.png' %}">
+    <meta name="twitter:card"       content="summary_large_image">
 
     <!-- Favicon -->
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220%22 width=%2232%22 height=%2232%22><text y=%2226%22 font-size=%2226%22>🛍️</text></svg>">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><text y='26' font-size='26'>🛍️</text></svg>">
 
-    <!-- Google Fonts -->
+    <!-- Google Fonts — preconnect for performance -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
-    <!-- Tailwind CSS CDN with custom config -->
+    <!-- Tailwind CSS CDN with shared design-token config -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -29,7 +30,7 @@
                 extend: {
                     colors: {
                         brand: {
-                            50: '#F5F3FF',
+                            50:  '#F5F3FF',
                             100: '#EDE9FE',
                             200: '#DDD6FE',
                             300: '#C4B5FD',
@@ -48,19 +49,26 @@
                         }
                     },
                     fontFamily: {
-                        sans: ['"Plus Jakarta Sans"', 'Inter', 'sans-serif'],
+                        sans:    ['"Plus Jakarta Sans"', 'Inter', 'sans-serif'],
                         heading: ['Outfit', '"Plus Jakarta Sans"', 'sans-serif'],
                     },
                     boxShadow: {
-                        'glow': '0 0 40px -10px rgba(124, 58, 237, 0.35)',
-                        'glow-sm': '0 0 20px -5px rgba(124, 58, 237, 0.25)',
+                        'glow':    '0 0 40px -10px rgba(124, 58, 237, 0.35)',
+                        'glow-sm': '0 0 20px -5px  rgba(124, 58, 237, 0.25)',
+                        'glow-lg': '0 0 60px -15px rgba(124, 58, 237, 0.45)',
+                    },
+                    animation: {
+                        'bounce-in': 'bounceIn 0.5s ease-out forwards',
+                    },
+                    screens: {
+                        'xs': '480px',
                     }
                 }
             }
         }
     </script>
 
-    <!-- Custom CSS -->
+    <!-- Custom CSS (Design System) -->
     <link rel="stylesheet" href="{% static 'css/styles.css' %}">
 
     <!-- Lucide Icons -->
@@ -71,8 +79,11 @@
 
     {% block extra_head %}{% endblock %}
 </head>
-<body class="min-h-screen flex flex-col bg-[#FAFAFE] text-slate-900 antialiased selection:bg-brand-500 selection:text-white" x-data="{ mobileMenuOpen: false }">
-    
+<body
+    class="min-h-screen flex flex-col bg-[#FAFAFE] text-slate-900 antialiased selection:bg-brand-500 selection:text-white"
+    x-data="{ mobileMenuOpen: false }"
+>
+
     <!-- Navigation Bar -->
     {% include 'includes/navbar.html' %}
 
@@ -86,14 +97,7 @@
 
     <!-- Custom JS -->
     <script src="{% static 'js/main.js' %}"></script>
-    <script>
-        // Refresh icons after Alpine loads
-        document.addEventListener('alpine:initialized', () => {
-            if (window.lucide) {
-                window.lucide.createIcons();
-            }
-        });
-    </script>
+
     {% block extra_js %}{% endblock %}
 </body>
 </html>

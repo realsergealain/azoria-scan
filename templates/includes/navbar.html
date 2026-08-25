@@ -1,11 +1,16 @@
-<!-- Floating Pill Navbar -->
-<header class="fixed top-0 left-0 right-0 z-50 pt-4 px-4 sm:px-6 lg:px-8">
+<!-- ═══════════════════════════════════════════
+     Navbar — Floating Pill, Scroll-Aware, Mobile Responsive
+     ═══════════════════════════════════════════ -->
+<header class="nav-header fixed top-0 left-0 right-0 z-50 pt-4 px-4 sm:px-6 lg:px-8">
     <div class="max-w-6xl mx-auto">
-        <nav class="glass-nav rounded-full px-5 py-3 flex items-center justify-between transition-all duration-300">
+
+        <!-- ── Main Pill Nav Bar ── -->
+        <nav class="glass-nav rounded-full px-4 sm:px-5 py-3 flex items-center justify-between transition-all duration-300">
+
             <!-- Brand Logo -->
-            <a href="{% url 'core:home' %}" class="flex items-center gap-2.5 group">
-                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-brand-700 via-brand-600 to-indigo-500 flex items-center justify-center shadow-md shadow-brand-500/20 group-hover:scale-105 transition-transform duration-300">
-                    <svg class="w-5 h-5 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <a href="{% url 'core:home' %}" class="flex items-center gap-2.5 group shrink-0">
+                <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-tr from-brand-700 via-brand-600 to-indigo-500 flex items-center justify-center shadow-md shadow-brand-500/20 group-hover:scale-105 transition-transform duration-300">
+                    <svg class="w-4 h-4 sm:w-5 sm:h-5 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
                         <path d="m2 7 4.41-4.41A2 2 0 0 1 7.83 2h8.34a2 2 0 0 1 1.42.59L22 7"/>
                         <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/>
                         <path d="M15 22v-4a2 2 0 0 0-2-2h-2a2 2 0 0 0-2 2v4"/>
@@ -14,82 +19,160 @@
                     </svg>
                 </div>
                 <div class="flex flex-col">
-                    <span class="font-heading font-extrabold text-xl tracking-tight text-slate-900 group-hover:text-brand-600 transition-colors">
+                    <span class="font-heading font-extrabold text-lg sm:text-xl tracking-tight text-slate-900 group-hover:text-brand-600 transition-colors">
                         Azoria<span class="text-brand-600">.</span>
                     </span>
-                    <span class="text-[9px] font-medium text-slate-500 -mt-1 tracking-wider uppercase">Social Commerce</span>
+                    <span class="hidden xs:block text-[9px] font-medium text-slate-500 -mt-1 tracking-wider uppercase">Social Commerce</span>
                 </div>
             </a>
 
             <!-- Desktop Navigation Links -->
-            <div class="hidden md:flex items-center gap-1 lg:gap-2">
-                <a href="#features" class="px-3.5 py-2 text-sm font-medium text-slate-600 hover:text-brand-600 hover:bg-brand-50/60 rounded-full transition-all duration-200">
+            <div class="hidden md:flex items-center gap-0.5 lg:gap-1">
+                <a href="{% url 'core:home' %}#features"
+                   class="px-3 py-2 text-sm font-medium text-slate-600 hover:text-brand-600 hover:bg-brand-50/60 rounded-full transition-all duration-200 whitespace-nowrap">
                     Fonctionnalités
                 </a>
-                <a href="#simulator" class="px-3.5 py-2 text-sm font-medium text-slate-600 hover:text-brand-600 hover:bg-brand-50/60 rounded-full transition-all duration-200">
+                <a href="{% url 'core:home' %}#simulator"
+                   class="px-3 py-2 text-sm font-medium text-slate-600 hover:text-brand-600 hover:bg-brand-50/60 rounded-full transition-all duration-200 whitespace-nowrap">
                     Simulateur
                 </a>
-                <a href="#ai" class="px-3.5 py-2 text-sm font-medium text-slate-600 hover:text-brand-600 hover:bg-brand-50/60 rounded-full transition-all duration-200 flex items-center gap-1.5">
+                <a href="{% url 'core:home' %}#ai"
+                   class="px-3 py-2 text-sm font-medium text-slate-600 hover:text-brand-600 hover:bg-brand-50/60 rounded-full transition-all duration-200 flex items-center gap-1.5 whitespace-nowrap">
                     <span class="inline-block w-2 h-2 rounded-full bg-pink-500 animate-pulse"></span>
                     Azoria AI
                 </a>
-                <a href="#workflow" class="px-3.5 py-2 text-sm font-medium text-slate-600 hover:text-brand-600 hover:bg-brand-50/60 rounded-full transition-all duration-200">
+                <a href="{% url 'core:home' %}#workflow"
+                   class="px-3 py-2 text-sm font-medium text-slate-600 hover:text-brand-600 hover:bg-brand-50/60 rounded-full transition-all duration-200 whitespace-nowrap">
                     Comment ça marche
                 </a>
-                <a href="#pricing" class="px-3.5 py-2 text-sm font-medium text-slate-600 hover:text-brand-600 hover:bg-brand-50/60 rounded-full transition-all duration-200">
+                <a href="{% url 'core:home' %}#pricing"
+                   class="px-3 py-2 text-sm font-medium text-slate-600 hover:text-brand-600 hover:bg-brand-50/60 rounded-full transition-all duration-200 whitespace-nowrap">
                     Tarifs
                 </a>
             </div>
 
-            <!-- Action Buttons -->
-            <div class="hidden sm:flex items-center gap-3">
-                <a href="/admin/" class="text-xs font-semibold text-slate-600 hover:text-brand-700 px-3 py-2 transition-colors">
+            <!-- Right Actions -->
+            <div class="flex items-center gap-2 sm:gap-3 shrink-0">
+                <!-- Authenticated user -->
+                {% if user.is_authenticated %}
+                <span class="hidden sm:block text-xs font-semibold text-slate-700">
+                    👋 {{ user.first_name|default:user.email }}
+                </span>
+                <a href="{% url 'accounts:logout' %}"
+                   class="hidden sm:inline text-xs font-semibold text-rose-600 hover:text-rose-700 px-3 py-2 rounded-full hover:bg-rose-50 transition-all">
+                    Déconnexion
+                </a>
+
+                <!-- Guest user -->
+                {% else %}
+                <a href="{% url 'accounts:login' %}"
+                   class="hidden sm:inline text-xs font-semibold text-slate-600 hover:text-brand-700 px-3 py-2 rounded-full hover:bg-brand-50/50 transition-all">
                     Connexion
                 </a>
-                <a href="#simulator" class="btn-primary-glow text-white text-xs sm:text-sm font-semibold px-5 py-2.5 rounded-full inline-flex items-center gap-2">
-                    <span>Créer ma boutique</span>
+                <a href="{% url 'accounts:register' %}"
+                   class="btn-primary-glow text-white text-xs sm:text-sm font-semibold px-4 sm:px-5 py-2 sm:py-2.5 rounded-full inline-flex items-center gap-1.5 sm:gap-2">
+                    <span class="hidden xs:inline">Créer ma boutique</span>
+                    <span class="xs:hidden">Démarrer</span>
                     <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
                 </a>
-            </div>
+                {% endif %}
 
-            <!-- Mobile Menu Toggle Button -->
-            <button @click="mobileMenuOpen = !mobileMenuOpen" type="button" class="md:hidden p-2 rounded-full text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-colors focus:outline-none" aria-label="Menu de navigation">
-                <i x-show="!mobileMenuOpen" data-lucide="menu" class="w-5 h-5"></i>
-                <i x-show="mobileMenuOpen" data-lucide="x" class="w-5 h-5"></i>
-            </button>
+                <!-- Mobile Menu Toggle -->
+                <button
+                    @click="mobileMenuOpen = !mobileMenuOpen"
+                    type="button"
+                    class="md:hidden p-2 rounded-full text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-colors focus:outline-none focus:ring-2 focus:ring-brand-300"
+                    :aria-expanded="mobileMenuOpen"
+                    aria-label="Ouvrir ou fermer le menu"
+                >
+                    <i x-show="!mobileMenuOpen" data-lucide="menu" class="w-5 h-5 pointer-events-none"></i>
+                    <i x-show="mobileMenuOpen" data-lucide="x" class="w-5 h-5 pointer-events-none"></i>
+                </button>
+            </div>
         </nav>
 
-        <!-- Mobile Dropdown Menu -->
-        <div x-show="mobileMenuOpen" 
-             x-transition:enter="transition ease-out duration-200"
-             x-transition:enter-start="opacity-0 -translate-y-4"
-             x-transition:enter-end="opacity-100 translate-y-0"
-             x-transition:leave="transition ease-in duration-150"
-             x-transition:leave-start="opacity-100 translate-y-0"
-             x-transition:leave-end="opacity-0 -translate-y-4"
-             @click.away="mobileMenuOpen = false"
-             class="md:hidden mt-2 p-4 glass-card rounded-2xl shadow-xl flex flex-col gap-2">
-            <a @click="mobileMenuOpen = false" href="#features" class="px-4 py-2.5 text-sm font-medium text-slate-700 hover:bg-brand-50 rounded-xl transition-colors">
-                Fonctionnalités
-            </a>
-            <a @click="mobileMenuOpen = false" href="#simulator" class="px-4 py-2.5 text-sm font-medium text-slate-700 hover:bg-brand-50 rounded-xl transition-colors">
-                Simulateur en direct
-            </a>
-            <a @click="mobileMenuOpen = false" href="#ai" class="px-4 py-2.5 text-sm font-medium text-slate-700 hover:bg-brand-50 rounded-xl transition-colors flex items-center justify-between">
-                <span>Azoria AI</span>
-                <span class="text-[10px] uppercase font-bold bg-pink-100 text-pink-700 px-2 py-0.5 rounded-full">Nouveau</span>
-            </a>
-            <a @click="mobileMenuOpen = false" href="#workflow" class="px-4 py-2.5 text-sm font-medium text-slate-700 hover:bg-brand-50 rounded-xl transition-colors">
-                Comment ça marche
-            </a>
-            <a @click="mobileMenuOpen = false" href="#pricing" class="px-4 py-2.5 text-sm font-medium text-slate-700 hover:bg-brand-50 rounded-xl transition-colors">
-                Tarifs
-            </a>
-            <div class="pt-3 mt-1 border-t border-slate-100 flex flex-col gap-2">
-                <a href="#simulator" @click="mobileMenuOpen = false" class="btn-primary-glow text-white text-center py-2.5 rounded-xl font-semibold text-sm">
-                    Créer ma boutique gratuite
+        <!-- ── Mobile Dropdown Menu ── -->
+        <div
+            x-show="mobileMenuOpen"
+            x-transition:enter="transition ease-out duration-200"
+            x-transition:enter-start="opacity-0 -translate-y-3 scale-95"
+            x-transition:enter-end="opacity-100 translate-y-0 scale-100"
+            x-transition:leave="transition ease-in duration-150"
+            x-transition:leave-start="opacity-100 translate-y-0 scale-100"
+            x-transition:leave-end="opacity-0 -translate-y-3 scale-95"
+            @click.away="mobileMenuOpen = false"
+            class="md:hidden mt-2 mobile-nav-menu"
+        >
+            <!-- Nav links -->
+            <div class="flex flex-col gap-1">
+                <a @click="mobileMenuOpen = false"
+                   href="{% url 'core:home' %}#features"
+                   class="flex items-center gap-3 px-4 py-3 text-sm font-semibold text-slate-700 hover:bg-brand-50 hover:text-brand-700 rounded-xl transition-colors">
+                    <div class="w-7 h-7 rounded-lg bg-brand-100 flex items-center justify-center">
+                        <i data-lucide="layers" class="w-4 h-4 text-brand-600"></i>
+                    </div>
+                    Fonctionnalités
+                </a>
+                <a @click="mobileMenuOpen = false"
+                   href="{% url 'core:home' %}#simulator"
+                   class="flex items-center gap-3 px-4 py-3 text-sm font-semibold text-slate-700 hover:bg-brand-50 hover:text-brand-700 rounded-xl transition-colors">
+                    <div class="w-7 h-7 rounded-lg bg-indigo-100 flex items-center justify-center">
+                        <i data-lucide="play" class="w-4 h-4 text-indigo-600"></i>
+                    </div>
+                    Simulateur en direct
+                </a>
+                <a @click="mobileMenuOpen = false"
+                   href="{% url 'core:home' %}#ai"
+                   class="flex items-center gap-3 px-4 py-3 text-sm font-semibold text-slate-700 hover:bg-pink-50 hover:text-pink-700 rounded-xl transition-colors">
+                    <div class="w-7 h-7 rounded-lg bg-pink-100 flex items-center justify-center">
+                        <i data-lucide="sparkles" class="w-4 h-4 text-pink-600"></i>
+                    </div>
+                    <span>Azoria AI</span>
+                    <span class="ml-auto text-[10px] uppercase font-bold bg-pink-100 text-pink-700 px-2 py-0.5 rounded-full">Nouveau</span>
+                </a>
+                <a @click="mobileMenuOpen = false"
+                   href="{% url 'core:home' %}#workflow"
+                   class="flex items-center gap-3 px-4 py-3 text-sm font-semibold text-slate-700 hover:bg-brand-50 hover:text-brand-700 rounded-xl transition-colors">
+                    <div class="w-7 h-7 rounded-lg bg-emerald-100 flex items-center justify-center">
+                        <i data-lucide="workflow" class="w-4 h-4 text-emerald-600"></i>
+                    </div>
+                    Comment ça marche
+                </a>
+                <a @click="mobileMenuOpen = false"
+                   href="{% url 'core:home' %}#pricing"
+                   class="flex items-center gap-3 px-4 py-3 text-sm font-semibold text-slate-700 hover:bg-brand-50 hover:text-brand-700 rounded-xl transition-colors">
+                    <div class="w-7 h-7 rounded-lg bg-amber-100 flex items-center justify-center">
+                        <i data-lucide="tag" class="w-4 h-4 text-amber-600"></i>
+                    </div>
+                    Tarifs
                 </a>
             </div>
+
+            <!-- Divider + Auth buttons -->
+            <div class="pt-3 mt-2 border-t border-slate-100 flex flex-col gap-2">
+                {% if user.is_authenticated %}
+                <div class="px-4 py-2 text-xs font-semibold text-slate-500 uppercase tracking-wider">
+                    Connecté en tant que {{ user.first_name|default:user.email }}
+                </div>
+                <a href="{% url 'accounts:logout' %}"
+                   class="text-center py-2.5 px-4 text-rose-600 font-semibold text-sm hover:bg-rose-50 rounded-xl transition-colors">
+                    Déconnexion
+                </a>
+                {% else %}
+                <a href="{% url 'accounts:login' %}"
+                   class="text-center py-2.5 px-4 text-slate-700 font-semibold text-sm hover:bg-slate-50 rounded-xl transition-colors">
+                    Connexion
+                </a>
+                <a href="{% url 'accounts:register' %}"
+                   @click="mobileMenuOpen = false"
+                   class="btn-primary-glow text-white text-center py-3 px-4 rounded-xl font-bold text-sm flex items-center justify-center gap-2">
+                    <i data-lucide="zap" class="w-4 h-4"></i>
+                    Créer ma boutique gratuite
+                </a>
+                {% endif %}
+            </div>
         </div>
+        <!-- /Mobile Dropdown -->
+
     </div>
 </header>

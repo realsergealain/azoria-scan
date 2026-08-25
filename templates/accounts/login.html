@@ -1,0 +1,109 @@
+{% extends 'accounts/base_auth.html' %}
+
+{% block title %}Connexion — Azoria{% endblock %}
+{% block meta_description %}Connectez-vous à votre espace vendeur Azoria pour gérer votre boutique, vos commandes et vos fiches produits.{% endblock %}
+
+{% block brand_headline %}Bon retour<br><span class="text-transparent bg-clip-text bg-gradient-to-r from-violet-300 to-pink-300">parmi nous 👋</span>{% endblock %}
+{% block brand_subline %}Connectez-vous pour gérer vos commandes, vos produits et booster vos ventes.{% endblock %}
+
+{% block body_data %}x-data="{ showPassword: false }"{% endblock %}
+
+{% block form_content %}
+    <!-- En-tête du formulaire -->
+    <div class="text-center mb-6">
+        <h1 class="font-heading text-2xl sm:text-3xl lg:text-2xl xl:text-3xl font-extrabold text-slate-900 tracking-tight">
+            Bon retour ! <span class="animate-wave inline-block">👋</span>
+        </h1>
+        <p class="text-xs sm:text-sm text-slate-500 font-medium mt-1.5">
+            Connectez-vous pour accéder à votre espace vendeur
+        </p>
+    </div>
+
+    <!-- Formulaire de connexion -->
+    <form method="POST" action="{% url 'accounts:login' %}{% if next %}?next={{ next }}{% endif %}"
+          class="space-y-4" novalidate>
+        {% csrf_token %}
+
+        <!-- Email -->
+        <div>
+            <label for="id_email" class="sr-only">Adresse email</label>
+            <div class="relative">
+                <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                    <i data-lucide="mail" class="w-4 h-4"></i>
+                </div>
+                {{ form.email }}
+            </div>
+            {% if form.email.errors %}
+            <p class="field-error mt-1.5">
+                <i data-lucide="alert-circle" class="w-3 h-3 text-rose-600 shrink-0"></i>
+                {{ form.email.errors.0 }}
+            </p>
+            {% endif %}
+        </div>
+
+        <!-- Mot de passe avec bouton afficher/masquer -->
+        <div>
+            <label for="id_password" class="sr-only">Mot de passe</label>
+            <div class="relative">
+                <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                    <i data-lucide="lock" class="w-4 h-4"></i>
+                </div>
+                <input
+                    :type="showPassword ? 'text' : 'password'"
+                    name="password"
+                    id="id_password"
+                    placeholder="Votre mot de passe"
+                    autocomplete="current-password"
+                    required
+                    class="w-full pl-11 pr-11 py-3.5 bg-slate-50 border border-slate-200/90 rounded-2xl text-slate-900 text-sm font-medium focus:bg-white focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition-all shadow-sm placeholder:text-slate-400"
+                >
+                <button
+                    type="button"
+                    @click="showPassword = !showPassword"
+                    class="absolute inset-y-0 right-0 pr-3.5 flex items-center text-slate-400 hover:text-slate-700 transition-colors focus:outline-none"
+                    :aria-label="showPassword ? 'Masquer le mot de passe' : 'Afficher le mot de passe'"
+                >
+                    <i x-show="!showPassword" data-lucide="eye"     class="w-4 h-4"></i>
+                    <i x-show="showPassword"  data-lucide="eye-off" class="w-4 h-4"></i>
+                </button>
+            </div>
+            {% if form.password.errors %}
+            <p class="field-error mt-1.5">
+                <i data-lucide="alert-circle" class="w-3 h-3 text-rose-600 shrink-0"></i>
+                {{ form.password.errors.0 }}
+            </p>
+            {% endif %}
+        </div>
+
+        <!-- Mot de passe oublié -->
+        <div class="flex items-center justify-between">
+            <!-- Se souvenir de moi -->
+            <label class="flex items-center gap-2 cursor-pointer">
+                {{ form.remember_me }}
+                <span class="text-xs font-medium text-slate-600">Se souvenir de moi</span>
+            </label>
+            <a href="#" class="auth-link text-xs">
+                Mot de passe oublié ?
+            </a>
+        </div>
+
+        <!-- Bouton de connexion -->
+        <div class="pt-1">
+            <button
+                type="submit"
+                id="btn-login-submit"
+                class="auth-btn-submit"
+            >
+                <i data-lucide="log-in" class="w-4 h-4"></i>
+                <span>Se connecter</span>
+            </button>
+        </div>
+    </form>
+{% endblock %}
+
+{% block switch_link %}
+    Pas encore de compte ?
+    <a href="{% url 'accounts:register' %}" class="auth-link ml-1">
+        Créer mon compte — c'est gratuit
+    </a>
+{% endblock %}

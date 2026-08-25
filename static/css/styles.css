@@ -1,19 +1,74 @@
-/* Azoria - Modern SaaS & Social Commerce Styles */
+/* ============================================================
+   Azoria — Design System CSS
+   Modern SaaS & Social Commerce — Mobile First, Pro Design
+   ============================================================ */
 
 @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&family=Inter:wght@300;400;500;600;700&display=swap');
 
+/* ────────────────────────────────────────────
+   1. CSS Custom Properties (Design Tokens)
+──────────────────────────────────────────── */
 :root {
-  --primary: #7C3AED;
-  --primary-glow: rgba(124, 58, 237, 0.35);
-  --primary-light: #8B5CF6;
-  --primary-subtle: #F5F3FF;
-  --accent: #6366F1;
-  --accent-secondary: #EC4899;
-  --surface: #FFFFFF;
-  --surface-alt: #F8FAFC;
-  --text-main: #0F172A;
-  --text-muted: #64748B;
-  --border-glass: rgba(226, 232, 240, 0.8);
+  /* Brand Colors */
+  --primary:          #7C3AED;
+  --primary-dark:     #6D28D9;
+  --primary-darker:   #5B21B6;
+  --primary-glow:     rgba(124, 58, 237, 0.35);
+  --primary-light:    #8B5CF6;
+  --primary-subtle:   #F5F3FF;
+  --primary-100:      #EDE9FE;
+  --primary-200:      #DDD6FE;
+
+  /* Accent Colors */
+  --accent:           #6366F1;
+  --accent-pink:      #EC4899;
+  --accent-emerald:   #10B981;
+
+  /* Surface Colors */
+  --surface:          #FFFFFF;
+  --surface-alt:      #F8FAFC;
+  --surface-dark:     #0F172A;
+
+  /* Text Colors */
+  --text-main:        #0F172A;
+  --text-muted:       #64748B;
+  --text-light:       #94A3B8;
+
+  /* Border Colors */
+  --border-light:     rgba(226, 232, 240, 0.8);
+  --border-brand:     rgba(196, 181, 253, 0.6);
+
+  /* Shadows */
+  --shadow-sm:        0 1px 3px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.06);
+  --shadow-md:        0 4px 16px -4px rgba(0,0,0,0.1), 0 2px 6px rgba(0,0,0,0.04);
+  --shadow-lg:        0 20px 40px -12px rgba(0,0,0,0.12), 0 4px 12px rgba(0,0,0,0.04);
+  --shadow-glow:      0 8px 24px -4px rgba(124, 58, 237, 0.38);
+  --shadow-glow-lg:   0 16px 40px -8px rgba(124, 58, 237, 0.45);
+
+  /* Spacing Scale */
+  --radius-sm:        0.5rem;
+  --radius-md:        0.75rem;
+  --radius-lg:        1rem;
+  --radius-xl:        1.5rem;
+  --radius-2xl:       2rem;
+  --radius-full:      9999px;
+
+  /* Transitions */
+  --transition-fast:  150ms cubic-bezier(0.16, 1, 0.3, 1);
+  --transition-base:  250ms cubic-bezier(0.16, 1, 0.3, 1);
+  --transition-slow:  400ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* ────────────────────────────────────────────
+   2. Base Reset & Typography
+──────────────────────────────────────────── */
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
 }
 
 body {
@@ -23,40 +78,66 @@ body {
   overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  line-height: 1.6;
 }
 
-h1, h2, h3, .font-heading {
+h1, h2, h3, h4, h5, h6,
+.font-heading {
   font-family: 'Outfit', 'Plus Jakarta Sans', sans-serif;
   letter-spacing: -0.025em;
+  line-height: 1.2;
 }
 
-/* Background Mesh Gradients */
+img, video {
+  max-width: 100%;
+  height: auto;
+}
+
+/* ────────────────────────────────────────────
+   3. Scrollbar Customization
+──────────────────────────────────────────── */
+::-webkit-scrollbar        { width: 6px; height: 6px; }
+::-webkit-scrollbar-track  { background: #F1F5F9; }
+::-webkit-scrollbar-thumb  { background: #CBD5E1; border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: #94A3B8; }
+
+/* ────────────────────────────────────────────
+   4. Background Gradients & Meshes
+──────────────────────────────────────────── */
 .mesh-gradient-hero {
-  background: 
+  background:
     radial-gradient(circle at 50% 18%, rgba(139, 92, 246, 0.22) 0%, rgba(168, 85, 247, 0.12) 30%, rgba(99, 102, 241, 0.05) 55%, transparent 75%),
-    radial-gradient(circle at 15% 40%, rgba(236, 72, 153, 0.1) 0%, transparent 45%),
+    radial-gradient(circle at 15% 40%, rgba(236, 72, 153, 0.10) 0%, transparent 45%),
     radial-gradient(circle at 85% 35%, rgba(99, 102, 241, 0.12) 0%, transparent 45%),
     linear-gradient(180deg, #FFFFFF 0%, #FAF8FF 40%, #FFFFFF 100%);
 }
 
 .mesh-gradient-cta {
-  background: 
+  background:
     radial-gradient(circle at 20% 20%, rgba(244, 114, 182, 0.35) 0%, transparent 50%),
-    radial-gradient(circle at 80% 80%, rgba(99, 102, 241, 0.4) 0%, transparent 50%),
+    radial-gradient(circle at 80% 80%, rgba(99, 102, 241, 0.40) 0%, transparent 50%),
     linear-gradient(135deg, #6D28D9 0%, #7C3AED 50%, #4338CA 100%);
 }
 
 .mesh-card-bg {
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.98) 0%, rgba(248, 246, 255, 0.85) 100%);
+  background: linear-gradient(180deg, rgba(255,255,255,0.98) 0%, rgba(248,246,255,0.85) 100%);
 }
 
-/* Glassmorphism Classes */
+/* ────────────────────────────────────────────
+   5. Glassmorphism Utility Classes
+──────────────────────────────────────────── */
 .glass-nav {
   background: rgba(255, 255, 255, 0.82);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
   border: 1px solid rgba(226, 232, 240, 0.8);
   box-shadow: 0 10px 30px -10px rgba(124, 58, 237, 0.08);
+  transition: background var(--transition-base), box-shadow var(--transition-base);
+}
+
+.glass-nav.scrolled {
+  background: rgba(255, 255, 255, 0.95);
+  box-shadow: 0 4px 20px -4px rgba(0, 0, 0, 0.10), 0 0 0 1px rgba(226, 232, 240, 0.6);
 }
 
 .glass-card {
@@ -64,70 +145,37 @@ h1, h2, h3, .font-heading {
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   border: 1px solid rgba(237, 233, 254, 0.9);
-  box-shadow: 0 20px 40px -15px rgba(124, 58, 237, 0.08), 0 2px 6px rgba(0, 0, 0, 0.02);
+  box-shadow: 0 20px 40px -15px rgba(124, 58, 237, 0.08), 0 2px 6px rgba(0,0,0,0.02);
 }
 
 .glass-card-hover {
-  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: all var(--transition-base);
 }
 
 .glass-card-hover:hover {
   transform: translateY(-4px);
-  box-shadow: 0 25px 50px -12px rgba(124, 58, 237, 0.15), 0 4px 12px rgba(0, 0, 0, 0.03);
+  box-shadow: 0 25px 50px -12px rgba(124, 58, 237, 0.15), 0 4px 12px rgba(0,0,0,0.03);
   border-color: rgba(196, 181, 253, 0.9);
 }
 
-/* Floating Animations */
-@keyframes floatSlow {
-  0%, 100% {
-    transform: translateY(0px) rotate(0deg);
-  }
-  50% {
-    transform: translateY(-8px) rotate(0.5deg);
-  }
-}
-
-@keyframes floatReverse {
-  0%, 100% {
-    transform: translateY(0px) rotate(0deg);
-  }
-  50% {
-    transform: translateY(7px) rotate(-0.5deg);
-  }
-}
-
-@keyframes pulseGlow {
-  0%, 100% {
-    opacity: 0.6;
-    transform: scale(1);
-  }
-  50% {
-    opacity: 0.9;
-    transform: scale(1.05);
-  }
-}
-
-.animate-float-1 {
-  animation: floatSlow 6s ease-in-out infinite;
-}
-
-.animate-float-2 {
-  animation: floatReverse 7s ease-in-out infinite 0.5s;
-}
-
-.animate-float-3 {
-  animation: floatSlow 5.5s ease-in-out infinite 1s;
-}
-
-.animate-pulse-glow {
-  animation: pulseGlow 4s ease-in-out infinite;
-}
-
-/* Button & Pill Effects */
+/* ────────────────────────────────────────────
+   6. Button & Interactive Components
+──────────────────────────────────────────── */
 .btn-primary-glow {
   background: linear-gradient(135deg, #7C3AED 0%, #6366F1 100%);
-  box-shadow: 0 8px 20px -4px rgba(124, 58, 237, 0.4);
-  transition: all 0.25s ease;
+  box-shadow: 0 8px 20px -4px rgba(124, 58, 237, 0.40);
+  transition: all var(--transition-base);
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-primary-glow::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(255,255,255,0.15) 0%, transparent 50%);
+  opacity: 0;
+  transition: opacity var(--transition-fast);
 }
 
 .btn-primary-glow:hover {
@@ -136,18 +184,28 @@ h1, h2, h3, .font-heading {
   transform: translateY(-2px);
 }
 
-.pill-glow {
-  background: linear-gradient(135deg, #7C3AED 0%, #8B5CF6 100%);
-  box-shadow: 0 4px 12px rgba(124, 58, 237, 0.3);
+.btn-primary-glow:hover::before {
+  opacity: 1;
 }
 
-/* Phone Mockup Frame */
+.btn-primary-glow:active {
+  transform: translateY(0) scale(0.98);
+}
+
+.pill-glow {
+  background: linear-gradient(135deg, #7C3AED 0%, #8B5CF6 100%);
+  box-shadow: 0 4px 12px rgba(124, 58, 237, 0.30);
+}
+
+/* ────────────────────────────────────────────
+   7. Phone / Device Mockup
+──────────────────────────────────────────── */
 .mockup-iphone {
   border: 10px solid #1E293B;
   border-radius: 46px;
-  box-shadow: 
-    0 25px 60px -15px rgba(15, 23, 42, 0.3),
-    0 0 0 1px rgba(255, 255, 255, 0.1),
+  box-shadow:
+    0 25px 60px -15px rgba(15, 23, 42, 0.30),
+    0 0 0 1px rgba(255, 255, 255, 0.10),
     inset 0 0 0 2px rgba(255, 255, 255, 0.15);
   background: #FFFFFF;
 }
@@ -161,20 +219,392 @@ h1, h2, h3, .font-heading {
   margin: 0 auto;
 }
 
-/* Scrollbar Customization */
-::-webkit-scrollbar {
-  width: 8px;
+/* ────────────────────────────────────────────
+   8. Animations & Keyframes
+──────────────────────────────────────────── */
+
+/* Floating */
+@keyframes floatSlow {
+  0%, 100% { transform: translateY(0px) rotate(0deg); }
+  50%       { transform: translateY(-8px) rotate(0.5deg); }
 }
 
-::-webkit-scrollbar-track {
-  background: #F1F5F9;
+@keyframes floatReverse {
+  0%, 100% { transform: translateY(0px) rotate(0deg); }
+  50%       { transform: translateY(7px) rotate(-0.5deg); }
 }
 
-::-webkit-scrollbar-thumb {
-  background: #CBD5E1;
-  border-radius: 4px;
+/* Pulse Glow */
+@keyframes pulseGlow {
+  0%, 100% { opacity: 0.6; transform: scale(1); }
+  50%       { opacity: 0.9; transform: scale(1.05); }
 }
 
-::-webkit-scrollbar-thumb:hover {
-  background: #94A3B8;
+/* Slide In Up */
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(28px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Fade In */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+/* Shimmer */
+@keyframes shimmer {
+  0%   { background-position: -200% center; }
+  100% { background-position:  200% center; }
+}
+
+/* Gradient Shift */
+@keyframes gradientShift {
+  0%, 100% { background-position: 0% 50%; }
+  50%       { background-position: 100% 50%; }
+}
+
+/* Wave (for emoji animations) */
+@keyframes wave {
+  0%, 100% { transform: rotate(0deg); }
+  25%       { transform: rotate(15deg); }
+  75%       { transform: rotate(-8deg); }
+}
+
+/* Bounce In (for register page) */
+@keyframes bounceIn {
+  0%   { opacity: 0; transform: scale(0.8) translateY(-10px); }
+  60%  { opacity: 1; transform: scale(1.05) translateY(2px); }
+  100% { transform: scale(1) translateY(0); }
+}
+
+/* ────────────────────────────────────────────
+   9. Animation Utility Classes
+──────────────────────────────────────────── */
+.animate-float-1        { animation: floatSlow 6s ease-in-out infinite; }
+.animate-float-2        { animation: floatReverse 7s ease-in-out infinite 0.5s; }
+.animate-float-3        { animation: floatSlow 5.5s ease-in-out infinite 1s; }
+.animate-pulse-glow     { animation: pulseGlow 4s ease-in-out infinite; }
+.animate-wave           { animation: wave 1.8s ease-in-out infinite; display: inline-block; }
+.animate-bounce-in      { animation: bounceIn 0.5s ease-out forwards; }
+
+/* Scroll-triggered animations */
+.reveal-on-scroll {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+
+.reveal-on-scroll.revealed {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.reveal-delay-1 { transition-delay: 0.1s; }
+.reveal-delay-2 { transition-delay: 0.2s; }
+.reveal-delay-3 { transition-delay: 0.3s; }
+.reveal-delay-4 { transition-delay: 0.4s; }
+
+/* ────────────────────────────────────────────
+   10. Navbar Responsive Enhancements
+──────────────────────────────────────────── */
+.nav-header {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 50;
+  padding-top: 1rem;
+  padding-left: 1rem;
+  padding-right: 1rem;
+  transition: padding var(--transition-base);
+}
+
+.nav-header.scrolled {
+  padding-top: 0.5rem;
+}
+
+/* Mobile nav menu */
+.mobile-nav-menu {
+  margin-top: 0.5rem;
+  padding: 1rem;
+  background: rgba(255, 255, 255, 0.97);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(226, 232, 240, 0.9);
+  border-radius: 1.25rem;
+  box-shadow: 0 20px 40px -12px rgba(0, 0, 0, 0.12), 0 0 0 1px rgba(237, 233, 254, 0.5);
+}
+
+/* ────────────────────────────────────────────
+   11. Auth Pages — Externalized Styles
+   (moved from base_auth.html inline <style>)
+──────────────────────────────────────────── */
+
+/* Auth brand panel gradient (left panel on desktop) */
+.auth-brand-panel {
+  background:
+    radial-gradient(circle at 25% 15%, rgba(167, 139, 250, 0.35) 0%, transparent 50%),
+    radial-gradient(circle at 80% 80%, rgba(236, 72, 153, 0.25) 0%, transparent 50%),
+    linear-gradient(145deg, #0F172A 0%, #1E1B4B 45%, #0F172A 100%);
+}
+
+/* Animated dot grid background */
+.auth-dots {
+  background-image: radial-gradient(rgba(255,255,255,0.07) 1px, transparent 1px);
+  background-size: 28px 28px;
+}
+
+/* Mobile status bar: hidden on sm+ */
+@media (min-width: 640px) {
+  .mobile-status-bar { display: none !important; }
+}
+
+/* Phone shell border: visible on mobile/tablet, flat on desktop */
+@media (min-width: 1024px) {
+  .auth-phone-shell {
+    border-radius: 1.5rem !important;
+    box-shadow: 0 32px 64px -20px rgba(0,0,0,0.25), 0 0 0 1px rgba(255,255,255,0.06) !important;
+    border: none !important;
+  }
+}
+
+/* Feature item hover */
+.auth-feature-item {
+  transition: transform var(--transition-fast), opacity var(--transition-fast);
+}
+.auth-feature-item:hover {
+  transform: translateX(4px);
+}
+
+/* Auth form input focus style */
+.auth-input {
+  width: 100%;
+  padding: 0.875rem 2.75rem 0.875rem 2.75rem;
+  background: #F8FAFC;
+  border: 1.5px solid rgba(226, 232, 240, 0.9);
+  border-radius: var(--radius-xl);
+  color: var(--text-main);
+  font-size: 0.875rem;
+  font-weight: 500;
+  transition: background var(--transition-fast), border-color var(--transition-fast), box-shadow var(--transition-fast);
+  outline: none;
+  box-shadow: var(--shadow-sm);
+}
+
+.auth-input:focus {
+  background: #FFFFFF;
+  border-color: var(--primary-light);
+  box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.10), var(--shadow-sm);
+}
+
+.auth-input::placeholder {
+  color: var(--text-light);
+}
+
+/* Auth submit button */
+.auth-btn-submit {
+  width: 100%;
+  padding: 1rem 1.5rem;
+  background: linear-gradient(135deg, #1E293B 0%, #0F172A 100%);
+  color: white;
+  font-size: 0.875rem;
+  font-weight: 700;
+  border-radius: var(--radius-full);
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  box-shadow: 0 8px 20px -4px rgba(15, 23, 42, 0.30);
+  transition: all var(--transition-base);
+}
+
+.auth-btn-submit:hover {
+  background: linear-gradient(135deg, #334155 0%, #1E293B 100%);
+  box-shadow: 0 12px 28px -4px rgba(15, 23, 42, 0.40);
+  transform: translateY(-1px);
+}
+
+.auth-btn-submit:active {
+  transform: translateY(0) scale(0.98);
+}
+
+/* Auth — link style */
+.auth-link {
+  color: #0EA5E9;
+  font-weight: 600;
+  transition: color var(--transition-fast);
+  text-decoration: none;
+}
+
+.auth-link:hover {
+  color: #0284C7;
+  text-decoration: underline;
+}
+
+/* ────────────────────────────────────────────
+   12. Form Field Enhancements
+──────────────────────────────────────────── */
+
+/* Error message style */
+.field-error {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  margin-top: 0.375rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: #E11D48;
+}
+
+/* Focus ring utility */
+.focus-ring:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.15);
+}
+
+/* ────────────────────────────────────────────
+   13. Section & Layout Utilities
+──────────────────────────────────────────── */
+.section-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0.25rem 0.875rem;
+  border-radius: var(--radius-full);
+  background: var(--primary-subtle);
+  border: 1px solid var(--primary-200);
+  color: var(--primary);
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.gradient-text {
+  background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ────────────────────────────────────────────
+   14. Footer Enhancements
+──────────────────────────────────────────── */
+.footer-link {
+  color: #94A3B8;
+  font-size: 0.875rem;
+  text-decoration: none;
+  transition: color var(--transition-fast);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.footer-link:hover {
+  color: #7C3AED;
+}
+
+/* ────────────────────────────────────────────
+   15. Responsive Breakpoint Utilities
+──────────────────────────────────────────── */
+
+/* Hide decorative floating cards on small screens */
+@media (max-width: 767px) {
+  .hero-floating-card {
+    display: none;
+  }
+
+  /* Ensure hero section doesn't overflow */
+  .mesh-gradient-hero {
+    padding-left: 0;
+    padding-right: 0;
+  }
+}
+
+/* Stack grids on mobile */
+@media (max-width: 639px) {
+  .responsive-grid-2 {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Section padding adjustments */
+@media (max-width: 639px) {
+  section {
+    padding-top: 3rem;
+    padding-bottom: 3rem;
+  }
+}
+
+/* Simulator: stack on mobile */
+@media (max-width: 1023px) {
+  .simulator-grid {
+    flex-direction: column;
+    align-items: center;
+  }
+}
+
+/* ────────────────────────────────────────────
+   16. Notification / Toast Component
+──────────────────────────────────────────── */
+.toast-success {
+  background: #F0FDF4;
+  border: 1px solid #BBF7D0;
+  color: #166534;
+  border-radius: var(--radius-xl);
+  padding: 0.75rem 1rem;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.toast-error {
+  background: #FFF1F2;
+  border: 1px solid #FECDD3;
+  color: #9F1239;
+  border-radius: var(--radius-xl);
+  padding: 0.75rem 1rem;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* ────────────────────────────────────────────
+   17. Loading / Skeleton States
+──────────────────────────────────────────── */
+.skeleton {
+  background: linear-gradient(90deg, #F1F5F9 25%, #E2E8F0 50%, #F1F5F9 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  border-radius: var(--radius-md);
+}
+
+/* ────────────────────────────────────────────
+   18. Print Styles
+──────────────────────────────────────────── */
+@media print {
+  .glass-nav,
+  footer,
+  .btn-primary-glow,
+  .animate-float-1,
+  .animate-float-2,
+  .animate-float-3 {
+    display: none !important;
+  }
+
+  body {
+    color: #000;
+    background: #fff;
+  }
 }

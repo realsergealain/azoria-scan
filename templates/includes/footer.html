@@ -1,70 +1,116 @@
-<!-- Modern Footer Component -->
-<footer class="bg-white border-t border-slate-200/80 pt-16 pb-12 mt-20">
+<!-- ═══════════════════════════════════════════
+     Footer — Premium, Responsive, Branded
+     ═══════════════════════════════════════════ -->
+<footer class="bg-slate-900 text-slate-300 pt-16 pb-8">
     <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10 pb-12 border-b border-slate-100">
+
+        <!-- Top grid -->
+        <div class="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-8 pb-12 border-b border-slate-700/60">
+
             <!-- Brand Column -->
-            <div class="lg:col-span-2 space-y-4">
-                <a href="{% url 'core:home' %}" class="flex items-center gap-2.5">
-                    <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-brand-700 to-indigo-500 flex items-center justify-center text-white shadow-md shadow-brand-500/20">
+            <div class="col-span-2 sm:col-span-2 md:col-span-2 lg:col-span-2 space-y-5">
+                <!-- Logo -->
+                <a href="{% url 'core:home' %}" class="inline-flex items-center gap-2.5 group">
+                    <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-brand-600 to-indigo-500 flex items-center justify-center text-white shadow-lg shadow-brand-500/30 group-hover:scale-105 transition-transform">
                         <i data-lucide="shopping-bag" class="w-4 h-4"></i>
                     </div>
-                    <span class="font-heading font-extrabold text-xl tracking-tight text-slate-900">
-                        Azoria<span class="text-brand-600">.</span>
+                    <span class="font-heading font-extrabold text-xl tracking-tight text-white">
+                        Azoria<span class="text-brand-400">.</span>
                     </span>
                 </a>
-                <p class="text-sm text-slate-600 max-w-sm leading-relaxed">
+
+                <!-- Tagline -->
+                <p class="text-sm text-slate-400 max-w-xs leading-relaxed">
                     La plateforme de social commerce conçue pour permettre à chaque vendeur de transformer ses abonnés TikTok, WhatsApp et Instagram en commandes concrètes.
                 </p>
-                <div class="flex items-center gap-3 pt-2">
-                    <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200/60">
-                        <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+
+                <!-- Status Badge -->
+                <div class="flex flex-wrap items-center gap-3">
+                    <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-900/40 text-emerald-400 border border-emerald-700/40">
+                        <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
                         Service opérationnel en Côte d'Ivoire
                     </span>
                 </div>
+
+                <!-- Social links -->
+                <div class="flex items-center gap-3 pt-1">
+                    <a href="#" aria-label="TikTok" class="w-9 h-9 rounded-lg bg-slate-800 hover:bg-pink-500/20 border border-slate-700 hover:border-pink-500/40 flex items-center justify-center text-slate-400 hover:text-pink-400 transition-all">
+                        <i data-lucide="video" class="w-4 h-4"></i>
+                    </a>
+                    <a href="#" aria-label="WhatsApp" class="w-9 h-9 rounded-lg bg-slate-800 hover:bg-emerald-500/20 border border-slate-700 hover:border-emerald-500/40 flex items-center justify-center text-slate-400 hover:text-emerald-400 transition-all">
+                        <i data-lucide="message-circle" class="w-4 h-4"></i>
+                    </a>
+                    <a href="#" aria-label="Instagram" class="w-9 h-9 rounded-lg bg-slate-800 hover:bg-purple-500/20 border border-slate-700 hover:border-purple-500/40 flex items-center justify-center text-slate-400 hover:text-purple-400 transition-all">
+                        <i data-lucide="instagram" class="w-4 h-4"></i>
+                    </a>
+                    <a href="#" aria-label="Facebook" class="w-9 h-9 rounded-lg bg-slate-800 hover:bg-blue-500/20 border border-slate-700 hover:border-blue-500/40 flex items-center justify-center text-slate-400 hover:text-blue-400 transition-all">
+                        <i data-lucide="facebook" class="w-4 h-4"></i>
+                    </a>
+                </div>
             </div>
 
-            <!-- Product Links -->
-            <div class="space-y-3">
-                <h4 class="font-heading font-bold text-sm text-slate-900 uppercase tracking-wider">Plateforme</h4>
-                <ul class="space-y-2 text-sm text-slate-600">
-                    <li><a href="#features" class="hover:text-brand-600 transition-colors">Boutique Mobile</a></li>
-                    <li><a href="#ai" class="hover:text-brand-600 transition-colors">Azoria AI & Fiches</a></li>
-                    <li><a href="#features" class="hover:text-brand-600 transition-colors">Générateur QR Code</a></li>
-                    <li><a href="#features" class="hover:text-brand-600 transition-colors">Paiement à la livraison</a></li>
-                    <li><a href="#simulator" class="hover:text-brand-600 transition-colors">Simulateur en direct</a></li>
+            <!-- Platform Links -->
+            <div class="space-y-4">
+                <h4 class="font-heading font-bold text-sm text-white uppercase tracking-wider">Plateforme</h4>
+                <ul class="space-y-2.5">
+                    <li><a href="#features"  class="footer-link hover:text-brand-400">Boutique Mobile</a></li>
+                    <li><a href="#ai"        class="footer-link hover:text-brand-400">Azoria AI</a></li>
+                    <li><a href="#features"  class="footer-link hover:text-brand-400">Générateur QR Code</a></li>
+                    <li><a href="#features"  class="footer-link hover:text-brand-400">Paiement à la livraison</a></li>
+                    <li><a href="#simulator" class="footer-link hover:text-brand-400">Simulateur en direct</a></li>
+                    <li><a href="#pricing"   class="footer-link hover:text-brand-400">Tarifs</a></li>
                 </ul>
             </div>
 
-            <!-- Logistics Coverage -->
-            <div class="space-y-3">
-                <h4 class="font-heading font-bold text-sm text-slate-900 uppercase tracking-wider">Villes couvertes</h4>
-                <ul class="space-y-2 text-sm text-slate-600">
-                    <li><span class="text-slate-700 font-medium">Abidjan</span> (Toutes communes)</li>
-                    <li>Yamoussoukro & Bouaké</li>
-                    <li>San Pedro & Daloa</li>
-                    <li>Korhogo & Man</li>
-                    <li>Expéditions multi-transporteurs</li>
+            <!-- Cities Coverage -->
+            <div class="space-y-4">
+                <h4 class="font-heading font-bold text-sm text-white uppercase tracking-wider">Zones couvertes</h4>
+                <ul class="space-y-2.5">
+                    <li class="text-sm text-slate-400">
+                        <span class="text-slate-200 font-medium">Abidjan</span>
+                        <span class="block text-xs text-slate-500">Toutes communes</span>
+                    </li>
+                    <li class="text-sm text-slate-400">Yamoussoukro & Bouaké</li>
+                    <li class="text-sm text-slate-400">San Pedro & Daloa</li>
+                    <li class="text-sm text-slate-400">Korhogo & Man</li>
+                    <li class="inline-flex items-center gap-1.5 text-sm text-brand-400 font-medium">
+                        <i data-lucide="truck" class="w-3.5 h-3.5"></i>
+                        Expéditions nationales
+                    </li>
                 </ul>
             </div>
 
             <!-- Support & Legal -->
-            <div class="space-y-3">
-                <h4 class="font-heading font-bold text-sm text-slate-900 uppercase tracking-wider">Aide & Contact</h4>
-                <ul class="space-y-2 text-sm text-slate-600">
-                    <li><a href="https://wa.me/" target="_blank" rel="noopener" class="hover:text-emerald-600 transition-colors flex items-center gap-1.5"><i data-lucide="message-circle" class="w-3.5 h-3.5 text-emerald-500"></i> Support WhatsApp</a></li>
-                    <li><a href="#faq" class="hover:text-brand-600 transition-colors">Foire Aux Questions</a></li>
-                    <li><a href="#" class="hover:text-brand-600 transition-colors">Guide du vendeur</a></li>
-                    <li><a href="#" class="hover:text-brand-600 transition-colors">Mentions légales</a></li>
-                    <li><a href="#" class="hover:text-brand-600 transition-colors">Confidentialité</a></li>
+            <div class="space-y-4">
+                <h4 class="font-heading font-bold text-sm text-white uppercase tracking-wider">Aide & Contact</h4>
+                <ul class="space-y-2.5">
+                    <li>
+                        <a href="https://wa.me/" target="_blank" rel="noopener noreferrer"
+                           class="footer-link hover:text-emerald-400 flex items-center gap-1.5">
+                            <i data-lucide="message-circle" class="w-3.5 h-3.5 text-emerald-500"></i>
+                            Support WhatsApp
+                        </a>
+                    </li>
+                    <li><a href="#faq" class="footer-link hover:text-brand-400">Foire Aux Questions</a></li>
+                    <li><a href="#" class="footer-link hover:text-brand-400">Guide du vendeur</a></li>
+                    <li><a href="#" class="footer-link hover:text-slate-200">Mentions légales</a></li>
+                    <li><a href="#" class="footer-link hover:text-slate-200">Confidentialité</a></li>
                 </ul>
             </div>
         </div>
 
-        <div class="pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-500">
-            <p>© 2026 Azoria Technologies. Tous droits réservés.</p>
-            <p class="flex items-center gap-1">
-                Fait avec passion pour le commerce africain 🌍✨
+        <!-- Bottom bar -->
+        <div class="pt-8 flex flex-col sm:flex-row items-center justify-between gap-4">
+            <p class="text-xs text-slate-500">
+                © 2026 Azoria Technologies. Tous droits réservés.
+            </p>
+            <p class="text-xs text-slate-600 flex items-center gap-1.5">
+                <span>Fait avec</span>
+                <span class="text-rose-500">❤</span>
+                <span>pour le commerce africain</span>
+                <span>🌍</span>
             </p>
         </div>
+
     </div>
 </footer>

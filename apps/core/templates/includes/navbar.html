@@ -23,33 +23,42 @@
 
             <!-- Desktop Navigation Links -->
             <div class="hidden md:flex items-center gap-1 lg:gap-2">
-                <a href="#features" class="px-3.5 py-2 text-sm font-medium text-slate-600 hover:text-brand-600 hover:bg-brand-50/60 rounded-full transition-all duration-200">
+                <a href="{% url 'core:home' %}#features" class="px-3.5 py-2 text-sm font-medium text-slate-600 hover:text-brand-600 hover:bg-brand-50/60 rounded-full transition-all duration-200">
                     Fonctionnalités
                 </a>
-                <a href="#simulator" class="px-3.5 py-2 text-sm font-medium text-slate-600 hover:text-brand-600 hover:bg-brand-50/60 rounded-full transition-all duration-200">
+                <a href="{% url 'core:home' %}#simulator" class="px-3.5 py-2 text-sm font-medium text-slate-600 hover:text-brand-600 hover:bg-brand-50/60 rounded-full transition-all duration-200">
                     Simulateur
                 </a>
-                <a href="#ai" class="px-3.5 py-2 text-sm font-medium text-slate-600 hover:text-brand-600 hover:bg-brand-50/60 rounded-full transition-all duration-200 flex items-center gap-1.5">
+                <a href="{% url 'core:home' %}#ai" class="px-3.5 py-2 text-sm font-medium text-slate-600 hover:text-brand-600 hover:bg-brand-50/60 rounded-full transition-all duration-200 flex items-center gap-1.5">
                     <span class="inline-block w-2 h-2 rounded-full bg-pink-500 animate-pulse"></span>
                     Azoria AI
                 </a>
-                <a href="#workflow" class="px-3.5 py-2 text-sm font-medium text-slate-600 hover:text-brand-600 hover:bg-brand-50/60 rounded-full transition-all duration-200">
+                <a href="{% url 'core:home' %}#workflow" class="px-3.5 py-2 text-sm font-medium text-slate-600 hover:text-brand-600 hover:bg-brand-50/60 rounded-full transition-all duration-200">
                     Comment ça marche
                 </a>
-                <a href="#pricing" class="px-3.5 py-2 text-sm font-medium text-slate-600 hover:text-brand-600 hover:bg-brand-50/60 rounded-full transition-all duration-200">
+                <a href="{% url 'core:home' %}#pricing" class="px-3.5 py-2 text-sm font-medium text-slate-600 hover:text-brand-600 hover:bg-brand-50/60 rounded-full transition-all duration-200">
                     Tarifs
                 </a>
             </div>
 
             <!-- Action Buttons -->
             <div class="hidden sm:flex items-center gap-3">
-                <a href="/admin/" class="text-xs font-semibold text-slate-600 hover:text-brand-700 px-3 py-2 transition-colors">
+                {% if user.is_authenticated %}
+                <span class="text-xs font-semibold text-slate-700">
+                    Bonjour, {{ user.first_name|default:user.email }}
+                </span>
+                <a href="{% url 'accounts:logout' %}" class="text-xs font-semibold text-rose-600 hover:text-rose-700 px-3 py-2 transition-colors">
+                    Déconnexion
+                </a>
+                {% else %}
+                <a href="{% url 'accounts:login' %}" class="text-xs font-semibold text-slate-600 hover:text-brand-700 px-3 py-2 transition-colors">
                     Connexion
                 </a>
-                <a href="#simulator" class="btn-primary-glow text-white text-xs sm:text-sm font-semibold px-5 py-2.5 rounded-full inline-flex items-center gap-2">
+                <a href="{% url 'accounts:register' %}" class="btn-primary-glow text-white text-xs sm:text-sm font-semibold px-5 py-2.5 rounded-full inline-flex items-center gap-2">
                     <span>Créer ma boutique</span>
                     <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
                 </a>
+                {% endif %}
             </div>
 
             <!-- Mobile Menu Toggle Button -->
@@ -69,26 +78,35 @@
              x-transition:leave-end="opacity-0 -translate-y-4"
              @click.away="mobileMenuOpen = false"
              class="md:hidden mt-2 p-4 glass-card rounded-2xl shadow-xl flex flex-col gap-2">
-            <a @click="mobileMenuOpen = false" href="#features" class="px-4 py-2.5 text-sm font-medium text-slate-700 hover:bg-brand-50 rounded-xl transition-colors">
+            <a @click="mobileMenuOpen = false" href="{% url 'core:home' %}#features" class="px-4 py-2.5 text-sm font-medium text-slate-700 hover:bg-brand-50 rounded-xl transition-colors">
                 Fonctionnalités
             </a>
-            <a @click="mobileMenuOpen = false" href="#simulator" class="px-4 py-2.5 text-sm font-medium text-slate-700 hover:bg-brand-50 rounded-xl transition-colors">
+            <a @click="mobileMenuOpen = false" href="{% url 'core:home' %}#simulator" class="px-4 py-2.5 text-sm font-medium text-slate-700 hover:bg-brand-50 rounded-xl transition-colors">
                 Simulateur en direct
             </a>
-            <a @click="mobileMenuOpen = false" href="#ai" class="px-4 py-2.5 text-sm font-medium text-slate-700 hover:bg-brand-50 rounded-xl transition-colors flex items-center justify-between">
+            <a @click="mobileMenuOpen = false" href="{% url 'core:home' %}#ai" class="px-4 py-2.5 text-sm font-medium text-slate-700 hover:bg-brand-50 rounded-xl transition-colors flex items-center justify-between">
                 <span>Azoria AI</span>
                 <span class="text-[10px] uppercase font-bold bg-pink-100 text-pink-700 px-2 py-0.5 rounded-full">Nouveau</span>
             </a>
-            <a @click="mobileMenuOpen = false" href="#workflow" class="px-4 py-2.5 text-sm font-medium text-slate-700 hover:bg-brand-50 rounded-xl transition-colors">
+            <a @click="mobileMenuOpen = false" href="{% url 'core:home' %}#workflow" class="px-4 py-2.5 text-sm font-medium text-slate-700 hover:bg-brand-50 rounded-xl transition-colors">
                 Comment ça marche
             </a>
-            <a @click="mobileMenuOpen = false" href="#pricing" class="px-4 py-2.5 text-sm font-medium text-slate-700 hover:bg-brand-50 rounded-xl transition-colors">
+            <a @click="mobileMenuOpen = false" href="{% url 'core:home' %}#pricing" class="px-4 py-2.5 text-sm font-medium text-slate-700 hover:bg-brand-50 rounded-xl transition-colors">
                 Tarifs
             </a>
             <div class="pt-3 mt-1 border-t border-slate-100 flex flex-col gap-2">
-                <a href="#simulator" @click="mobileMenuOpen = false" class="btn-primary-glow text-white text-center py-2.5 rounded-xl font-semibold text-sm">
+                {% if user.is_authenticated %}
+                <a href="{% url 'accounts:logout' %}" class="text-center py-2.5 text-rose-600 font-semibold text-sm">
+                    Déconnexion
+                </a>
+                {% else %}
+                <a href="{% url 'accounts:login' %}" class="text-center py-2 text-slate-700 font-semibold text-sm">
+                    Connexion
+                </a>
+                <a href="{% url 'accounts:register' %}" @click="mobileMenuOpen = false" class="btn-primary-glow text-white text-center py-2.5 rounded-xl font-semibold text-sm">
                     Créer ma boutique gratuite
                 </a>
+                {% endif %}
             </div>
         </div>
     </div>

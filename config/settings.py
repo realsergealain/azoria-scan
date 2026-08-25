@@ -3,6 +3,7 @@ Django settings for Azoria project.
 """
 
 from pathlib import Path
+import os
 import sys
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -11,16 +12,26 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # Add apps folder to Python path for convenient imports
 sys.path.insert(0, str(BASE_DIR / 'apps'))
 
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-djk3c-83jpuhf@u3)^hwongpp3401ahx_=%2)x)0a_2#$sz6f%'
+# ─────────────────────────────────────────────────────────────
+# SECURITY
+# ─────────────────────────────────────────────────────────────
+
+# Read SECRET_KEY from environment (never commit a real key to version control).
+# Fallback is only acceptable in local development — always set the env var in production!
+SECRET_KEY = os.environ.get(
+    'DJANGO_SECRET_KEY',
+    'django-insecure-djk3c-83jpuhf@u3)^hwongpp3401ahx_=%2)x)0a_2#$sz6f%'
+)
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.environ.get('DJANGO_DEBUG', 'True') == 'True'
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = os.environ.get('DJANGO_ALLOWED_HOSTS', '*').split(',')
 
 
-# Application definition
+# ─────────────────────────────────────────────────────────────
+# APPLICATION DEFINITION
+# ─────────────────────────────────────────────────────────────
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -29,7 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    
+
     # Custom Apps
     'apps.accounts',
     'apps.core',
@@ -50,13 +61,13 @@ ROOT_URLCONF = 'config.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [
-            BASE_DIR / 'templates',
-            BASE_DIR / 'apps' / 'core' / 'templates',
-        ],
+        # Only include the top-level templates/ directory here.
+        # App templates are discovered automatically via APP_DIRS=True.
+        'DIRS': [BASE_DIR / 'templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
+                'django.template.context_processors.debug',
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
@@ -68,8 +79,9 @@ TEMPLATES = [
 WSGI_APPLICATION = 'config.wsgi.application'
 
 
-# Database
-# https://docs.djangoproject.com/en/6.1/ref/settings/#databases
+# ─────────────────────────────────────────────────────────────
+# DATABASE
+# ─────────────────────────────────────────────────────────────
 
 DATABASES = {
     'default': {
@@ -79,17 +91,41 @@ DATABASES = {
 }
 
 
-# Custom User Model
+# ─────────────────────────────────────────────────────────────
+# CUSTOM USER MODEL
+# ─────────────────────────────────────────────────────────────
+
 AUTH_USER_MODEL = 'accounts.User'
 
 
-# Password validation
+# ─────────────────────────────────────────────────────────────
+# AUTHENTICATION
+# ─────────────────────────────────────────────────────────────
+
+# Where to redirect unauthenticated users
+LOGIN_URL = '/accounts/login/'
+
+# Where to redirect after a successful login
+LOGIN_REDIRECT_URL = '/'
+
+# Where to redirect after logout
+LOGOUT_REDIRECT_URL = '/'
+
+# Session cookie age: 2 weeks (in seconds)
+SESSION_COOKIE_AGE = 60 * 60 * 24 * 14
+
+
+# ─────────────────────────────────────────────────────────────
+# PASSWORD VALIDATION
+# ─────────────────────────────────────────────────────────────
+
 AUTH_PASSWORD_VALIDATORS = [
     {
         'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
     },
     {
         'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
+        'OPTIONS': {'min_length': 8},
     },
     {
         'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
@@ -100,24 +136,45 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 
-# Internationalization
+# ─────────────────────────────────────────────────────────────
+# INTERNATIONALIZATION
+# ─────────────────────────────────────────────────────────────
+
 LANGUAGE_CODE = 'fr-fr'
-
-TIME_ZONE = 'Africa/Abidjan'
-
-USE_I18N = True
-
-USE_TZ = True
+TIME_ZONE     = 'Africa/Abidjan'
+USE_I18N      = True
+USE_TZ        = True
 
 
-# Static files (CSS, JavaScript, Images)
-STATIC_URL = '/static/'
+# ─────────────────────────────────────────────────────────────
+# STATIC & MEDIA FILES
+# ─────────────────────────────────────────────────────────────
+
+STATIC_URL  = '/static/'
 STATICFILES_DIRS = [BASE_DIR / 'static']
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 
-# Media files
-MEDIA_URL = '/media/'
-MEDIA_ROOT = BASE_DIR / 'media'
+MEDIA_URL   = '/media/'
+MEDIA_ROOT  = BASE_DIR / 'media'
 
-# Default primary key field type
+
+# ─────────────────────────────────────────────────────────────
+# MESSAGES FRAMEWORK
+# ─────────────────────────────────────────────────────────────
+
+from django.contrib.messages import constants as message_constants
+
+MESSAGE_TAGS = {
+    message_constants.DEBUG:   'debug',
+    message_constants.INFO:    'info',
+    message_constants.SUCCESS: 'success',
+    message_constants.WARNING: 'warning',
+    message_constants.ERROR:   'error',
+}
+
+
+# ─────────────────────────────────────────────────────────────
+# DEFAULT PRIMARY KEY FIELD TYPE
+# ─────────────────────────────────────────────────────────────
+
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
