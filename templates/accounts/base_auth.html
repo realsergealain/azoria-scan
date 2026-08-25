@@ -3,14 +3,14 @@
 <html lang="fr" class="h-full">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
     <title>{% block title %}Azoria{% endblock %}</title>
     <meta name="description" content="{% block meta_description %}{% endblock %}">
 
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 
     <!-- Favicon -->
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 32 32%22><text y=%2226%22 font-size=%2226%22>🛍️</text></svg>">
@@ -41,22 +41,23 @@
                         }
                     },
                     fontFamily: {
-                        sans:    ['"Plus Jakarta Sans"', 'sans-serif'],
+                        sans:    ['"Plus Jakarta Sans"', 'Inter', 'sans-serif'],
                         heading: ['Outfit', '"Plus Jakarta Sans"', 'sans-serif'],
                     },
                     screens: {
                         'xs': '480px',
                     },
                     boxShadow: {
-                        'auth-card': '0 32px 64px -20px rgba(0,0,0,0.25), 0 0 0 1px rgba(255,255,255,0.06)',
-                        'glow':     '0 0 40px -10px rgba(124, 58, 237, 0.40)',
+                        'md-1': '0 1px 3px 0 rgba(15, 23, 42, 0.08), 0 1px 2px -1px rgba(15, 23, 42, 0.06)',
+                        'md-2': '0 4px 6px -1px rgba(15, 23, 42, 0.08), 0 2px 4px -2px rgba(15, 23, 42, 0.04)',
+                        'md-3': '0 10px 15px -3px rgba(15, 23, 42, 0.08), 0 4px 6px -4px rgba(15, 23, 42, 0.04)',
                     }
                 }
             }
         }
     </script>
 
-    <!-- Custom CSS -->
+    <!-- Custom CSS (Material Design Tokens & Utilities) -->
     <link rel="stylesheet" href="{% static 'css/styles.css' %}">
 
     <!-- Lucide Icons -->
@@ -64,181 +65,115 @@
 
     <!-- Alpine.js -->
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.8/dist/cdn.min.js"></script>
-
-    <!-- All auth-specific styles are in static/css/styles.css -->
-    <!-- (.auth-brand-panel, .auth-dots, .auth-feature-item, .animate-wave, etc.) -->
 </head>
 
-{# ── BODY ─────────────────────────────────────────────────────────────────── #}
-<body class="h-full bg-slate-900 selection:bg-brand-500 selection:text-white antialiased"
+<body class="min-h-full bg-slate-50 text-slate-900 selection:bg-brand-500 selection:text-white antialiased flex flex-col justify-between"
       {% block body_data %}{% endblock %}>
 
-    {# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-       RESPONSIVE WRAPPER
-       mobile  : single-column, full-height phone shell
-       tablet  : single column, centered card (max-w-md)
-       desktop : two columns — brand panel | form panel
-    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ #}
-    <div class="min-h-full flex flex-col lg:flex-row">
-
-        {# ╔══════════════════════════════════════════════════════╗
-           ║  LEFT — Brand panel  (hidden on mobile/tablet)      ║
-           ╚══════════════════════════════════════════════════════╝ #}
-        <aside class="hidden lg:flex lg:w-1/2 xl:w-[55%] auth-brand-panel auth-dots relative flex-col items-center justify-center p-12 xl:p-16 overflow-hidden">
-
-            <!-- Decorative glow blobs -->
-            <div class="absolute top-0 left-0 w-96 h-96 bg-purple-600/20 rounded-full blur-3xl -translate-x-1/2 -translate-y-1/2 pointer-events-none"></div>
-            <div class="absolute bottom-0 right-0 w-96 h-96 bg-pink-500/15 rounded-full blur-3xl translate-x-1/3 translate-y-1/3 pointer-events-none"></div>
-
-            <div class="relative z-10 max-w-sm xl:max-w-md w-full">
-                <!-- Logo & Brand -->
-                <div class="mb-10">
-                    <div class="flex items-center gap-3 mb-6">
-                        <div class="w-11 h-11 rounded-2xl bg-gradient-to-br from-brand-500 to-pink-500 flex items-center justify-center shadow-glow text-xl">🛍️</div>
-                        <span class="font-heading text-2xl font-extrabold text-white tracking-tight">Azoria</span>
-                    </div>
-                    <h2 class="font-heading text-4xl xl:text-5xl font-extrabold text-white leading-tight tracking-tight mb-4">
-                        {% block brand_headline %}Vendez partout,<br><span class="text-transparent bg-clip-text bg-gradient-to-r from-violet-300 to-pink-300">encaissez vite</span>{% endblock %}
-                    </h2>
-                    <p class="text-slate-400 text-base leading-relaxed">
-                        {% block brand_subline %}Boutique mobile, QR Code, commandes & paiement à la livraison — tout en 2 minutes.{% endblock %}
-                    </p>
-                </div>
-
-                <!-- Illustration: Characters SVG -->
-                {% include 'accounts/includes/character_header.html' with panel_mode=True %}
-
-                <!-- Feature list -->
-                <ul class="mt-8 space-y-3.5">
-                    {% block brand_features %}
-                    <li class="auth-feature-item flex items-center gap-3 text-slate-300 text-sm font-medium">
-                        <div class="w-8 h-8 rounded-xl bg-emerald-500/15 flex items-center justify-center shrink-0"><i data-lucide="store" class="w-4 h-4 text-emerald-400"></i></div>
-                        Boutique mobile en 2 minutes
-                    </li>
-                    <li class="auth-feature-item flex items-center gap-3 text-slate-300 text-sm font-medium">
-                        <div class="w-8 h-8 rounded-xl bg-sky-500/15 flex items-center justify-center shrink-0"><i data-lucide="qr-code" class="w-4 h-4 text-sky-400"></i></div>
-                        QR Code partageable sur TikTok, WhatsApp
-                    </li>
-                    <li class="auth-feature-item flex items-center gap-3 text-slate-300 text-sm font-medium">
-                        <div class="w-8 h-8 rounded-xl bg-violet-500/15 flex items-center justify-center shrink-0"><i data-lucide="banknote" class="w-4 h-4 text-violet-400"></i></div>
-                        Paiement à la livraison simplifié
-                    </li>
-                    <li class="auth-feature-item flex items-center gap-3 text-slate-300 text-sm font-medium">
-                        <div class="w-8 h-8 rounded-xl bg-pink-500/15 flex items-center justify-center shrink-0"><i data-lucide="package-check" class="w-4 h-4 text-pink-400"></i></div>
-                        Gestion des commandes en temps réel
-                    </li>
-                    {% endblock %}
-                </ul>
+    <!-- Top Minimalist App Bar -->
+    <header class="w-full py-4 px-4 sm:px-8 flex items-center justify-between border-b border-slate-200/70 bg-white/80 backdrop-blur-md sticky top-0 z-40">
+        <a href="{% url 'core:home' %}" class="flex items-center gap-2.5 group transition-transform active:scale-95">
+            <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-brand-700 via-brand-600 to-indigo-500 flex items-center justify-center shadow-sm text-white">
+                <svg class="w-4 h-4 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="m2 7 4.41-4.41A2 2 0 0 1 7.83 2h8.34a2 2 0 0 1 1.42.59L22 7"/>
+                    <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/>
+                    <path d="M15 22v-4a2 2 0 0 0-2-2h-2a2 2 0 0 0-2 2v4"/>
+                    <path d="M2 7h20"/>
+                    <circle cx="12" cy="12" r="1.5" fill="currentColor"/>
+                </svg>
             </div>
-        </aside>
+            <div class="flex flex-col">
+                <span class="font-heading font-extrabold text-lg sm:text-xl tracking-tight text-slate-900 group-hover:text-brand-600 transition-colors">
+                    Azoria<span class="text-brand-600">.</span>
+                </span>
+            </div>
+        </a>
 
-        {# ╔══════════════════════════════════════════════════════╗
-           ║  RIGHT — Form panel                                 ║
-           ╚══════════════════════════════════════════════════════╝ #}
-        <main class="flex-1 flex flex-col items-center justify-center
-                     min-h-full
-                     sm:p-6 md:p-10 lg:p-12
-                     bg-slate-900 lg:bg-slate-950">
+        <a href="{% url 'core:home' %}" class="md-btn-text text-xs font-medium text-slate-600 hover:text-slate-900 inline-flex items-center gap-1.5">
+            <i data-lucide="arrow-left" class="w-3.5 h-3.5"></i>
+            <span>Retour à l'accueil</span>
+        </a>
+    </header>
 
-            {# ── Phone shell on mobile/tablet, plain card on desktop ── #}
-            <div class="auth-phone-shell
-                        w-full max-w-md
-                        min-h-full sm:min-h-0
-                        bg-white
-                        sm:rounded-[44px] sm:border-8 sm:border-slate-800 sm:shadow-auth-card
-                        lg:rounded-3xl lg:border-0 lg:shadow-auth-card
-                        overflow-hidden flex flex-col">
+    <!-- Main Content Area -->
+    <main class="flex-1 flex items-center justify-center p-4 sm:p-6 md:p-10">
+        <div class="w-full max-w-md">
 
-                {# ── Mobile status bar (hidden sm+) ── #}
-                <div class="mobile-status-bar pt-3 px-7 pb-1 flex items-center justify-between text-slate-800 text-xs font-semibold select-none bg-sky-50/60 z-30">
-                    <span>9:41</span>
-                    <div class="w-24 h-6 bg-slate-950 rounded-full flex items-center justify-end px-2.5 gap-1.5 shadow-sm">
-                        <div class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div>
-                        <div class="w-2.5 h-2.5 rounded-full bg-slate-800"></div>
+            <!-- Flash Messages / Notifications -->
+            {% if messages %}
+            <div class="mb-5 space-y-2.5">
+                {% for message in messages %}
+                <div class="p-3.5 rounded-xl text-xs sm:text-sm font-medium flex items-center gap-2.5 shadow-sm transition-all
+                            {% if message.tags == 'error' %}bg-rose-50 text-rose-900 border border-rose-200
+                            {% elif message.tags == 'info' %}bg-sky-50 text-sky-900 border border-sky-200
+                            {% else %}bg-emerald-50 text-emerald-900 border border-emerald-200{% endif %}">
+                    <i data-lucide="{% if message.tags == 'error' %}alert-circle{% elif message.tags == 'info' %}info{% else %}check-circle{% endif %}"
+                       class="w-4 h-4 shrink-0 {% if message.tags == 'error' %}text-rose-600{% elif message.tags == 'info' %}text-sky-600{% else %}text-emerald-600{% endif %}"></i>
+                    <span>{{ message }}</span>
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+
+            <!-- Form Validation Non-Field Errors -->
+            {% if form.non_field_errors %}
+            <div class="mb-5 p-3.5 rounded-xl bg-rose-50 border border-rose-200 text-rose-900 text-xs sm:text-sm font-medium space-y-1 shadow-sm">
+                {% for error in form.non_field_errors %}
+                <div class="flex items-center gap-2">
+                    <i data-lucide="alert-circle" class="w-4 h-4 text-rose-600 shrink-0"></i>
+                    <span>{{ error }}</span>
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+
+            <!-- Material Design Card Container -->
+            <div class="bg-white border border-slate-200/80 rounded-2xl sm:rounded-3xl p-6 sm:p-8 md:p-9 shadow-sm sm:shadow-md transition-shadow">
+                
+                <!-- Card Header -->
+                {% block form_header %}{% endblock %}
+
+                <!-- Form Content -->
+                {% block form_content %}{% endblock %}
+
+                <!-- Social Sign-In Divider -->
+                <div class="relative my-6 text-center">
+                    <div class="absolute inset-0 flex items-center">
+                        <div class="w-full border-t border-slate-200"></div>
                     </div>
-                    <div class="flex items-center gap-1.5 text-slate-900">
-                        <i data-lucide="signal"         class="w-3.5 h-3.5"></i>
-                        <i data-lucide="wifi"           class="w-3.5 h-3.5"></i>
-                        <i data-lucide="battery-medium" class="w-4   h-4"  ></i>
+                    <div class="relative">
+                        <span class="bg-white px-3 text-xs font-semibold text-slate-500 uppercase tracking-wider">
+                            Ou continuer avec
+                        </span>
                     </div>
                 </div>
 
-                {# ── Character header (mobile / tablet only) ── #}
-                <div class="lg:hidden">
-                    {% include 'accounts/includes/character_header.html' %}
+                <!-- Social Buttons -->
+                {% include 'accounts/includes/social_buttons.html' %}
+
+                <!-- Switch Link (Login <-> Register) -->
+                <div class="mt-6 pt-5 border-t border-slate-100 text-center text-xs sm:text-sm text-slate-600">
+                    {% block switch_link %}{% endblock %}
                 </div>
+            </div>
 
-                {# ── Scrollable form body ── #}
-                <div class="-mt-8 lg:mt-0 relative z-20 bg-white
-                            lg:rounded-3xl
-                            px-6 sm:px-8 lg:px-10
-                            pt-7 lg:pt-10
-                            pb-8 lg:pb-10
-                            shadow-[-0px_-10px_30px_rgba(0,0,0,0.06)] lg:shadow-none
-                            flex-grow flex flex-col justify-between
-                            overflow-y-auto">
+            <!-- Footer Security Badge -->
+            <div class="mt-6 text-center text-xs text-slate-600 flex items-center justify-center gap-1.5">
+                <i data-lucide="shield-check" class="w-3.5 h-3.5 text-emerald-600"></i>
+                <span>Connexion sécurisée SSL 256-bit</span>
+            </div>
+        </div>
+    </main>
 
-                    <div>
-                        {# ── Pull pill (mobile only) ── #}
-                        <div class="lg:hidden w-10 h-1 bg-slate-200 rounded-full mx-auto mb-5"></div>
-
-                        {# ── Desktop logo (hidden on mobile/tablet, shown on desktop) ── #}
-                        <div class="hidden lg:flex items-center gap-2.5 mb-8">
-                            <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-brand-500 to-pink-500 flex items-center justify-center text-lg">🛍️</div>
-                            <span class="font-heading text-xl font-extrabold text-slate-900 tracking-tight">Azoria</span>
-                        </div>
-
-                        {# ── Flash messages ── #}
-                        {% if messages %}
-                        <div class="mb-5 space-y-2">
-                            {% for message in messages %}
-                            <div class="p-3.5 rounded-2xl text-xs font-medium flex items-center gap-2
-                                        {% if message.tags == 'error' %}bg-rose-50 text-rose-800 border border-rose-200
-                                        {% else %}bg-emerald-50 text-emerald-800 border border-emerald-200{% endif %}">
-                                <i data-lucide="{% if message.tags == 'error' %}alert-circle{% else %}check-circle{% endif %}" class="w-4 h-4 shrink-0"></i>
-                                <span>{{ message }}</span>
-                            </div>
-                            {% endfor %}
-                        </div>
-                        {% endif %}
-
-                        {# ── Non-field errors ── #}
-                        {% if form.non_field_errors %}
-                        <div class="mb-4 p-3 rounded-2xl bg-rose-50 border border-rose-200 text-rose-800 text-xs font-medium space-y-1">
-                            {% for error in form.non_field_errors %}
-                            <div class="flex items-center gap-1.5">
-                                <i data-lucide="alert-circle" class="w-3.5 h-3.5 text-rose-600 shrink-0"></i>
-                                <span>{{ error }}</span>
-                            </div>
-                            {% endfor %}
-                        </div>
-                        {% endif %}
-
-                        {# ══════════════════════════════ FORM CONTENT ══════════════════════════════ #}
-                        {% block form_content %}{% endblock %}
-                        {# ══════════════════════════════════════════════════════════════════════════ #}
-
-                        {# ── Divider ── #}
-                        <div class="relative my-5 text-center">
-                            <div class="absolute inset-0 flex items-center"><div class="w-full border-t border-slate-100"></div></div>
-                            <div class="relative">
-                                <span class="bg-white px-3 text-[11px] font-semibold text-slate-500 uppercase tracking-widest">or continue with</span>
-                            </div>
-                        </div>
-
-                        {# ── Social buttons (shared include) ── #}
-                        {% include 'accounts/includes/social_buttons.html' %}
-                    </div>
-
-                    {# ── Bottom switch link ── #}
-                    <div class="mt-7 pt-4 border-t border-slate-50 text-center text-xs text-slate-600 font-medium">
-                        {% block switch_link %}{% endblock %}
-                    </div>
-
-                </div>{# /form body #}
-            </div>{# /phone shell #}
-        </main>
-    </div>{# /responsive wrapper #}
+    <!-- Bottom Minimal Footer -->
+    <footer class="py-4 px-4 text-center text-xs text-slate-600 border-t border-slate-200/60 bg-white/60">
+        <div class="flex flex-wrap items-center justify-center gap-4">
+            <span>&copy; 2026 Azoria Inc. Tous droits réservés.</span>
+            <a href="#" class="hover:text-brand-600 transition-colors">Conditions d'utilisation</a>
+            <a href="#" class="hover:text-brand-600 transition-colors">Confidentialité</a>
+            <a href="#" class="hover:text-brand-600 transition-colors">Aide</a>
+        </div>
+    </footer>
 
     <!-- Init Lucide Icons -->
     <script>

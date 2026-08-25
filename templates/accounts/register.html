@@ -3,83 +3,116 @@
 {% block title %}Créer un compte — Azoria{% endblock %}
 {% block meta_description %}Créez votre compte vendeur Azoria en 2 minutes pour lancer votre boutique mobile et vendre sur les réseaux sociaux.{% endblock %}
 
-{% block brand_headline %}Lancez votre<br><span class="text-transparent bg-clip-text bg-gradient-to-r from-violet-300 to-pink-300">boutique en ligne 🚀</span>{% endblock %}
-{% block brand_subline %}Rejoignez des milliers de vendeurs qui vendent sur TikTok, WhatsApp et Instagram avec Azoria.{% endblock %}
+{% block body_data %}x-data="{ showPassword: false, showConfirmPassword: false, submitting: false }"{% endblock %}
 
-{% block body_data %}x-data="{ showPassword: false, showConfirmPassword: false }"{% endblock %}
-
-{% block form_content %}
-    <!-- En-tête du formulaire -->
+{% block form_header %}
     <div class="text-center mb-6">
-        <h1 class="font-heading text-2xl sm:text-3xl lg:text-2xl xl:text-3xl font-extrabold text-slate-900 tracking-tight">
-            C'est parti ! <span class="inline-block animate-bounce-in">🎉</span>
+        <h1 class="font-heading text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
+            Créer un compte
         </h1>
-        <p class="text-xs sm:text-sm text-slate-500 font-medium mt-1.5">
-            Créez votre boutique gratuitement en quelques minutes
+        <p class="text-xs sm:text-sm text-slate-600 font-medium mt-1.5">
+            Lancez votre boutique mobile en quelques minutes
         </p>
     </div>
+{% endblock %}
 
-    <!-- Formulaire d'inscription -->
+{% block form_content %}
     <form method="POST" action="{% url 'accounts:register' %}"
-          class="space-y-3.5" novalidate>
+          @submit="submitting = true"
+          class="space-y-4" novalidate>
         {% csrf_token %}
 
-        <!-- Nom complet -->
-        <div>
-            <label for="id_full_name" class="sr-only">Nom complet</label>
-            <div class="relative">
-                <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+        <!-- Full Name Field -->
+        <div class="md-form-field">
+            <label for="id_full_name" class="md-label">
+                <span>Nom complet</span>
+            </label>
+            <div class="md-input-wrapper">
+                <div class="md-leading-icon">
                     <i data-lucide="user" class="w-4 h-4"></i>
                 </div>
-                {{ form.full_name }}
+                <input
+                    type="text"
+                    name="full_name"
+                    id="id_full_name"
+                    value="{{ form.full_name.value|default:'' }}"
+                    placeholder="Ex: Aïcha Kouamé"
+                    autocomplete="name"
+                    required
+                    class="md-input has-leading-icon {% if form.full_name.errors %}has-error{% endif %}"
+                >
             </div>
             {% if form.full_name.errors %}
-            <p class="field-error mt-1">
-                <i data-lucide="alert-circle" class="w-3 h-3 text-rose-600 shrink-0"></i>
-                {{ form.full_name.errors.0 }}
-            </p>
+            <div class="md-field-error">
+                <i data-lucide="alert-circle" class="w-3.5 h-3.5 shrink-0"></i>
+                <span>{{ form.full_name.errors.0 }}</span>
+            </div>
             {% endif %}
         </div>
 
-        <!-- Email -->
-        <div>
-            <label for="id_email" class="sr-only">Adresse email</label>
-            <div class="relative">
-                <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+        <!-- Email Field -->
+        <div class="md-form-field">
+            <label for="id_email" class="md-label">
+                <span>Adresse email</span>
+            </label>
+            <div class="md-input-wrapper">
+                <div class="md-leading-icon">
                     <i data-lucide="mail" class="w-4 h-4"></i>
                 </div>
-                {{ form.email }}
+                <input
+                    type="email"
+                    name="email"
+                    id="id_email"
+                    value="{{ form.email.value|default:'' }}"
+                    placeholder="aicha@boutique.com"
+                    autocomplete="email"
+                    required
+                    class="md-input has-leading-icon {% if form.email.errors %}has-error{% endif %}"
+                >
             </div>
             {% if form.email.errors %}
-            <p class="field-error mt-1">
-                <i data-lucide="alert-circle" class="w-3 h-3 text-rose-600 shrink-0"></i>
-                {{ form.email.errors.0 }}
-            </p>
+            <div class="md-field-error">
+                <i data-lucide="alert-circle" class="w-3.5 h-3.5 shrink-0"></i>
+                <span>{{ form.email.errors.0 }}</span>
+            </div>
             {% endif %}
         </div>
 
-        <!-- Numéro WhatsApp / Téléphone -->
-        <div>
-            <label for="id_phone" class="sr-only">Numéro WhatsApp</label>
-            <div class="relative">
-                <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+        <!-- WhatsApp / Phone Field -->
+        <div class="md-form-field">
+            <label for="id_phone" class="md-label">
+                <span>Numéro WhatsApp / Téléphone</span>
+                <span class="text-[11px] font-normal text-slate-400">Optionnel</span>
+            </label>
+            <div class="md-input-wrapper">
+                <div class="md-leading-icon">
                     <i data-lucide="phone" class="w-4 h-4"></i>
                 </div>
-                {{ form.phone }}
+                <input
+                    type="tel"
+                    name="phone"
+                    id="id_phone"
+                    value="{{ form.phone.value|default:'' }}"
+                    placeholder="+225 07 00 00 00 00"
+                    autocomplete="tel"
+                    class="md-input has-leading-icon {% if form.phone.errors %}has-error{% endif %}"
+                >
             </div>
             {% if form.phone.errors %}
-            <p class="field-error mt-1">
-                <i data-lucide="alert-circle" class="w-3 h-3 text-rose-600 shrink-0"></i>
-                {{ form.phone.errors.0 }}
-            </p>
+            <div class="md-field-error">
+                <i data-lucide="alert-circle" class="w-3.5 h-3.5 shrink-0"></i>
+                <span>{{ form.phone.errors.0 }}</span>
+            </div>
             {% endif %}
         </div>
 
-        <!-- Mot de passe avec toggle -->
-        <div>
-            <label for="id_password" class="sr-only">Mot de passe</label>
-            <div class="relative">
-                <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+        <!-- Password Field -->
+        <div class="md-form-field">
+            <label for="id_password" class="md-label">
+                <span>Mot de passe</span>
+            </label>
+            <div class="md-input-wrapper">
+                <div class="md-leading-icon">
                     <i data-lucide="lock" class="w-4 h-4"></i>
                 </div>
                 <input
@@ -89,31 +122,33 @@
                     placeholder="Minimum 8 caractères"
                     autocomplete="new-password"
                     required
-                    class="w-full pl-11 pr-11 py-3.5 bg-slate-50 border border-slate-200/90 rounded-2xl text-slate-900 text-sm font-medium focus:bg-white focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition-all shadow-sm placeholder:text-slate-400"
+                    class="md-input has-leading-icon has-trailing-icon {% if form.password.errors %}has-error{% endif %}"
                 >
                 <button
                     type="button"
                     @click="showPassword = !showPassword"
-                    class="absolute inset-y-0 right-0 pr-3.5 flex items-center text-slate-400 hover:text-slate-700 transition-colors focus:outline-none"
-                    :aria-label="showPassword ? 'Masquer' : 'Afficher'"
+                    class="md-trailing-action"
+                    :aria-label="showPassword ? 'Masquer le mot de passe' : 'Afficher le mot de passe'"
                 >
                     <i x-show="!showPassword" data-lucide="eye"     class="w-4 h-4"></i>
                     <i x-show="showPassword"  data-lucide="eye-off" class="w-4 h-4"></i>
                 </button>
             </div>
             {% if form.password.errors %}
-            <p class="field-error mt-1">
-                <i data-lucide="alert-circle" class="w-3 h-3 text-rose-600 shrink-0"></i>
-                {{ form.password.errors.0 }}
-            </p>
+            <div class="md-field-error">
+                <i data-lucide="alert-circle" class="w-3.5 h-3.5 shrink-0"></i>
+                <span>{{ form.password.errors.0 }}</span>
+            </div>
             {% endif %}
         </div>
 
-        <!-- Confirmer le mot de passe -->
-        <div>
-            <label for="id_password_confirm" class="sr-only">Confirmer le mot de passe</label>
-            <div class="relative">
-                <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+        <!-- Password Confirm Field -->
+        <div class="md-form-field">
+            <label for="id_password_confirm" class="md-label">
+                <span>Confirmer le mot de passe</span>
+            </label>
+            <div class="md-input-wrapper">
+                <div class="md-leading-icon">
                     <i data-lucide="shield-check" class="w-4 h-4"></i>
                 </div>
                 <input
@@ -123,42 +158,45 @@
                     placeholder="Répétez votre mot de passe"
                     autocomplete="new-password"
                     required
-                    class="w-full pl-11 pr-11 py-3.5 bg-slate-50 border border-slate-200/90 rounded-2xl text-slate-900 text-sm font-medium focus:bg-white focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition-all shadow-sm placeholder:text-slate-400"
+                    class="md-input has-leading-icon has-trailing-icon {% if form.password_confirm.errors %}has-error{% endif %}"
                 >
                 <button
                     type="button"
                     @click="showConfirmPassword = !showConfirmPassword"
-                    class="absolute inset-y-0 right-0 pr-3.5 flex items-center text-slate-400 hover:text-slate-700 transition-colors focus:outline-none"
-                    :aria-label="showConfirmPassword ? 'Masquer' : 'Afficher'"
+                    class="md-trailing-action"
+                    :aria-label="showConfirmPassword ? 'Masquer le mot de passe' : 'Afficher le mot de passe'"
                 >
                     <i x-show="!showConfirmPassword" data-lucide="eye"     class="w-4 h-4"></i>
                     <i x-show="showConfirmPassword"  data-lucide="eye-off" class="w-4 h-4"></i>
                 </button>
             </div>
             {% if form.password_confirm.errors %}
-            <p class="field-error mt-1">
-                <i data-lucide="alert-circle" class="w-3 h-3 text-rose-600 shrink-0"></i>
-                {{ form.password_confirm.errors.0 }}
-            </p>
+            <div class="md-field-error">
+                <i data-lucide="alert-circle" class="w-3.5 h-3.5 shrink-0"></i>
+                <span>{{ form.password_confirm.errors.0 }}</span>
+            </div>
             {% endif %}
         </div>
 
-        <!-- Conditions d'utilisation -->
-        <p class="text-[11px] text-slate-500 leading-relaxed">
-            En créant un compte, vous acceptez nos
-            <a href="#" class="auth-link">Conditions d'utilisation</a> et notre
-            <a href="#" class="auth-link">Politique de confidentialité</a>.
-        </p>
-
-        <!-- Bouton de création de compte -->
-        <div class="pt-1">
+        <!-- Submit Button -->
+        <div class="pt-2">
             <button
                 type="submit"
                 id="btn-register-submit"
-                class="auth-btn-submit"
+                class="md-btn-filled"
+                :disabled="submitting"
             >
-                <i data-lucide="rocket" class="w-4 h-4"></i>
-                <span>Créer mon compte gratuit</span>
+                <span x-show="!submitting" class="inline-flex items-center gap-2">
+                    <i data-lucide="store" class="w-4 h-4"></i>
+                    <span>Créer ma boutique</span>
+                </span>
+                <span x-show="submitting" class="inline-flex items-center gap-2" style="display: none;">
+                    <svg class="animate-spin -ml-1 mr-2 h-4 w-4 text-white" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    <span>Création de votre boutique...</span>
+                </span>
             </button>
         </div>
     </form>
@@ -166,7 +204,7 @@
 
 {% block switch_link %}
     Vous avez déjà un compte ?
-    <a href="{% url 'accounts:login' %}" class="auth-link ml-1">
+    <a href="{% url 'accounts:login' %}" class="font-semibold text-brand-600 hover:text-brand-700 hover:underline ml-1">
         Se connecter
     </a>
 {% endblock %}

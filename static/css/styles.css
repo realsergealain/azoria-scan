@@ -53,6 +53,36 @@
   --radius-2xl:       2rem;
   --radius-full:      9999px;
 
+  /* Material Design 3 (M3) Tokens */
+  --md-primary:               #6D28D9;
+  --md-primary-hover:         #5B21B6;
+  --md-primary-focus:         rgba(109, 40, 217, 0.15);
+  --md-on-primary:            #FFFFFF;
+  --md-primary-container:     #EDE9FE;
+  --md-on-primary-container:  #3B0764;
+  --md-surface:               #FFFFFF;
+  --md-surface-dim:           #F8FAFC;
+  --md-surface-container:     #F1F5F9;
+  --md-surface-container-high:#E2E8F0;
+  --md-on-surface:            #0F172A;
+  --md-on-surface-variant:    #64748B;
+  --md-outline:               #CBD5E1;
+  --md-outline-focus:         #7C3AED;
+  --md-error:                 #E11D48;
+  --md-error-container:       #FFE4E6;
+  --md-on-error-container:    #9F1239;
+
+  /* Material 3 Elevation & Shapes */
+  --md-shape-sm:              8px;
+  --md-shape-md:              12px;
+  --md-shape-lg:              16px;
+  --md-shape-xl:              24px;
+  --md-shape-full:            9999px;
+  --md-elev-1:                0 1px 3px 0 rgba(15, 23, 42, 0.08), 0 1px 2px -1px rgba(15, 23, 42, 0.06);
+  --md-elev-2:                0 4px 6px -1px rgba(15, 23, 42, 0.08), 0 2px 4px -2px rgba(15, 23, 42, 0.04);
+  --md-elev-3:                0 10px 15px -3px rgba(15, 23, 42, 0.08), 0 4px 6px -4px rgba(15, 23, 42, 0.04);
+  --md-elev-4:                0 20px 25px -5px rgba(15, 23, 42, 0.08), 0 8px 10px -6px rgba(15, 23, 42, 0.04);
+
   /* Transitions */
   --transition-fast:  150ms cubic-bezier(0.16, 1, 0.3, 1);
   --transition-base:  250ms cubic-bezier(0.16, 1, 0.3, 1);
@@ -98,6 +128,287 @@ img, video {
 ──────────────────────────────────────────── */
 ::-webkit-scrollbar        { width: 6px; height: 6px; }
 ::-webkit-scrollbar-track  { background: #F1F5F9; }
+::-webkit-scrollbar-thumb  { background: #CBD5E1; border-radius: 9999px; }
+::-webkit-scrollbar-thumb:hover { background: #94A3B8; }
+
+/* ────────────────────────────────────────────
+   19. Material Design 3 (M3) Components
+──────────────────────────────────────────── */
+
+/* Material Outlined Input & Form Field */
+.md-form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem;
+  width: 100%;
+}
+
+.md-label {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--md-on-surface);
+  letter-spacing: -0.01em;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.md-input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.md-leading-icon {
+  position: absolute;
+  left: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--md-on-surface-variant);
+  pointer-events: none;
+  transition: color var(--transition-fast);
+}
+
+.md-trailing-action {
+  position: absolute;
+  right: 0.75rem;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.375rem;
+  border-radius: var(--md-shape-full);
+  color: var(--md-on-surface-variant);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.md-trailing-action:hover {
+  color: var(--md-on-surface);
+  background-color: var(--md-surface-container);
+}
+
+.md-trailing-action:focus-visible {
+  outline: 2px solid var(--md-outline-focus);
+}
+
+/* Material Outlined Input */
+.md-input {
+  width: 100%;
+  height: 3.25rem; /* 52px comfortable touch target */
+  padding: 0 1rem;
+  font-size: 1rem; /* 16px to prevent auto-zoom on iOS Safari */
+  font-weight: 500;
+  color: var(--md-on-surface);
+  background-color: var(--md-surface);
+  border: 1.5px solid var(--md-outline);
+  border-radius: var(--md-shape-md);
+  outline: none;
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast), background-color var(--transition-fast);
+  appearance: none;
+  -webkit-appearance: none;
+}
+
+.md-input.has-leading-icon {
+  padding-left: 2.875rem;
+}
+
+.md-input.has-trailing-icon {
+  padding-right: 2.875rem;
+}
+
+.md-input::placeholder {
+  color: #94A3B8;
+  font-weight: 400;
+}
+
+.md-input:hover {
+  border-color: #94A3B8;
+}
+
+.md-input:focus {
+  border-color: var(--md-outline-focus);
+  box-shadow: 0 0 0 4px var(--md-primary-focus);
+  background-color: #FFFFFF;
+}
+
+.md-input:focus ~ .md-leading-icon,
+.md-input-wrapper:focus-within .md-leading-icon {
+  color: var(--md-primary);
+}
+
+.md-input.has-error {
+  border-color: var(--md-error) !important;
+}
+
+.md-input.has-error:focus {
+  box-shadow: 0 0 0 4px rgba(225, 29, 72, 0.15) !important;
+}
+
+/* Material Checkbox */
+.md-checkbox {
+  width: 1.125rem;
+  height: 1.125rem;
+  border-radius: 4px;
+  border: 1.5px solid var(--md-outline);
+  color: var(--md-primary);
+  background-color: #FFFFFF;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.md-checkbox:checked {
+  background-color: var(--md-primary);
+  border-color: var(--md-primary);
+}
+
+.md-checkbox:focus-visible {
+  outline: 2px solid var(--md-outline-focus);
+  outline-offset: 2px;
+}
+
+/* Material Buttons */
+.md-btn-filled {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  width: 100%;
+  height: 3.125rem; /* 50px */
+  padding: 0 1.5rem;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--md-on-primary);
+  background-color: var(--md-primary);
+  border: none;
+  border-radius: var(--md-shape-full);
+  cursor: pointer;
+  transition: background-color var(--transition-fast), box-shadow var(--transition-fast), transform 100ms ease;
+  box-shadow: var(--md-elev-1);
+  text-decoration: none;
+}
+
+.md-btn-filled:hover {
+  background-color: var(--md-primary-hover);
+  box-shadow: var(--md-elev-2);
+}
+
+.md-btn-filled:active {
+  transform: scale(0.985);
+  box-shadow: var(--md-elev-1);
+}
+
+.md-btn-filled:focus-visible {
+  outline: 3px solid var(--md-primary-focus);
+  outline-offset: 2px;
+}
+
+.md-btn-outlined {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.625rem;
+  width: 100%;
+  height: 3rem;
+  padding: 0 1.25rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--md-on-surface);
+  background-color: var(--md-surface);
+  border: 1px solid var(--md-outline);
+  border-radius: var(--md-shape-full);
+  cursor: pointer;
+  transition: background-color var(--transition-fast), border-color var(--transition-fast), transform 100ms ease;
+  text-decoration: none;
+}
+
+.md-btn-outlined:hover {
+  background-color: var(--md-surface-dim);
+  border-color: #94A3B8;
+}
+
+.md-btn-outlined:active {
+  transform: scale(0.985);
+  background-color: var(--md-surface-container);
+}
+
+.md-btn-outlined:focus-visible {
+  outline: 2px solid var(--md-outline-focus);
+  outline-offset: 2px;
+}
+
+.md-btn-text {
+  background: transparent;
+  border: none;
+  color: var(--md-primary);
+  font-weight: 600;
+  font-size: 0.8125rem;
+  padding: 0.25rem 0.5rem;
+  border-radius: var(--md-shape-sm);
+  cursor: pointer;
+  text-decoration: none;
+  transition: background-color var(--transition-fast), color var(--transition-fast);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.md-btn-text:hover {
+  color: var(--md-primary-hover);
+  background-color: var(--md-primary-container);
+}
+
+/* Material Design Card */
+.md-card {
+  background-color: var(--md-surface);
+  border-radius: var(--md-shape-xl);
+  border: 1px solid rgba(226, 232, 240, 0.8);
+  box-shadow: var(--md-elev-2);
+}
+
+@media (max-width: 639px) {
+  .md-card-mobile-flat {
+    border-radius: 0;
+    border: none;
+    box-shadow: none;
+    background-color: transparent;
+  }
+}
+
+/* Material Error text */
+.md-field-error {
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--md-error);
+  margin-top: 0.25rem;
+}
+
+/* Print Styles */
+@media print {
+  .glass-nav,
+  footer,
+  .btn-primary-glow,
+  .animate-float-1,
+  .animate-float-2,
+  .animate-float-3 {
+    display: none !important;
+  }
+
+  body {
+    color: #000;
+    background: #fff;
+  }
+}
 ::-webkit-scrollbar-thumb  { background: #CBD5E1; border-radius: 4px; }
 ::-webkit-scrollbar-thumb:hover { background: #94A3B8; }
 

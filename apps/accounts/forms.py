@@ -14,7 +14,7 @@ class LoginForm(forms.Form):
         label=_("Adresse email"),
         widget=forms.EmailInput(attrs={
             'placeholder': 'votre.email@exemple.com',
-            'class': 'w-full pl-11 pr-4 py-3.5 bg-slate-50 border border-slate-200/90 rounded-2xl text-slate-900 text-sm font-medium focus:bg-white focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition-all shadow-sm placeholder:text-slate-600',
+            'class': 'md-input',
             'autocomplete': 'email',
             'required': True,
         })
@@ -22,8 +22,8 @@ class LoginForm(forms.Form):
     password = forms.CharField(
         label=_("Mot de passe"),
         widget=forms.PasswordInput(attrs={
-            'placeholder': '••••••••••••',
-            'class': 'w-full pl-11 pr-11 py-3.5 bg-slate-50 border border-slate-200/90 rounded-2xl text-slate-900 text-sm font-medium focus:bg-white focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition-all shadow-sm placeholder:text-slate-600',
+            'placeholder': 'Votre mot de passe',
+            'class': 'md-input',
             'autocomplete': 'current-password',
             'required': True,
         })
@@ -32,7 +32,7 @@ class LoginForm(forms.Form):
         required=False,
         initial=True,
         widget=forms.CheckboxInput(attrs={
-            'class': 'w-4 h-4 text-brand-600 bg-slate-100 border-slate-300 rounded focus:ring-brand-500',
+            'class': 'md-checkbox',
         })
     )
 
@@ -68,7 +68,7 @@ class RegisterForm(forms.Form):
         max_length=150,
         widget=forms.TextInput(attrs={
             'placeholder': 'Ex: Aïcha Kouamé',
-            'class': 'w-full pl-11 pr-4 py-3.5 bg-slate-50 border border-slate-200/90 rounded-2xl text-slate-900 text-sm font-medium focus:bg-white focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition-all shadow-sm placeholder:text-slate-600',
+            'class': 'md-input',
             'autocomplete': 'name',
             'required': True,
         })
@@ -77,7 +77,7 @@ class RegisterForm(forms.Form):
         label=_("Adresse email"),
         widget=forms.EmailInput(attrs={
             'placeholder': 'aicha@boutique.com',
-            'class': 'w-full pl-11 pr-4 py-3.5 bg-slate-50 border border-slate-200/90 rounded-2xl text-slate-900 text-sm font-medium focus:bg-white focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition-all shadow-sm placeholder:text-slate-600',
+            'class': 'md-input',
             'autocomplete': 'email',
             'required': True,
         })
@@ -88,7 +88,7 @@ class RegisterForm(forms.Form):
         required=False,
         widget=forms.TextInput(attrs={
             'placeholder': '+225 07 00 00 00 00',
-            'class': 'w-full pl-11 pr-4 py-3.5 bg-slate-50 border border-slate-200/90 rounded-2xl text-slate-900 text-sm font-medium focus:bg-white focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition-all shadow-sm placeholder:text-slate-600',
+            'class': 'md-input',
             'autocomplete': 'tel',
         })
     )
@@ -97,7 +97,7 @@ class RegisterForm(forms.Form):
         min_length=8,
         widget=forms.PasswordInput(attrs={
             'placeholder': 'Minimum 8 caractères',
-            'class': 'w-full pl-11 pr-11 py-3.5 bg-slate-50 border border-slate-200/90 rounded-2xl text-slate-900 text-sm font-medium focus:bg-white focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition-all shadow-sm placeholder:text-slate-600',
+            'class': 'md-input',
             'autocomplete': 'new-password',
             'required': True,
         })
@@ -107,7 +107,7 @@ class RegisterForm(forms.Form):
         min_length=8,
         widget=forms.PasswordInput(attrs={
             'placeholder': 'Répétez votre mot de passe',
-            'class': 'w-full pl-11 pr-11 py-3.5 bg-slate-50 border border-slate-200/90 rounded-2xl text-slate-900 text-sm font-medium focus:bg-white focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition-all shadow-sm placeholder:text-slate-600',
+            'class': 'md-input',
             'autocomplete': 'new-password',
             'required': True,
         })
