@@ -1,0 +1,396 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fr" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+    <title>Tableau de bord — Azoria</title>
+    <meta name="description" content="Gérez vos boutiques et suivez vos ventes sur Azoria.">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@600;700;800;900&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><text y='26' font-size='26'>🛍️</text></svg>">
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        :root {
+            --brand: #7C3AED;
+            --brand-light: #8B5CF6;
+            --brand-dark: #6D28D9;
+            --brand-glow: rgba(124,58,237,.18);
+            --bg: #F8F7FF;
+            --white: #fff;
+            --slate-50: #F8FAFC;
+            --slate-100: #F1F5F9;
+            --slate-200: #E2E8F0;
+            --slate-400: #94A3B8;
+            --slate-500: #64748B;
+            --slate-600: #475569;
+            --slate-700: #334155;
+            --slate-900: #0F172A;
+            --green: #10B981;
+            --green-bg: #ECFDF5;
+            --r: 16px;
+        }
+        html, body { height: 100%; }
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg);
+            color: var(--slate-900);
+            min-height: 100svh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* ── TOPBAR ── */
+        .topbar {
+            background: var(--white);
+            border-bottom: 1px solid var(--slate-200);
+            padding: 0 16px;
+            position: sticky; top: 0; z-index: 50;
+            height: 56px;
+            display: flex; align-items: center; justify-content: space-between;
+        }
+        .logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+        .logo-icon {
+            width: 34px; height: 34px; border-radius: 9px;
+            background: linear-gradient(135deg, var(--brand-dark), var(--brand-light));
+            display: flex; align-items: center; justify-content: center;
+        }
+        .logo-icon svg { width: 17px; height: 17px; color: #fff; }
+        .logo-text {
+            font-family: 'Outfit', sans-serif; font-weight: 800;
+            font-size: 17px; color: var(--slate-900);
+        }
+        .logo-text span { color: var(--brand); }
+        .topbar-right { display: flex; align-items: center; gap: 10px; }
+        .avatar {
+            width: 34px; height: 34px; border-radius: 50%;
+            background: linear-gradient(135deg, var(--brand-dark), var(--brand-light));
+            display: flex; align-items: center; justify-content: center;
+            font-family: 'Outfit', sans-serif; font-weight: 700;
+            font-size: 13px; color: #fff; flex-shrink: 0;
+        }
+        .logout-btn {
+            display: flex; align-items: center; gap: 5px;
+            font-size: 12px; font-weight: 500; color: var(--slate-600);
+            text-decoration: none; padding: 6px 10px; border-radius: 8px;
+            border: 1px solid var(--slate-200);
+            transition: background .15s, color .15s;
+        }
+        .logout-btn:hover { background: var(--slate-100); color: var(--slate-900); }
+        .logout-btn svg { width: 13px; height: 13px; }
+
+        /* ── MAIN ── */
+        main { flex: 1; padding: 20px 16px 60px; max-width: 540px; margin: 0 auto; width: 100%; }
+
+        /* Welcome */
+        .welcome {
+            display: flex; align-items: center; justify-content: space-between;
+            margin-bottom: 24px;
+        }
+        .welcome-text h1 {
+            font-family: 'Outfit', sans-serif; font-weight: 800;
+            font-size: clamp(19px, 4.5vw, 23px); color: var(--slate-900); line-height: 1.2;
+        }
+        .welcome-text p { font-size: 13px; color: var(--slate-500); margin-top: 3px; }
+
+        /* Alert messages */
+        .messages { margin-bottom: 20px; display: flex; flex-direction: column; gap: 10px; }
+        .msg {
+            display: flex; align-items: flex-start; gap: 10px;
+            padding: 12px 14px; border-radius: 12px;
+            font-size: 13px; font-weight: 500; animation: slideDown .3s ease-out;
+        }
+        .msg-success { background: var(--green-bg); color: #065F46; border: 1px solid #A7F3D0; }
+        .msg svg { width: 16px; height: 16px; flex-shrink: 0; margin-top: 1px; }
+        @keyframes slideDown { from { transform: translateY(-8px); opacity: 0; } to { transform: none; opacity: 1; } }
+
+        /* Section label */
+        .section-label {
+            font-size: 11px; font-weight: 700; text-transform: uppercase;
+            letter-spacing: .08em; color: var(--slate-400);
+            margin-bottom: 12px;
+        }
+
+        /* CTA new shop */
+        .cta-new {
+            display: flex; align-items: center; gap: 14px;
+            padding: 16px 18px;
+            background: linear-gradient(135deg, var(--brand-dark), var(--brand-light));
+            border-radius: var(--r);
+            text-decoration: none;
+            box-shadow: 0 4px 20px var(--brand-glow);
+            margin-bottom: 28px;
+            transition: opacity .2s, transform .15s;
+        }
+        .cta-new:hover { opacity: .93; }
+        .cta-new:active { transform: scale(.98); }
+        .cta-new-icon {
+            width: 42px; height: 42px; border-radius: 12px;
+            background: rgba(255,255,255,.2);
+            display: flex; align-items: center; justify-content: center;
+            flex-shrink: 0;
+        }
+        .cta-new-icon svg { width: 20px; height: 20px; color: #fff; }
+        .cta-new-text { flex: 1; }
+        .cta-new-text strong {
+            display: block; font-family: 'Outfit', sans-serif;
+            font-size: 15px; font-weight: 700; color: #fff;
+        }
+        .cta-new-text span { font-size: 12px; color: rgba(255,255,255,.75); }
+        .cta-new-arrow { color: rgba(255,255,255,.7); }
+        .cta-new-arrow svg { width: 18px; height: 18px; }
+
+        /* Shop cards */
+        .shops-list { display: flex; flex-direction: column; gap: 12px; }
+
+        .shop-card {
+            background: var(--white);
+            border: 1px solid var(--slate-200);
+            border-radius: var(--r);
+            padding: 16px 18px;
+            display: flex; align-items: center; gap: 14px;
+            text-decoration: none;
+            transition: box-shadow .2s, transform .15s;
+            animation: slideUp .35s ease-out both;
+        }
+        .shop-card:hover { box-shadow: 0 6px 24px rgba(15,23,42,.08); transform: translateY(-2px); }
+        .shop-card:active { transform: scale(.99); }
+
+        @keyframes slideUp { from { transform: translateY(16px); opacity: 0; } to { transform: none; opacity: 1; } }
+
+        .shop-avatar {
+            width: 46px; height: 46px; border-radius: 12px;
+            background: linear-gradient(135deg, var(--brand-dark), var(--brand-light));
+            display: flex; align-items: center; justify-content: center;
+            font-family: 'Outfit', sans-serif; font-weight: 800;
+            font-size: 18px; color: #fff; flex-shrink: 0;
+        }
+        .shop-info { flex: 1; min-width: 0; }
+        .shop-name {
+            font-family: 'Outfit', sans-serif; font-weight: 700;
+            font-size: 15px; color: var(--slate-900);
+            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+        }
+        .shop-meta {
+            display: flex; align-items: center; gap: 8px;
+            margin-top: 4px; flex-wrap: wrap;
+        }
+        .badge-gw {
+            display: inline-flex; align-items: center; gap: 4px;
+            padding: 3px 8px; border-radius: 6px;
+            background: var(--slate-100); font-size: 11px;
+            font-weight: 600; color: var(--slate-600);
+        }
+        .badge-active {
+            display: inline-flex; align-items: center; gap: 4px;
+            padding: 3px 8px; border-radius: 6px;
+            background: var(--green-bg); font-size: 11px;
+            font-weight: 600; color: #065F46;
+        }
+        .shop-arrow { color: var(--slate-400); }
+        .shop-arrow svg { width: 16px; height: 16px; }
+
+        /* Empty state */
+        .empty {
+            text-align: center; padding: 40px 20px;
+            background: var(--white); border-radius: var(--r);
+            border: 1.5px dashed var(--slate-200);
+        }
+        .empty-emoji { font-size: 40px; margin-bottom: 12px; display: block; }
+        .empty h2 {
+            font-family: 'Outfit', sans-serif; font-weight: 700;
+            font-size: 16px; color: var(--slate-700); margin-bottom: 6px;
+        }
+        .empty p { font-size: 13px; color: var(--slate-500); line-height: 1.6; }
+
+        /* Stats row */
+        .stats-row {
+            display: grid; grid-template-columns: repeat(3, 1fr);
+            gap: 10px; margin-bottom: 28px;
+        }
+        .stat-card {
+            background: var(--white); border: 1px solid var(--slate-200);
+            border-radius: 14px; padding: 14px 12px; text-align: center;
+        }
+        .stat-value {
+            font-family: 'Outfit', sans-serif; font-weight: 800;
+            font-size: 20px; color: var(--slate-900); line-height: 1;
+        }
+        .stat-label { font-size: 11px; color: var(--slate-500); margin-top: 4px; }
+
+        /* Bottom nav */
+        .bottom-nav {
+            position: fixed; bottom: 0; left: 0; right: 0;
+            background: var(--white); border-top: 1px solid var(--slate-200);
+            display: flex; padding: 8px 0 env(safe-area-inset-bottom, 8px);
+            z-index: 40;
+        }
+        .nav-item {
+            flex: 1; display: flex; flex-direction: column;
+            align-items: center; gap: 3px;
+            text-decoration: none; padding: 4px 0;
+        }
+        .nav-item svg { width: 22px; height: 22px; color: var(--slate-400); }
+        .nav-item span { font-size: 10px; font-weight: 600; color: var(--slate-400); }
+        .nav-item.active svg { color: var(--brand); }
+        .nav-item.active span { color: var(--brand); }
+    </style>
+</head>
+<body>
+
+    <!-- TOP BAR -->
+    <header class="topbar">
+        <a href="{% url 'core:home' %}" class="logo">
+            <div class="logo-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="m2 7 4.41-4.41A2 2 0 0 1 7.83 2h8.34a2 2 0 0 1 1.42.59L22 7"/>
+                    <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/>
+                    <path d="M15 22v-4a2 2 0 0 0-2-2h-2a2 2 0 0 0-2 2v4"/>
+                    <path d="M2 7h20"/>
+                </svg>
+            </div>
+            <span class="logo-text">Azoria<span>.</span></span>
+        </a>
+        <div class="topbar-right">
+            <div class="avatar">{{ request.user.get_short_name|first|upper }}{{ request.user.last_name|first|upper }}</div>
+            <a href="{% url 'accounts:logout' %}" class="logout-btn">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+                Déconnexion
+            </a>
+        </div>
+    </header>
+
+    <main>
+
+        <!-- Flash messages -->
+        {% if messages %}
+        <div class="messages">
+            {% for message in messages %}
+            <div class="msg {% if message.tags == 'success' %}msg-success{% endif %}">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                <span>{{ message }}</span>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <!-- Welcome -->
+        <div class="welcome">
+            <div class="welcome-text">
+                <h1>Bonjour, {{ request.user.get_short_name|default:request.user.email }} 👋</h1>
+                <p>Bienvenue sur votre espace vendeur</p>
+            </div>
+        </div>
+
+        <!-- Stats -->
+        <div class="stats-row">
+            <div class="stat-card">
+                <div class="stat-value">{{ shop_count }}</div>
+                <div class="stat-label">Boutique{{ shop_count|pluralize }}</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">0</div>
+                <div class="stat-label">Commandes</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">0</div>
+                <div class="stat-label">Produits</div>
+            </div>
+        </div>
+
+        <!-- CTA Nouvelle boutique -->
+        <a href="{% url 'shop:create' %}" class="cta-new">
+            <div class="cta-new-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            </div>
+            <div class="cta-new-text">
+                <strong>Créer une nouvelle boutique</strong>
+                <span>30 secondes pour être en ligne</span>
+            </div>
+            <div class="cta-new-arrow">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+            </div>
+        </a>
+
+        <!-- Mes boutiques -->
+        <p class="section-label">Mes boutiques ({{ shop_count }})</p>
+
+        {% if shops %}
+        <div class="shops-list">
+            {% for shop in shops %}
+            <a href="{% url 'shop:detail' pk=shop.pk %}" class="shop-card" style="animation-delay: {{ forloop.counter0 }}00ms">
+                <div class="shop-avatar">{{ shop.name|first|upper }}</div>
+                <div class="shop-info">
+                    <div class="shop-name">{{ shop.name }}</div>
+                    <div class="shop-meta">
+                        <span class="badge-active">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:10px;height:10px"><polyline points="20 6 9 17 4 12"/></svg>
+                            Active
+                        </span>
+                        {% if shop.payment %}
+                        <span class="badge-gw">
+                            {% if shop.payment.gateway == 'mobile_money' %}📱 Mobile Money
+                            {% elif shop.payment.gateway == 'livraison' %}🚚 Livraison
+                            {% else %}🏦 Virement{% endif %}
+                        </span>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="shop-arrow">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+                </div>
+            </a>
+            {% endfor %}
+        </div>
+
+        {% else %}
+        <div class="empty">
+            <span class="empty-emoji">🏪</span>
+            <h2>Aucune boutique pour l'instant</h2>
+            <p>Créez votre première boutique en cliquant sur le bouton ci-dessus.</p>
+        </div>
+        {% endif %}
+
+    </main>
+
+    <!-- BOTTOM NAV -->
+    <nav class="bottom-nav">
+        <a href="{% url 'core:dashboard' %}" class="nav-item active">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+            <span>Accueil</span>
+        </a>
+        <a href="{% url 'shop:create' %}" class="nav-item">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m2 7 4.41-4.41A2 2 0 0 1 7.83 2h8.34a2 2 0 0 1 1.42.59L22 7"/><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><path d="M2 7h20"/></svg>
+            <span>Boutiques</span>
+        </a>
+        <a href="#" class="nav-item">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+            <span>Produits</span>
+        </a>
+        <a href="#" class="nav-item">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            <span>Profil</span>
+        </a>
+    </nav>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            if (window.lucide) lucide.createIcons();
+
+            // Auto-dismiss messages after 4s
+            document.querySelectorAll('.msg').forEach(el => {
+                setTimeout(() => {
+                    el.style.transition = 'opacity .4s ease';
+                    el.style.opacity = '0';
+                    setTimeout(() => el.remove(), 400);
+                }, 4000);
+            });
+        });
+    </script>
+
+</body>
+</html>

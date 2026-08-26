@@ -29,7 +29,7 @@ def shop_create(request):
         )
 
         messages.success(request, f'🎉 Boutique « {shop.name} » créée avec succès !')
-        return redirect('shop:detail', pk=shop.pk)
+        return redirect('core:dashboard')
 
     return render(request, 'shop/create.html', {'form': form})
 

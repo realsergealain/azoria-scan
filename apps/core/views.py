@@ -1,4 +1,5 @@
 from django.shortcuts import render
+from django.contrib.auth.decorators import login_required
 from django.views.generic import TemplateView
 
 
@@ -84,3 +85,14 @@ class HomeView(TemplateView):
 
 def home_view(request):
     return HomeView.as_view()(request)
+
+
+@login_required
+def dashboard_view(request):
+    """Tableau de bord principal du vendeur."""
+    from apps.shop.models import Shop
+    shops = Shop.objects.filter(owner=request.user).select_related('branding', 'payment')
+    return render(request, 'core/dashboard.html', {
+        'shops': shops,
+        'shop_count': shops.count(),
+    })
