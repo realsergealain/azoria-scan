@@ -91,6 +91,7 @@ def home_view(request):
 def dashboard_view(request):
     """Tableau de bord principal du vendeur (Admin Panel layout)."""
     from apps.shop.models import Shop
+    from apps.shop.forms import ShopCreateForm
     shops = Shop.objects.filter(owner=request.user).select_related('branding', 'payment')
     
     # Données factices pour le nouveau design du tableau de bord
@@ -118,4 +119,5 @@ def dashboard_view(request):
         'shop_count': shops.count(),
         'stats': dummy_stats,
         'recent_orders': dummy_recent_orders,
+        'shop_form': ShopCreateForm(),
     })

@@ -180,10 +180,10 @@
                     <i data-lucide="bell" class="w-5 h-5"></i>
                     <span class="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-rose-500 ring-2 ring-white"></span>
                 </button>
-                <a href="{% url 'shop:create' %}" class="hidden sm:inline-flex bg-brand-600 hover:bg-brand-700 text-white text-xs font-bold px-4 py-2 rounded-full items-center gap-2 transition-colors shadow-sm">
+                <button @click="$dispatch('open-create-shop-modal')" class="hidden sm:inline-flex bg-brand-600 hover:bg-brand-700 text-white text-xs font-bold px-4 py-2 rounded-full items-center gap-2 transition-colors shadow-sm">
                     <i data-lucide="plus" class="w-3.5 h-3.5"></i>
                     Créer une boutique
-                </a>
+                </button>
             </div>
         </header>
 
