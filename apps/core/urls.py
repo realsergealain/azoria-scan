@@ -5,5 +5,5 @@ app_name = 'core'
 
 urlpatterns = [
     path('', home_view, name='home'),
-    path('dashboard/', dashboard_view, name='dashboard'),
+    path('tableau-de-bord/', dashboard_view, name='dashboard'),
 ]

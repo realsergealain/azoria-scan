@@ -35,7 +35,7 @@ def shop_create(request):
 
 
 @login_required
-def shop_detail(request, pk):
+def shop_detail(request, shop_uuid, shop_slug):
     """Vue de détail d'une boutique (stub — à enrichir ultérieurement)."""
-    shop = get_object_or_404(Shop, pk=pk, owner=request.user)
+    shop = get_object_or_404(Shop, uuid=shop_uuid, slug=shop_slug, owner=request.user)
     return render(request, 'shop/detail.html', {'shop': shop})

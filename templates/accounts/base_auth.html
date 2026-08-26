@@ -184,6 +184,28 @@
             if (window.lucide) { window.lucide.createIcons(); }
         });
     </script>
+
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        {% if messages %}
+            {% for message in messages %}
+                Swal.fire({
+                    toast: true,
+                    position: 'top-end',
+                    icon: '{{ message.tags|default:"info" }}',
+                    title: '{{ message }}',
+                    showConfirmButton: false,
+                    timer: 3000,
+                    timerProgressBar: true,
+                    customClass: {
+                        popup: 'rounded-xl shadow-lg border border-slate-100',
+                        title: 'text-sm font-semibold text-slate-800'
+                    }
+                });
+            {% endfor %}
+        {% endif %}
+    </script>
     {% block extra_js %}{% endblock %}
 </body>
 </html>

@@ -11,9 +11,9 @@ def login_view(request):
     Vue de connexion vendeur.
     """
     if request.user.is_authenticated:
-        return redirect('core:home')
+        return redirect('core:dashboard')
 
-    next_url = request.GET.get('next', 'core:home')
+    next_url = request.GET.get('next', 'core:dashboard')
 
     if request.method == 'POST':
         form = LoginForm(request.POST)

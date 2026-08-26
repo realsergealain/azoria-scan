@@ -1,8 +1,12 @@
 from django.db import models
 from django.conf import settings
 from django.utils.translation import gettext_lazy as _
+import uuid
+from django.utils.text import slugify
 
 class Shop(models.Model):
+    uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
+    slug = models.SlugField(max_length=150, unique=True, blank=True)
     owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='shops', verbose_name=_("Propriétaire"))
     name = models.CharField(max_length=120, verbose_name=_("Nom de la boutique"))
     description = models.TextField(blank=True, verbose_name=_("Description"))
@@ -11,6 +15,12 @@ class Shop(models.Model):
     class Meta:
         verbose_name = _("Boutique")
         verbose_name_plural = _("Boutiques")
+
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            self.slug = slugify(self.name)
+            # Ensure slug is unique if needed, but since names could be duplicated, we might need a unique suffix. Let's start simple.
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return self.name
@@ -45,6 +55,8 @@ class ShopPayment(models.Model):
         return f"Paiement ({self.get_gateway_display()}) pour {self.shop.name}"
 
 class ShopProduct(models.Model):
+    uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
+    slug = models.SlugField(max_length=150, unique=True, blank=True)
     shop = models.ForeignKey(Shop, on_delete=models.CASCADE, related_name='products', verbose_name=_("Boutique"))
     name = models.CharField(max_length=120, verbose_name=_("Nom du produit"))
     price = models.DecimalField(max_digits=10, decimal_places=2, verbose_name=_("Prix"))
@@ -54,6 +66,11 @@ class ShopProduct(models.Model):
     class Meta:
         verbose_name = _("Produit")
         verbose_name_plural = _("Produits")
+
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            self.slug = slugify(self.name)
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return self.name

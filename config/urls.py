@@ -13,9 +13,9 @@ admin.site.index_title = "Tableau de Bord Principal"
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('accounts/', include('apps.accounts.urls', namespace='accounts')),
+    path('mon-compte/', include('apps.accounts.urls', namespace='accounts')),
     path('', include('apps.core.urls', namespace='core')),
-    path('shop/', include('apps.shop.urls', namespace='shop')),
+    path('boutique/', include('apps.shop.urls', namespace='shop')),
 ]
 
 if settings.DEBUG:

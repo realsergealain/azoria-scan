@@ -322,7 +322,7 @@
         {% if shops %}
         <div class="shops-list">
             {% for shop in shops %}
-            <a href="{% url 'shop:detail' pk=shop.pk %}" class="shop-card" style="animation-delay: {{ forloop.counter0 }}00ms">
+            <a href="{% url 'shop:detail' shop_uuid=shop.uuid shop_slug=shop.slug %}" class="shop-card" style="animation-delay: {{ forloop.counter0 }}00ms">
                 <div class="shop-avatar">{{ shop.name|first|upper }}</div>
                 <div class="shop-info">
                     <div class="shop-name">{{ shop.name }}</div>

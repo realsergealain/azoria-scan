@@ -4,13 +4,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}Azoria — La plateforme de Social Commerce & Vente Directe{% endblock %}</title>
-    <meta name="description" content="{% block meta_description %}Créez votre boutique mobile en 2 minutes. Vendez sur TikTok, WhatsApp et Instagram, générez des QR Codes et encaissez à la livraison facilement.{% endblock %}">
+    <title>{% block title %}Azoria - Transformez vos abonnés en clients payants (sans site web complexe){% endblock %}</title>
+    <meta name="description" content="{% block meta_description %}Plateforme #1 pour les vendeurs sur WhatsApp, TikTok et Instagram. Créez votre boutique mobile en 2 minutes, recevez vos commandes automatiquement et gagnez du temps.{% endblock %}">
 
     <!-- Open Graph / Social Meta -->
     <meta property="og:type"        content="website">
-    <meta property="og:title"       content="Azoria — Vendez sur TikTok, WhatsApp & Instagram">
-    <meta property="og:description" content="Transformez vos abonnés en clients. Boutique mobile en 2 minutes, QR Code, gestion des commandes et paiement à la livraison.">
+    <meta property="og:title"       content="Azoria - Transformez vos abonnés en clients payants">
+    <meta property="og:description" content="Plateforme #1 pour les vendeurs sur WhatsApp, TikTok et Instagram. Créez votre boutique mobile en 2 minutes.">
     <meta property="og:image"       content="{% static 'images/og-azoria.png' %}">
     <meta name="twitter:card"       content="summary_large_image">
 
@@ -97,6 +97,28 @@
 
     <!-- Custom JS -->
     <script src="{% static 'js/main.js' %}"></script>
+
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        {% if messages %}
+            {% for message in messages %}
+                Swal.fire({
+                    toast: true,
+                    position: 'top-end',
+                    icon: '{{ message.tags|default:"info" }}',
+                    title: '{{ message }}',
+                    showConfirmButton: false,
+                    timer: 3000,
+                    timerProgressBar: true,
+                    customClass: {
+                        popup: 'rounded-xl shadow-lg border border-slate-100',
+                        title: 'text-sm font-semibold text-slate-800'
+                    }
+                });
+            {% endfor %}
+        {% endif %}
+    </script>
 
     {% block extra_js %}{% endblock %}
 </body>
