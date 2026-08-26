@@ -84,6 +84,42 @@
     x-data="{ mobileMenuOpen: false }"
 >
 
+    <!-- Page Loader (Azoria Branding) -->
+    <div id="page-loader" class="fixed inset-0 z-[100] bg-[#FAFAFE] flex flex-col items-center justify-center transition-opacity duration-500">
+        <div class="relative w-16 h-16">
+            <div class="absolute inset-0 border-4 border-brand-100 rounded-full"></div>
+            <div class="absolute inset-0 border-4 border-brand-600 rounded-full border-t-transparent animate-spin"></div>
+        </div>
+        <div class="mt-4 font-heading font-extrabold text-brand-700 tracking-wider text-sm animate-pulse uppercase">
+            Chargement...
+        </div>
+    </div>
+    
+    <script>
+        // Hide loader when page is fully loaded
+        window.addEventListener('load', function () {
+            const loader = document.getElementById('page-loader');
+            if (loader) {
+                loader.style.opacity = '0';
+                setTimeout(() => {
+                    loader.style.display = 'none';
+                }, 500); // match duration-500
+            }
+        });
+
+        // Show loader before page unload (for normal link clicks)
+        window.addEventListener('beforeunload', function () {
+            const loader = document.getElementById('page-loader');
+            if (loader) {
+                loader.style.display = 'flex';
+                // slight delay to let the browser render the display: flex
+                requestAnimationFrame(() => {
+                    loader.style.opacity = '1';
+                });
+            }
+        });
+    </script>
+
     <!-- Navigation Bar -->
     {% include 'includes/navbar.html' %}
 
