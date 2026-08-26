@@ -55,19 +55,43 @@
             <div class="flex items-center gap-2 sm:gap-3 shrink-0">
                 <!-- Authenticated user -->
                 {% if user.is_authenticated %}
-                <span class="hidden sm:block text-xs font-semibold text-slate-700">
-                    👋 {{ user.first_name|default:user.email }}
-                </span>
-                <a href="{% url 'accounts:logout' %}"
-                   class="hidden sm:inline text-xs font-semibold text-rose-600 hover:text-rose-700 px-3 py-2 rounded-full hover:bg-rose-50 transition-all">
-                    Déconnexion
-                </a>
-                <a href="{% url 'core:dashboard' %}"
-                   class="btn-primary-glow text-white text-xs sm:text-sm font-semibold px-4 sm:px-5 py-2 sm:py-2.5 rounded-full inline-flex items-center gap-1.5 sm:gap-2">
-                    <span class="hidden xs:inline">Tableau de bord</span>
-                    <span class="xs:hidden">Dashboard</span>
-                    <i data-lucide="layout-dashboard" class="w-3.5 h-3.5"></i>
-                </a>
+                <div class="relative" x-data="{ dropdownOpen: false }" @click.outside="dropdownOpen = false">
+                    <button @click="dropdownOpen = !dropdownOpen" type="button" class="flex items-center gap-2 focus:outline-none transition-transform hover:scale-105 active:scale-95">
+                        <!-- Avatar (Initials) -->
+                        <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-gradient-to-tr from-brand-600 to-indigo-600 flex items-center justify-center text-white font-heading font-extrabold text-sm sm:text-base shadow-md ring-2 ring-white/50 cursor-pointer">
+                            {{ user.first_name|default:user.email|make_list|first|upper }}
+                        </div>
+                    </button>
+
+                    <!-- Dropdown Menu -->
+                    <div x-show="dropdownOpen" 
+                         x-transition:enter="transition ease-out duration-200"
+                         x-transition:enter-start="opacity-0 scale-95 translate-y-2"
+                         x-transition:enter-end="opacity-100 scale-100 translate-y-0"
+                         x-transition:leave="transition ease-in duration-150"
+                         x-transition:leave-start="opacity-100 scale-100 translate-y-0"
+                         x-transition:leave-end="opacity-0 scale-95 translate-y-2"
+                         class="absolute right-0 mt-3 w-56 bg-white rounded-2xl shadow-xl border border-slate-100/60 overflow-hidden z-[60] py-2 origin-top-right"
+                         style="display: none;">
+                        <div class="px-4 py-3 border-b border-slate-100/60 mb-1 bg-slate-50/50">
+                            <p class="text-sm font-bold text-slate-900 truncate">{{ user.first_name|default:user.email }}</p>
+                            <p class="text-[11px] font-medium text-slate-500 truncate mt-0.5">{{ user.email }}</p>
+                        </div>
+                        <a href="{% url 'core:dashboard' %}" class="flex items-center gap-2.5 px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-brand-50/80 hover:text-brand-700 transition-colors">
+                            <i data-lucide="layout-dashboard" class="w-4 h-4"></i>
+                            Tableau de bord
+                        </a>
+                        <a href="#" class="flex items-center gap-2.5 px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-brand-50/80 hover:text-brand-700 transition-colors">
+                            <i data-lucide="settings" class="w-4 h-4"></i>
+                            Paramètres
+                        </a>
+                        <div class="h-px bg-slate-100 my-1"></div>
+                        <a href="{% url 'accounts:logout' %}" class="flex items-center gap-2.5 px-4 py-2 text-sm font-semibold text-rose-600 hover:bg-rose-50/80 transition-colors">
+                            <i data-lucide="log-out" class="w-4 h-4"></i>
+                            Déconnexion
+                        </a>
+                    </div>
+                </div>
 
                 <!-- Guest user -->
                 {% else %}
