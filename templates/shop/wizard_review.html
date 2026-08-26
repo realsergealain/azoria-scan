@@ -1,0 +1,24 @@
+{% extends 'shop/wizard_base.html' %}
+
+{% block wizard_title %}Étape 5 : Validation & Récapitulatif{% endblock %}
+{% block wizard_heading %}Vérifiez vos informations{% endblock %}
+{% block wizard_subheading %}Revoyez la configuration de votre boutique avant de finaliser la création.{% endblock %}
+
+{% block wizard_form_fields %}
+<div class="space-y-4">
+    <div class="p-4 rounded-xl bg-slate-50 border border-slate-200 space-y-3">
+        <h3 class="text-sm font-bold text-slate-800 flex items-center gap-2">
+            <i data-lucide="store" class="w-4 h-4 text-brand-600"></i>
+            Prêt à publier votre boutique
+        </h3>
+        <p class="text-xs text-slate-600 leading-relaxed">
+            Toutes les informations nécessaires ont été renseignées. En cliquant sur <strong class="text-slate-800">"Créer ma boutique"</strong>, votre espace de vente sera généré et prêt à être partagé sur vos réseaux sociaux.
+        </p>
+    </div>
+
+    <div class="p-4 rounded-xl bg-amber-50 border border-amber-200 text-amber-900 text-xs font-medium flex items-start gap-2.5">
+        <i data-lucide="info" class="w-4 h-4 text-amber-600 shrink-0 mt-0.5"></i>
+        <span>Vous pourrez modifier le logo, les produits et les moyens de paiement à tout moment depuis votre tableau de bord.</span>
+    </div>
+</div>
+{% endblock %}

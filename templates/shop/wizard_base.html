@@ -1,0 +1,128 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{% block wizard_title %}Création de boutique{% endblock %} — Azoria{% endblock %}
+
+{% block content %}
+<div class="min-h-[calc(100vh-5rem)] py-10 px-4 sm:px-6 lg:px-8 bg-slate-50/50 flex flex-col justify-center">
+    <div class="max-w-2xl mx-auto w-full">
+
+        <!-- Wizard Progress Header -->
+        <div class="mb-8 text-center">
+            <h1 class="font-heading font-extrabold text-2xl sm:text-3xl text-slate-900 tracking-tight">
+                {% block wizard_heading %}Configurez votre boutique{% endblock %}
+            </h1>
+            <p class="mt-2 text-sm text-slate-600">
+                {% block wizard_subheading %}Complétez les étapes pour lancer votre espace de vente.{% endblock %}
+            </p>
+
+            <!-- Stepper Progress Bar -->
+            <div class="mt-8 flex items-center justify-between relative max-w-md mx-auto">
+                <div class="absolute left-0 top-1/2 -translate-y-1/2 w-full h-1 bg-slate-200 -z-10 rounded-full"></div>
+                
+                {% with current=wizard.steps.current %}
+                <!-- Step 1: Info Base -->
+                <div class="flex flex-col items-center gap-1.5 bg-slate-50 px-2">
+                    <div class="w-9 h-9 rounded-full flex items-center justify-center font-semibold text-xs transition-all shadow-sm
+                        {% if current == 'basic' %}bg-brand-600 text-white ring-4 ring-brand-100
+                        {% elif current == 'branding' or current == 'payment' or current == 'products' or current == 'review' %}bg-emerald-500 text-white
+                        {% else %}bg-slate-200 text-slate-600{% endif %}">
+                        {% if current == 'branding' or current == 'payment' or current == 'products' or current == 'review' %}
+                            <i data-lucide="check" class="w-4 h-4"></i>
+                        {% else %}1{% endif %}
+                    </div>
+                    <span class="text-[11px] font-medium text-slate-600 hidden xs:inline">Infos</span>
+                </div>
+
+                <!-- Step 2: Branding -->
+                <div class="flex flex-col items-center gap-1.5 bg-slate-50 px-2">
+                    <div class="w-9 h-9 rounded-full flex items-center justify-center font-semibold text-xs transition-all shadow-sm
+                        {% if current == 'branding' %}bg-brand-600 text-white ring-4 ring-brand-100
+                        {% elif current == 'payment' or current == 'products' or current == 'review' %}bg-emerald-500 text-white
+                        {% else %}bg-slate-200 text-slate-600{% endif %}">
+                        {% if current == 'payment' or current == 'products' or current == 'review' %}
+                            <i data-lucide="check" class="w-4 h-4"></i>
+                        {% else %}2{% endif %}
+                    </div>
+                    <span class="text-[11px] font-medium text-slate-600 hidden xs:inline">Design</span>
+                </div>
+
+                <!-- Step 3: Payment -->
+                <div class="flex flex-col items-center gap-1.5 bg-slate-50 px-2">
+                    <div class="w-9 h-9 rounded-full flex items-center justify-center font-semibold text-xs transition-all shadow-sm
+                        {% if current == 'payment' %}bg-brand-600 text-white ring-4 ring-brand-100
+                        {% elif current == 'products' or current == 'review' %}bg-emerald-500 text-white
+                        {% else %}bg-slate-200 text-slate-600{% endif %}">
+                        {% if current == 'products' or current == 'review' %}
+                            <i data-lucide="check" class="w-4 h-4"></i>
+                        {% else %}3{% endif %}
+                    </div>
+                    <span class="text-[11px] font-medium text-slate-600 hidden xs:inline">Paiement</span>
+                </div>
+
+                <!-- Step 4: Products -->
+                <div class="flex flex-col items-center gap-1.5 bg-slate-50 px-2">
+                    <div class="w-9 h-9 rounded-full flex items-center justify-center font-semibold text-xs transition-all shadow-sm
+                        {% if current == 'products' %}bg-brand-600 text-white ring-4 ring-brand-100
+                        {% elif current == 'review' %}bg-emerald-500 text-white
+                        {% else %}bg-slate-200 text-slate-600{% endif %}">
+                        {% if current == 'review' %}
+                            <i data-lucide="check" class="w-4 h-4"></i>
+                        {% else %}4{% endif %}
+                    </div>
+                    <span class="text-[11px] font-medium text-slate-600 hidden xs:inline">Produits</span>
+                </div>
+
+                <!-- Step 5: Review -->
+                <div class="flex flex-col items-center gap-1.5 bg-slate-50 px-2">
+                    <div class="w-9 h-9 rounded-full flex items-center justify-center font-semibold text-xs transition-all shadow-sm
+                        {% if current == 'review' %}bg-brand-600 text-white ring-4 ring-brand-100
+                        {% else %}bg-slate-200 text-slate-600{% endif %}">
+                        5
+                    </div>
+                    <span class="text-[11px] font-medium text-slate-600 hidden xs:inline">Récapitulatif</span>
+                </div>
+                {% endwith %}
+            </div>
+        </div>
+
+        <!-- Wizard Card -->
+        <div class="bg-white border border-slate-200/80 rounded-2xl sm:rounded-3xl p-6 sm:p-8 md:p-10 shadow-sm">
+            <form method="post" enctype="multipart/form-data" class="space-y-6">
+                {% csrf_token %}
+                {{ wizard.management_form }}
+
+                {% block wizard_form_fields %}{% endblock %}
+
+                <!-- Form Controls -->
+                <div class="pt-6 border-t border-slate-100 flex items-center justify-between gap-4">
+                    {% if wizard.steps.prev %}
+                        <button type="submit" name="wizard_goto_step" value="{{ wizard.steps.prev }}"
+                                class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl border border-slate-200 bg-white text-slate-700 text-sm font-semibold hover:bg-slate-50 transition-colors">
+                            <i data-lucide="arrow-left" class="w-4 h-4"></i>
+                            <span>Précédent</span>
+                        </button>
+                    {% else %}
+                        <div></div>
+                    {% endif %}
+
+                    {% if wizard.steps.current == 'review' %}
+                        <button type="submit"
+                                class="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl bg-gradient-to-r from-brand-600 to-indigo-600 text-white text-sm font-semibold hover:from-brand-700 hover:to-indigo-700 shadow-md shadow-brand-500/20 transition-all">
+                            <span>Créer ma boutique</span>
+                            <i data-lucide="check-circle" class="w-4 h-4"></i>
+                        </button>
+                    {% else %}
+                        <button type="submit"
+                                class="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl bg-brand-600 text-white text-sm font-semibold hover:bg-brand-700 shadow-md shadow-brand-500/20 transition-all">
+                            <span>Continuer</span>
+                            <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                        </button>
+                    {% endif %}
+                </div>
+            </form>
+        </div>
+
+    </div>
+</div>
+{% endblock %}

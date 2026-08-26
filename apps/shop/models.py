@@ -20,7 +20,12 @@ class ShopBranding(models.Model):
 
 class ShopPayment(models.Model):
     shop = models.OneToOneField(Shop, on_delete=models.CASCADE, related_name='payment')
-    gateway = models.CharField(max_length=30, choices=[('stripe', 'Stripe'), ('paypal', 'PayPal')])
+    GATEWAY_CHOICES = [
+        ('mobile_money', '📱 Mobile Money (MTN, Orange, Wave…)'),
+        ('livraison', '🚚 Paiement à la livraison'),
+        ('virement', '🏦 Virement bancaire'),
+    ]
+    gateway = models.CharField(max_length=30, choices=GATEWAY_CHOICES, default='livraison')
     api_key = models.CharField(max_length=255, blank=True)
 
     def __str__(self):

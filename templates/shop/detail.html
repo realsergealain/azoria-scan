@@ -1,0 +1,73 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ shop.name }} — Azoria</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #F5F3FF;
+            min-height: 100svh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 24px 16px;
+        }
+        .card {
+            background: #fff;
+            border-radius: 20px;
+            border: 1px solid #E2E8F0;
+            box-shadow: 0 8px 32px rgba(124, 58, 237, .1);
+            padding: 36px 28px;
+            max-width: 400px;
+            width: 100%;
+            text-align: center;
+        }
+        .emoji { font-size: 52px; margin-bottom: 16px; display: block; }
+        h1 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 26px;
+            font-weight: 800;
+            color: #0F172A;
+            margin-bottom: 8px;
+        }
+        p { font-size: 14px; color: #64748B; margin-bottom: 24px; line-height: 1.6; }
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 14px;
+            border-radius: 10px;
+            background: #EDE9FE;
+            color: #6D28D9;
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 28px;
+        }
+        a.btn {
+            display: inline-block;
+            padding: 13px 28px;
+            background: linear-gradient(135deg, #6D28D9, #8B5CF6);
+            color: #fff;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 14px;
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <span class="emoji">🎉</span>
+        <h1>{{ shop.name }}</h1>
+        <p>Votre boutique a été créée avec succès ! Vous pouvez maintenant commencer à ajouter vos produits et partager votre lien.</p>
+        <div class="badge">✅ Boutique active</div><br>
+        <a href="{% url 'core:home' %}" class="btn">Aller au tableau de bord</a>
+    </div>
+</body>
+</html>

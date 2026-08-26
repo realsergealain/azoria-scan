@@ -1,0 +1,29 @@
+{% extends 'shop/wizard_base.html' %}
+
+{% block wizard_title %}Étape 3 : Options de Paiement{% endblock %}
+{% block wizard_heading %}Moyen d'encaissement{% endblock %}
+{% block wizard_subheading %}Configurez comment vos clients vont effectuer leurs réglements.{% endblock %}
+
+{% block wizard_form_fields %}
+<div class="space-y-4">
+    <div>
+        <label for="{{ wizard.form.gateway.id_for_label }}" class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5">
+            Passerelle de paiement
+        </label>
+        {{ wizard.form.gateway }}
+        {% if wizard.form.gateway.errors %}
+            <p class="mt-1 text-xs text-rose-600 font-medium">{{ wizard.form.gateway.errors.0 }}</p>
+        {% endif %}
+    </div>
+
+    <div>
+        <label for="{{ wizard.form.api_key.id_for_label }}" class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5">
+            Clé API / Identifiant (facultatif)
+        </label>
+        {{ wizard.form.api_key }}
+        {% if wizard.form.api_key.errors %}
+            <p class="mt-1 text-xs text-rose-600 font-medium">{{ wizard.form.api_key.errors.0 }}</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
