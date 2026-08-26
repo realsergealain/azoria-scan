@@ -51,7 +51,7 @@ def register_view(request):
             user = form.save()
             login(request, user)
             messages.success(request, _(f"Félicitations {user.full_name} ! Votre compte Azoria a été créé avec succès."))
-            return redirect('core:home')
+            return redirect('shop:create')
     else:
         form = RegisterForm()
 
