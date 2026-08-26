@@ -1,131 +1,111 @@
 {% extends 'accounts/base_auth.html' %}
 
 {% block title %}Connexion — Azoria{% endblock %}
-{% block meta_description %}Connectez-vous à votre espace vendeur Azoria pour gérer vos commandes, vos produits et vos ventes.{% endblock %}
+{% block meta_description %}Connectez-vous à votre espace vendeur Azoria pour gérer vos commandes, vos produits et vos
+ventes.{% endblock %}
 
 {% block body_data %}x-data="{ showPassword: false, submitting: false }"{% endblock %}
 
 {% block form_header %}
-    <div class="text-center mb-6">
-        <h1 class="font-heading text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
-            Connexion
-        </h1>
-        <p class="text-xs sm:text-sm text-slate-600 font-medium mt-1.5">
-            Accédez à votre espace vendeur Azoria
-        </p>
-    </div>
+<div class="text-center mb-6">
+    <h1 class="font-heading text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
+        Connexion
+    </h1>
+    <p class="text-xs sm:text-sm text-slate-600 font-medium mt-1.5">
+        Accédez à votre espace vendeur Azoria
+    </p>
+</div>
 {% endblock %}
 
 {% block form_content %}
-    <form method="POST" action="{% url 'accounts:login' %}{% if next %}?next={{ next }}{% endif %}"
-          @submit="submitting = true"
-          class="space-y-4" novalidate>
-        {% csrf_token %}
+<form method="POST" action="{% url 'accounts:login' %}{% if next %}?next={{ next }}{% endif %}"
+    @submit="submitting = true" class="space-y-4" novalidate>
+    {% csrf_token %}
 
-        <!-- Email Field -->
-        <div class="md-form-field">
-            <label for="id_email" class="md-label">
-                <span>Adresse email</span>
+    <!-- Email Field -->
+    <div class="md-form-field">
+        <label for="id_email" class="md-label">
+            <span>Adresse email</span>
+        </label>
+        <div class="md-input-wrapper">
+            <div class="md-leading-icon">
+                <i data-lucide="mail" class="w-4 h-4"></i>
+            </div>
+            <input type="email" name="email" id="id_email" value="{{ form.email.value|default:'' }}"
+                placeholder="votre.email@exemple.com" autocomplete="email" required
+                class="md-input has-leading-icon {% if form.email.errors %}has-error{% endif %}">
+        </div>
+        {% if form.email.errors %}
+        <div class="md-field-error">
+            <i data-lucide="alert-circle" class="w-3.5 h-3.5 shrink-0"></i>
+            <span>{{ form.email.errors.0 }}</span>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Password Field with Toggle -->
+    <div class="md-form-field">
+        <div class="flex items-center justify-between">
+            <label for="id_password" class="md-label">
+                <span>Mot de passe</span>
             </label>
-            <div class="md-input-wrapper">
-                <div class="md-leading-icon">
-                    <i data-lucide="mail" class="w-4 h-4"></i>
-                </div>
-                <input
-                    type="email"
-                    name="email"
-                    id="id_email"
-                    value="{{ form.email.value|default:'' }}"
-                    placeholder="votre.email@exemple.com"
-                    autocomplete="email"
-                    required
-                    class="md-input has-leading-icon {% if form.email.errors %}has-error{% endif %}"
-                >
-            </div>
-            {% if form.email.errors %}
-            <div class="md-field-error">
-                <i data-lucide="alert-circle" class="w-3.5 h-3.5 shrink-0"></i>
-                <span>{{ form.email.errors.0 }}</span>
-            </div>
-            {% endif %}
+            <a href="#" class="text-xs font-semibold text-brand-600 hover:text-brand-700 hover:underline">
+                Mot de passe oublié ?
+            </a>
         </div>
-
-        <!-- Password Field with Toggle -->
-        <div class="md-form-field">
-            <div class="flex items-center justify-between">
-                <label for="id_password" class="md-label">
-                    <span>Mot de passe</span>
-                </label>
-                <a href="#" class="text-xs font-semibold text-brand-600 hover:text-brand-700 hover:underline">
-                    Mot de passe oublié ?
-                </a>
+        <div class="md-input-wrapper">
+            <div class="md-leading-icon">
+                <i data-lucide="lock" class="w-4 h-4"></i>
             </div>
-            <div class="md-input-wrapper">
-                <div class="md-leading-icon">
-                    <i data-lucide="lock" class="w-4 h-4"></i>
-                </div>
-                <input
-                    :type="showPassword ? 'text' : 'password'"
-                    name="password"
-                    id="id_password"
-                    placeholder="Votre mot de passe"
-                    autocomplete="current-password"
-                    required
-                    class="md-input has-leading-icon has-trailing-icon {% if form.password.errors %}has-error{% endif %}"
-                >
-                <button
-                    type="button"
-                    @click="showPassword = !showPassword"
-                    class="md-trailing-action"
-                    :aria-label="showPassword ? 'Masquer le mot de passe' : 'Afficher le mot de passe'"
-                >
-                    <i x-show="!showPassword" data-lucide="eye"     class="w-4 h-4"></i>
-                    <i x-show="showPassword"  data-lucide="eye-off" class="w-4 h-4"></i>
-                </button>
-            </div>
-            {% if form.password.errors %}
-            <div class="md-field-error">
-                <i data-lucide="alert-circle" class="w-3.5 h-3.5 shrink-0"></i>
-                <span>{{ form.password.errors.0 }}</span>
-            </div>
-            {% endif %}
-        </div>
-
-        <!-- Remember Me Checkbox -->
-        <div class="flex items-center justify-between pt-1">
-            <label class="flex items-center gap-2.5 cursor-pointer select-none">
-                {{ form.remember_me }}
-                <span class="text-xs sm:text-sm font-medium text-slate-700">Se souvenir de moi</span>
-            </label>
-        </div>
-
-        <!-- Submit Button -->
-        <div class="pt-2">
-            <button
-                type="submit"
-                id="btn-login-submit"
-                class="md-btn-filled"
-                :disabled="submitting"
-            >
-                <span x-show="!submitting" class="inline-flex items-center gap-2">
-                    <i data-lucide="log-in" class="w-4 h-4"></i>
-                    <span>Se connecter</span>
-                </span>
-                <span x-show="submitting" class="inline-flex items-center gap-2" style="display: none;">
-                    <svg class="animate-spin -ml-1 mr-2 h-4 w-4 text-white" fill="none" viewBox="0 0 24 24">
-                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                    </svg>
-                    <span>Connexion en cours...</span>
-                </span>
+            <input :type="showPassword ? 'text' : 'password'" name="password" id="id_password"
+                placeholder="Votre mot de passe" autocomplete="current-password" required
+                class="md-input has-leading-icon has-trailing-icon {% if form.password.errors %}has-error{% endif %}">
+            <button type="button" @click="showPassword = !showPassword" class="md-trailing-action"
+                :aria-label="showPassword ? 'Masquer le mot de passe' : 'Afficher le mot de passe'">
+                <i x-show="!showPassword" data-lucide="eye" class="w-4 h-4"></i>
+                <i x-show="showPassword" data-lucide="eye-off" class="w-4 h-4"></i>
             </button>
         </div>
-    </form>
+        {% if form.password.errors %}
+        <div class="md-field-error">
+            <i data-lucide="alert-circle" class="w-3.5 h-3.5 shrink-0"></i>
+            <span>{{ form.password.errors.0 }}</span>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Remember Me Checkbox -->
+    <div class="flex items-center justify-between pt-1">
+        <label class="flex items-center gap-2.5 cursor-pointer select-none">
+            {{ form.remember_me }}
+            <span class="text-xs sm:text-sm font-medium text-slate-700">Se souvenir de moi</span>
+        </label>
+    </div>
+
+    <!-- Submit Button -->
+    <div class="pt-2">
+        <button type="submit" id="btn-login-submit" class="md-btn-filled" :disabled="submitting">
+            <span x-show="!submitting" class="inline-flex items-center gap-2">
+                <i data-lucide="log-in" class="w-4 h-4"></i>
+                <span>Se connecter</span>
+            </span>
+            <span x-show="submitting" class="inline-flex items-center gap-2" style="display: none;">
+                <svg class="animate-spin -ml-1 mr-2 h-4 w-4 text-white" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor"
+                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
+                    </path>
+                </svg>
+                <span>Connexion en cours...</span>
+            </span>
+        </button>
+    </div>
+</form>
 {% endblock %}
 
 {% block switch_link %}
-    Pas encore de compte ?
-    <a href="{% url 'accounts:register' %}" class="font-semibold text-brand-600 hover:text-brand-700 hover:underline ml-1">
-        Créer mon compte
-    </a>
+Pas encore de compte ?
+<a href="{% url 'accounts:register' %}" class="font-semibold text-brand-600 hover:text-brand-700 hover:underline ml-1">
+    Créer mon compte
+</a>
 {% endblock %}
