@@ -89,10 +89,33 @@ def home_view(request):
 
 @login_required
 def dashboard_view(request):
-    """Tableau de bord principal du vendeur."""
+    """Tableau de bord principal du vendeur (Admin Panel layout)."""
     from apps.shop.models import Shop
     shops = Shop.objects.filter(owner=request.user).select_related('branding', 'payment')
+    
+    # Données factices pour le nouveau design du tableau de bord
+    dummy_stats = {
+        'total_revenue': '22.42k FCFA',
+        'revenue_trend': '+2.75%',
+        'active_orders': '34',
+        'orders_trend': '-1.20%',
+        'total_products': '17',
+        'products_trend': '+5.00%',
+        'subscription_status': 'Actif',
+        'subscription_details': 'Forfait Pro'
+    }
+    
+    dummy_recent_orders = [
+        {'id': '2501130', 'customer': 'Albert Flores', 'email': 'man@yandex.ru', 'value': '2,084 FCFA', 'status': 'Livré', 'date': '10/12/2026'},
+        {'id': '2501131', 'customer': 'Ronald Richards', 'email': 'gamaho@mail.ru', 'value': '8,264 FCFA', 'status': 'En attente', 'date': '11/12/2026'},
+        {'id': '2501132', 'customer': 'Jane Cooper', 'email': 'imsabela@gmail.com', 'value': '4,500 FCFA', 'status': 'Annulé', 'date': '12/12/2026'},
+        {'id': '2501133', 'customer': 'Brooklyn Simmons', 'email': 'mlyokoto@mail.ru', 'value': '1,200 FCFA', 'status': 'Livré', 'date': '13/12/2026'},
+        {'id': '2501134', 'customer': 'Marvin McKinney', 'email': 'fline@yandex.ru', 'value': '9,800 FCFA', 'status': 'En attente', 'date': '14/12/2026'},
+    ]
+    
     return render(request, 'core/dashboard.html', {
         'shops': shops,
         'shop_count': shops.count(),
+        'stats': dummy_stats,
+        'recent_orders': dummy_recent_orders,
     })

@@ -43,7 +43,7 @@ def register_view(request):
     Vue d'inscription vendeur.
     """
     if request.user.is_authenticated:
-        return redirect('core:home')
+        return redirect('core:dashboard')
 
     if request.method == 'POST':
         form = RegisterForm(request.POST)
@@ -66,4 +66,4 @@ def logout_view(request):
     """
     logout(request)
     messages.info(request, _("Vous avez été déconnecté avec succès."))
-    return redirect('core:home')
+    return redirect('accounts:login')

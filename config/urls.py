@@ -6,6 +6,11 @@ from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
 
+# Customization of Django Admin Panel
+admin.site.site_header = "Administration Azoria"
+admin.site.site_title = "Portail Admin Azoria"
+admin.site.index_title = "Tableau de Bord Principal"
+
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('accounts/', include('apps.accounts.urls', namespace='accounts')),
