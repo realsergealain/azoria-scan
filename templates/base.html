@@ -76,12 +76,16 @@
 
     <!-- Alpine.js -->
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.8/dist/cdn.min.js"></script>
+    
+    <!-- HTMX for SPA Navigation -->
+    <script src="https://unpkg.com/htmx.org@1.9.10"></script>
 
     {% block extra_head %}{% endblock %}
 </head>
 <body
     class="min-h-screen flex flex-col bg-[#FAFAFE] text-slate-900 antialiased selection:bg-brand-500 selection:text-white"
     x-data="{ mobileMenuOpen: false }"
+    hx-boost="true"
 >
 
     <!-- Page Loader (Azoria Branding) -->
@@ -112,10 +116,29 @@
             const loader = document.getElementById('page-loader');
             if (loader) {
                 loader.style.display = 'flex';
-                // slight delay to let the browser render the display: flex
                 requestAnimationFrame(() => {
                     loader.style.opacity = '1';
                 });
+            }
+        });
+
+        // HTMX Integration for SPA Navigation
+        document.body.addEventListener('htmx:beforeRequest', function (evt) {
+            // Ne pas afficher le loader pour les petites requêtes silencieuses
+            if (evt.detail.elt.hasAttribute('hx-swap')) {
+                const loader = document.getElementById('page-loader');
+                if (loader) {
+                    loader.style.display = 'flex';
+                    requestAnimationFrame(() => loader.style.opacity = '1');
+                }
+            }
+        });
+
+        document.body.addEventListener('htmx:afterSettle', function () {
+            const loader = document.getElementById('page-loader');
+            if (loader) {
+                loader.style.opacity = '0';
+                setTimeout(() => loader.style.display = 'none', 500);
             }
         });
     </script>

@@ -1,0 +1,216 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fr" class="h-full bg-slate-50 antialiased selection:bg-brand-500 selection:text-white">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+    <title>{% block title %}Tableau de bord — Azoria{% endblock %}</title>
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><text y='26' font-size='26'>🛍️</text></svg>">
+    
+    <!-- Tailwind CSS (Shared config) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: { 50: '#F5F3FF', 100: '#EDE9FE', 200: '#DDD6FE', 300: '#C4B5FD', 400: '#A78BFA', 500: '#8B5CF6', 600: '#7C3AED', 700: '#6D28D9', 800: '#5B21B6', 900: '#4C1D95' }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        heading: ['Outfit', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- External Libs -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.8/dist/cdn.min.js"></script>
+    <script src="https://unpkg.com/htmx.org@1.9.10"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <!-- Custom Dashboard Styles -->
+    <style>
+        [x-cloak] { display: none !important; }
+        .glass-card { background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.3); }
+        .nav-link.active { background-color: theme('colors.brand.50'); color: theme('colors.brand.700'); font-weight: 600; }
+        .nav-link.active i { color: theme('colors.brand.600'); }
+    </style>
+</head>
+<body class="h-full flex overflow-hidden text-slate-800" x-data="{ sidebarOpen: false }" hx-boost="true">
+
+    <!-- Page Loader (Azoria Branding) -->
+    <div id="page-loader" class="fixed inset-0 z-[100] bg-slate-50 flex flex-col items-center justify-center transition-opacity duration-300" style="display: none; opacity: 0;">
+        <div class="relative w-12 h-12">
+            <div class="absolute inset-0 border-4 border-brand-100 rounded-full"></div>
+            <div class="absolute inset-0 border-4 border-brand-600 rounded-full border-t-transparent animate-spin"></div>
+        </div>
+    </div>
+    
+    <script>
+        document.body.addEventListener('htmx:beforeRequest', function (evt) {
+            if (evt.detail.elt.hasAttribute('hx-swap') && !evt.detail.elt.hasAttribute('data-no-loader')) {
+                const loader = document.getElementById('page-loader');
+                if (loader) { loader.style.display = 'flex'; requestAnimationFrame(() => loader.style.opacity = '1'); }
+            }
+        });
+        document.body.addEventListener('htmx:afterSettle', function () {
+            const loader = document.getElementById('page-loader');
+            if (loader) { loader.style.opacity = '0'; setTimeout(() => loader.style.display = 'none', 300); }
+        });
+    </script>
+
+    <!-- Mobile sidebar backdrop -->
+    <div x-show="sidebarOpen" x-transition.opacity class="fixed inset-0 z-40 bg-slate-900/50 lg:hidden" @click="sidebarOpen = false" x-cloak></div>
+
+    <!-- SIDEBAR -->
+    <aside :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full'" class="fixed inset-y-0 left-0 z-50 w-64 bg-white border-r border-slate-200 flex flex-col transition-transform duration-300 lg:translate-x-0 lg:static lg:w-64">
+        
+        <!-- Logo -->
+        <div class="h-16 flex items-center px-6 border-b border-slate-100 shrink-0">
+            <a href="{% url 'core:dashboard' %}" class="flex items-center gap-3">
+                <div class="w-8 h-8 rounded-lg bg-gradient-to-tr from-brand-700 to-indigo-500 flex items-center justify-center shadow-sm">
+                    <i data-lucide="shopping-bag" class="w-4 h-4 text-white"></i>
+                </div>
+                <span class="font-heading font-extrabold text-xl tracking-tight text-slate-900">Azoria<span class="text-brand-600">.</span></span>
+            </a>
+            <button @click="sidebarOpen = false" class="lg:hidden ml-auto text-slate-500 hover:text-slate-800">
+                <i data-lucide="x" class="w-5 h-5"></i>
+            </button>
+        </div>
+
+        <!-- Navigation Links -->
+        <div class="flex-1 overflow-y-auto py-4 px-3 space-y-1">
+            <p class="px-3 text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-2 mt-4">Principal</p>
+            
+            <a href="{% url 'core:dashboard' %}" class="nav-link {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %} flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-colors">
+                <i data-lucide="layout-dashboard" class="w-5 h-5 text-slate-400"></i>
+                Vue d'ensemble
+            </a>
+            
+            <a href="#" class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-colors">
+                <i data-lucide="store" class="w-5 h-5 text-slate-400"></i>
+                Mes Boutiques
+            </a>
+            
+            <a href="#" class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-colors">
+                <i data-lucide="package" class="w-5 h-5 text-slate-400"></i>
+                Produits
+            </a>
+            
+            <a href="#" class="nav-link flex items-center justify-between px-3 py-2.5 rounded-xl text-sm font-medium text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-colors">
+                <div class="flex items-center gap-3">
+                    <i data-lucide="shopping-cart" class="w-5 h-5 text-slate-400"></i>
+                    Commandes
+                </div>
+                <span class="bg-brand-100 text-brand-700 py-0.5 px-2 rounded-full text-[10px] font-bold">12</span>
+            </a>
+
+            <a href="#" class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-colors">
+                <i data-lucide="users" class="w-5 h-5 text-slate-400"></i>
+                Clients
+            </a>
+
+            <p class="px-3 text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-2 mt-6">Outils</p>
+            
+            <a href="#" class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-colors">
+                <i data-lucide="qr-code" class="w-5 h-5 text-slate-400"></i>
+                QR Codes & Marketing
+            </a>
+            
+            <a href="#" class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-colors">
+                <i data-lucide="settings" class="w-5 h-5 text-slate-400"></i>
+                Paramètres
+            </a>
+        </div>
+
+        <!-- User Profile (Bottom Sidebar) -->
+        <div class="p-4 border-t border-slate-100">
+            <div class="flex items-center gap-3 relative" x-data="{ userMenuOpen: false }" @click.outside="userMenuOpen = false">
+                <button @click="userMenuOpen = !userMenuOpen" class="flex items-center gap-3 w-full p-2 rounded-xl hover:bg-slate-50 transition-colors focus:outline-none">
+                    <div class="w-9 h-9 rounded-full bg-gradient-to-tr from-brand-600 to-indigo-600 flex items-center justify-center text-white font-heading font-bold text-sm shadow-sm shrink-0">
+                        {{ user.first_name|default:user.email|make_list|first|upper }}
+                    </div>
+                    <div class="text-left flex-1 overflow-hidden">
+                        <p class="text-sm font-bold text-slate-900 truncate">{{ user.first_name|default:user.email }}</p>
+                        <p class="text-[10px] text-slate-500 truncate">Plan Starter</p>
+                    </div>
+                    <i data-lucide="chevron-up" class="w-4 h-4 text-slate-400"></i>
+                </button>
+
+                <!-- User Dropdown Menu -->
+                <div x-show="userMenuOpen" x-transition x-cloak class="absolute bottom-full left-0 mb-2 w-full bg-white rounded-xl shadow-lg border border-slate-100 overflow-hidden z-50">
+                    <a href="{% url 'core:home' %}" class="flex items-center gap-2 px-4 py-2.5 text-sm font-medium text-slate-700 hover:bg-slate-50">
+                        <i data-lucide="globe" class="w-4 h-4"></i> Voir le site public
+                    </a>
+                    <div class="h-px bg-slate-100"></div>
+                    <a href="{% url 'accounts:logout' %}" class="flex items-center gap-2 px-4 py-2.5 text-sm font-medium text-rose-600 hover:bg-rose-50">
+                        <i data-lucide="log-out" class="w-4 h-4"></i> Déconnexion
+                    </a>
+                </div>
+            </div>
+        </div>
+    </aside>
+
+    <!-- MAIN CONTENT AREA -->
+    <div class="flex-1 flex flex-col min-w-0 bg-[#FAFAFE]">
+        
+        <!-- Top Header (Mobile & Desktop actions) -->
+        <header class="h-16 bg-white border-b border-slate-200 flex items-center justify-between px-4 sm:px-6 lg:px-8 shrink-0">
+            <!-- Mobile Hamburger -->
+            <button @click="sidebarOpen = true" class="lg:hidden p-2 -ml-2 text-slate-600 hover:text-slate-900 focus:outline-none rounded-lg hover:bg-slate-100">
+                <i data-lucide="menu" class="w-6 h-6"></i>
+            </button>
+            
+            <!-- Page Title (Desktop) -->
+            <h1 class="hidden lg:block font-heading font-bold text-xl text-slate-900">
+                {% block header_title %}Tableau de bord{% endblock %}
+            </h1>
+
+            <!-- Right Actions -->
+            <div class="flex items-center gap-3 ml-auto">
+                <button class="p-2 text-slate-400 hover:text-brand-600 hover:bg-brand-50 rounded-full transition-colors relative focus:outline-none">
+                    <i data-lucide="bell" class="w-5 h-5"></i>
+                    <span class="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-rose-500 ring-2 ring-white"></span>
+                </button>
+                <a href="{% url 'shop:create' %}" class="hidden sm:inline-flex bg-brand-600 hover:bg-brand-700 text-white text-xs font-bold px-4 py-2 rounded-full items-center gap-2 transition-colors shadow-sm">
+                    <i data-lucide="plus" class="w-3.5 h-3.5"></i>
+                    Créer une boutique
+                </a>
+            </div>
+        </header>
+
+        <!-- Main Scrolling Content -->
+        <main class="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8">
+            <!-- SweetAlert Messages -->
+            {% if messages %}
+                <script>
+                    document.addEventListener("DOMContentLoaded", function() {
+                        const Toast = Swal.mixin({
+                            toast: true, position: 'top-end', showConfirmButton: false, timer: 4000, timerProgressBar: true
+                        });
+                        {% for message in messages %}
+                            Toast.fire({ icon: '{{ message.tags|default:"info" }}', title: '{{ message|escapejs }}' });
+                        {% endfor %}
+                    });
+                </script>
+            {% endif %}
+            
+            {% block content %}{% endblock %}
+        </main>
+    </div>
+
+    <!-- Initialize Lucide Icons -->
+    <script>
+        document.addEventListener("DOMContentLoaded", function() { lucide.createIcons(); });
+        document.body.addEventListener('htmx:afterSettle', function() { lucide.createIcons(); });
+    </script>
+</body>
+</html>
