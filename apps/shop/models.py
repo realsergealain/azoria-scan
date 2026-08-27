@@ -74,3 +74,16 @@ class ShopProduct(models.Model):
 
     def __str__(self):
         return self.name
+
+class VisitTracker(models.Model):
+    shop = models.ForeignKey(Shop, on_delete=models.CASCADE, related_name='visits')
+    product = models.ForeignKey(ShopProduct, on_delete=models.CASCADE, null=True, blank=True, related_name='visits')
+    source = models.CharField(max_length=20, choices=[('direct', 'Lien Direct'), ('qr', 'QR Code')], default='direct')
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        verbose_name = _("Visite")
+        verbose_name_plural = _("Visites")
+
+    def __str__(self):
+        return f"Visite de {self.shop.name} - {self.source}"

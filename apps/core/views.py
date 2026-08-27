@@ -90,18 +90,20 @@ def home_view(request):
 @login_required
 def dashboard_view(request):
     """Tableau de bord principal du vendeur (Admin Panel layout)."""
-    from apps.shop.models import Shop
+    from apps.shop.models import Shop, ShopProduct
     from apps.shop.forms import ShopCreateForm
     shops = Shop.objects.filter(owner=request.user).select_related('branding', 'payment')
     
-    # Données factices pour le nouveau design du tableau de bord
+    total_products = ShopProduct.objects.filter(shop__in=shops).count()
+    
+    # Données factices pour le nouveau design du tableau de bord (sauf total_products)
     dummy_stats = {
-        'total_revenue': '22.42k FCFA',
-        'revenue_trend': '+2.75%',
-        'active_orders': '34',
-        'orders_trend': '-1.20%',
-        'total_products': '17',
-        'products_trend': '+5.00%',
+        'total_revenue': '0 FCFA',
+        'revenue_trend': '0%',
+        'active_orders': '0',
+        'orders_trend': '0%',
+        'total_products': str(total_products),
+        'products_trend': 'N/A',
         'subscription_status': 'Actif',
         'subscription_details': 'Forfait Pro'
     }

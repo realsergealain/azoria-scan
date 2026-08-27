@@ -84,10 +84,15 @@
                                 <span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md bg-emerald-50 text-emerald-700 text-[10px] font-bold">
                                     <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> Active
                                 </span>
-                                <span class="text-[11px] text-slate-500">0 produit</span>
+                                <span class="text-[11px] text-slate-500">{{ shop.products.count }} produit{{ shop.products.count|pluralize }}</span>
                             </div>
                         </div>
-                        <i data-lucide="chevron-right" class="w-5 h-5 text-slate-300 group-hover:text-brand-500 transition-colors mt-3"></i>
+                        <div class="flex items-center gap-2 mt-3 sm:mt-0 opacity-0 group-hover:opacity-100 transition-opacity">
+                            <a href="{% url 'shop:shop_qr' shop.uuid %}" download="qr_boutique_{{ shop.slug }}.png" class="p-2 text-brand-600 hover:bg-brand-50 rounded-lg transition-colors" title="Télécharger QR Code">
+                                <i data-lucide="qr-code" class="w-5 h-5"></i>
+                            </a>
+                            <i data-lucide="chevron-right" class="w-5 h-5 text-slate-300 group-hover:text-brand-500 transition-colors"></i>
+                        </div>
                     </div>
                 </a>
                 {% endfor %}

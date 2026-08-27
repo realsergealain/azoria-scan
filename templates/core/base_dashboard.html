@@ -115,7 +115,7 @@
                 Mes Boutiques
             </a>
             
-            <a href="#" @click.prevent="showComingSoonModal = true" class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-colors">
+            <a href="{% url 'shop:product_list' %}" class="nav-link {% if 'produits' in request.path %}active{% endif %} flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-colors">
                 <i data-lucide="package" class="w-5 h-5 text-slate-400"></i>
                 Produits
             </a>
