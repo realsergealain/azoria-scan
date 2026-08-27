@@ -1,9 +1,11 @@
 from django.contrib import admin
 from django.utils.translation import gettext_lazy as _
+from unfold.admin import ModelAdmin
+
 from .models import Shop, ShopBranding, ShopPayment, ShopProduct
 
 @admin.register(Shop)
-class ShopAdmin(admin.ModelAdmin):
+class ShopAdmin(ModelAdmin):
     list_display = ('name', 'owner', 'created_at')
     list_filter = ('created_at', 'owner')
     search_fields = ('name', 'owner__email', 'owner__first_name', 'owner__last_name')
@@ -17,7 +19,7 @@ class ShopAdmin(admin.ModelAdmin):
     )
 
 @admin.register(ShopBranding)
-class ShopBrandingAdmin(admin.ModelAdmin):
+class ShopBrandingAdmin(ModelAdmin):
     list_display = ('shop', 'primary_color', 'has_logo')
     list_filter = ('shop',)
     search_fields = ('shop__name',)
@@ -29,14 +31,14 @@ class ShopBrandingAdmin(admin.ModelAdmin):
     has_logo.boolean = True
 
 @admin.register(ShopPayment)
-class ShopPaymentAdmin(admin.ModelAdmin):
+class ShopPaymentAdmin(ModelAdmin):
     list_display = ('shop', 'accepted_payments')
     list_filter = ('shop',)
     search_fields = ('shop__name',)
     ordering = ('shop',)
 
 @admin.register(ShopProduct)
-class ShopProductAdmin(admin.ModelAdmin):
+class ShopProductAdmin(ModelAdmin):
     list_display = ('name', 'shop', 'price', 'created_at', 'has_image')
     list_filter = ('shop', 'created_at')
     search_fields = ('name', 'shop__name')
