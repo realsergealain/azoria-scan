@@ -37,7 +37,7 @@
                     <a href="#" aria-label="TikTok" class="w-9 h-9 rounded-lg bg-slate-800 hover:bg-pink-500/20 border border-slate-700 hover:border-pink-500/40 flex items-center justify-center text-slate-400 hover:text-pink-400 transition-all">
                         <i data-lucide="video" class="w-4 h-4"></i>
                     </a>
-                    <a href="#" aria-label="WhatsApp" class="w-9 h-9 rounded-lg bg-slate-800 hover:bg-emerald-500/20 border border-slate-700 hover:border-emerald-500/40 flex items-center justify-center text-slate-400 hover:text-emerald-400 transition-all">
+                    <a href="https://wa.me/2250711113420" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp" class="w-9 h-9 rounded-lg bg-slate-800 hover:bg-emerald-500/20 border border-slate-700 hover:border-emerald-500/40 flex items-center justify-center text-slate-400 hover:text-emerald-400 transition-all">
                         <i data-lucide="message-circle" class="w-4 h-4"></i>
                     </a>
                     <a href="#" aria-label="Instagram" class="w-9 h-9 rounded-lg bg-slate-800 hover:bg-purple-500/20 border border-slate-700 hover:border-purple-500/40 flex items-center justify-center text-slate-400 hover:text-purple-400 transition-all">
@@ -53,12 +53,12 @@
             <div class="space-y-4">
                 <h4 class="font-heading font-bold text-sm text-white uppercase tracking-wider">Plateforme</h4>
                 <ul class="space-y-2.5">
-                    <li><a href="#features"  class="footer-link hover:text-brand-400">Boutique Mobile</a></li>
-                    <li><a href="#ai"        class="footer-link hover:text-brand-400">Azoria AI</a></li>
-                    <li><a href="#features"  class="footer-link hover:text-brand-400">Générateur QR Code</a></li>
-                    <li><a href="#features"  class="footer-link hover:text-brand-400">Paiement à la livraison</a></li>
-                    <li><a href="#simulator" class="footer-link hover:text-brand-400">Simulateur en direct</a></li>
-                    <li><a href="#pricing"   class="footer-link hover:text-brand-400">Tarifs</a></li>
+                    <li><a href="{% url 'core:home' %}#features"  class="footer-link hover:text-brand-400">Boutique Mobile</a></li>
+                    <li><a href="{% url 'core:home' %}#ai"        class="footer-link hover:text-brand-400">Azoria AI</a></li>
+                    <li><a href="{% url 'core:home' %}#features"  class="footer-link hover:text-brand-400">Générateur QR Code</a></li>
+                    <li><a href="{% url 'core:home' %}#features"  class="footer-link hover:text-brand-400">Paiement à la livraison</a></li>
+                    <li><a href="{% url 'core:home' %}#simulator" class="footer-link hover:text-brand-400">Simulateur en direct</a></li>
+                    <li><a href="{% url 'core:home' %}#pricing"   class="footer-link hover:text-brand-400">Tarifs</a></li>
                 </ul>
             </div>
 
@@ -85,16 +85,16 @@
                 <h4 class="font-heading font-bold text-sm text-white uppercase tracking-wider">Aide & Contact</h4>
                 <ul class="space-y-2.5">
                     <li>
-                        <a href="https://wa.me/" target="_blank" rel="noopener noreferrer"
+                        <a href="https://wa.me/2250711113420" target="_blank" rel="noopener noreferrer"
                            class="footer-link hover:text-emerald-400 flex items-center gap-1.5">
                             <i data-lucide="message-circle" class="w-3.5 h-3.5 text-emerald-500"></i>
                             Support WhatsApp
                         </a>
                     </li>
-                    <li><a href="#faq" class="footer-link hover:text-brand-400">Foire Aux Questions</a></li>
-                    <li><a href="#" class="footer-link hover:text-brand-400">Guide du vendeur</a></li>
-                    <li><a href="#" class="footer-link hover:text-slate-200">Mentions légales</a></li>
-                    <li><a href="#" class="footer-link hover:text-slate-200">Confidentialité</a></li>
+                    <li><a href="{% url 'core:faq' %}" class="footer-link hover:text-brand-400">Foire Aux Questions</a></li>
+                    <li><a href="{% url 'core:guide_vendeur' %}" class="footer-link hover:text-brand-400">Guide du vendeur</a></li>
+                    <li><a href="{% url 'core:mentions_legales' %}" class="footer-link hover:text-slate-200">Mentions légales</a></li>
+                    <li><a href="{% url 'core:confidentialite' %}" class="footer-link hover:text-slate-200">Confidentialité</a></li>
                 </ul>
             </div>
         </div>

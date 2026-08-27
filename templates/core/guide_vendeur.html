@@ -1,0 +1,127 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Guide du Vendeur — Réussir en Social Commerce avec Azoria{% endblock %}
+{% block meta_description %}Le guide pratique complet pour vendre sur TikTok, WhatsApp et Instagram avec Azoria. Automatisez vos commandes et boostez votre chiffre d'affaires.{% endblock %}
+
+{% block content %}
+<div class="pt-24 pb-20 sm:pt-32 sm:pb-28 bg-[#FAFAFE] min-h-screen">
+    <!-- Header / Hero Section -->
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-brand-50 border border-brand-200/70 text-brand-700 text-xs sm:text-sm font-semibold mb-5 shadow-sm shadow-brand-500/10">
+            <i data-lucide="book-open" class="w-4 h-4 text-brand-600"></i>
+            <span>Guide Officiel Azoria</span>
+        </div>
+
+        <h1 class="font-heading text-3xl sm:text-4xl md:text-5xl font-extrabold text-slate-900 tracking-tight leading-tight">
+            Le Guide du <span class="text-transparent bg-clip-text bg-gradient-to-r from-brand-600 to-indigo-600">Vendeur Moderne</span>
+        </h1>
+        <p class="mt-4 text-sm sm:text-base text-slate-600 max-w-2xl mx-auto leading-relaxed">
+            Apprenez pas à pas comment convertir vos abonnés sur les réseaux sociaux en clients réguliers sans perdre de temps en messages manuels.
+        </p>
+    </div>
+
+    <!-- Steps & Content -->
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 mt-12 sm:mt-16 space-y-10">
+
+        <!-- Step 1: Configurer la boutique -->
+        <div class="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200/80 shadow-sm hover:shadow-md transition-shadow">
+            <div class="flex items-start gap-4">
+                <div class="w-10 h-10 rounded-2xl bg-brand-600 text-white font-heading font-black text-lg flex items-center justify-center shrink-0 shadow-md shadow-brand-500/30">
+                    1
+                </div>
+                <div class="space-y-3">
+                    <h2 class="font-heading font-bold text-xl text-slate-900">Configurez votre boutique en 2 minutes</h2>
+                    <p class="text-sm text-slate-600 leading-relaxed">
+                        Choisissez un nom percutant, ajoutez une brève description de vos articles et configurez votre numéro WhatsApp pour recevoir les notifications d'expédition.
+                    </p>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2 text-xs font-semibold text-slate-700">
+                        <div class="p-3 rounded-xl bg-slate-50 border border-slate-100 flex items-center gap-2">
+                            <i data-lucide="check-circle" class="w-4 h-4 text-emerald-500 shrink-0"></i>
+                            <span>Photos de haute qualité avec bon éclairage</span>
+                        </div>
+                        <div class="p-3 rounded-xl bg-slate-50 border border-slate-100 flex items-center gap-2">
+                            <i data-lucide="check-circle" class="w-4 h-4 text-emerald-500 shrink-0"></i>
+                            <span>Prix clairs et transparents en FCFA</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Step 2: Utiliser Azoria AI -->
+        <div class="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200/80 shadow-sm hover:shadow-md transition-shadow">
+            <div class="flex items-start gap-4">
+                <div class="w-10 h-10 rounded-2xl bg-pink-500 text-white font-heading font-black text-lg flex items-center justify-center shrink-0 shadow-md shadow-pink-500/30">
+                    2
+                </div>
+                <div class="space-y-3">
+                    <h2 class="font-heading font-bold text-xl text-slate-900">Rédigez des fiches produits irrésistibles avec l'IA</h2>
+                    <p class="text-sm text-slate-600 leading-relaxed">
+                        Ne perdez plus 20 minutes par article à rédiger votre texte. Utilisez <strong>Azoria AI</strong> en saisissant les mots-clés clés (matière, taille, occasion) pour obtenir instantanément une description vendeuse adaptée aux acheteurs mobiles.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Step 3: Partager sur les réseaux -->
+        <div class="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200/80 shadow-sm hover:shadow-md transition-shadow">
+            <div class="flex items-start gap-4">
+                <div class="w-10 h-10 rounded-2xl bg-indigo-600 text-white font-heading font-black text-lg flex items-center justify-center shrink-0 shadow-md shadow-indigo-500/30">
+                    3
+                </div>
+                <div class="space-y-3">
+                    <h2 class="font-heading font-bold text-xl text-slate-900">Diffusez votre lien sur TikTok, Instagram & WhatsApp</h2>
+                    <p class="text-sm text-slate-600 leading-relaxed">
+                        C'est le secret des vendeurs qui réussissent le mieux sur Azoria :
+                    </p>
+                    <ul class="space-y-2 text-xs sm:text-sm text-slate-700">
+                        <li class="flex items-start gap-2">
+                            <i data-lucide="video" class="w-4 h-4 text-pink-500 mt-0.5 shrink-0"></i>
+                            <span><strong>TikTok :</strong> Insérez votre lien dans votre bio et mentionnez « Lien en bio pour commander » dans chaque vidéo ou Live.</span>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <i data-lucide="instagram" class="w-4 h-4 text-purple-500 mt-0.5 shrink-0"></i>
+                            <span><strong>Instagram :</strong> Utilisez le sticker Lien dans vos Stories quotidiennes et épinglez votre vitrine.</span>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <i data-lucide="message-circle" class="w-4 h-4 text-emerald-500 mt-0.5 shrink-0"></i>
+                            <span><strong>WhatsApp :</strong> Partagez votre lien de boutique dans vos statuts au lieu de poster 40 photos à la suite.</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Step 4: Paiement & Livraison -->
+        <div class="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200/80 shadow-sm hover:shadow-md transition-shadow">
+            <div class="flex items-start gap-4">
+                <div class="w-10 h-10 rounded-2xl bg-emerald-600 text-white font-heading font-black text-lg flex items-center justify-center shrink-0 shadow-md shadow-emerald-500/30">
+                    4
+                </div>
+                <div class="space-y-3">
+                    <h2 class="font-heading font-bold text-xl text-slate-900">Gérez vos expéditions et le paiement à la livraison</h2>
+                    <p class="text-sm text-slate-600 leading-relaxed">
+                        Dès qu'une commande arrive, contactez votre livreur ou le transporteur pour l'expédition vers l'intérieur. Mettez à jour le statut dans votre tableau de bord en 1 clic (« Confirmée » ➔ « Expédiée » ➔ « Livrée ») pour garder une comptabilité parfaite.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- CTA Box -->
+        <div class="rounded-3xl bg-slate-900 p-8 sm:p-10 text-white text-center space-y-4">
+            <h3 class="font-heading text-2xl sm:text-3xl font-extrabold">Prêt à lancer votre boutique ?</h3>
+            <p class="text-xs sm:text-sm text-slate-400 max-w-md mx-auto">
+                Rejoignez des milliers de commerçants indépendants qui automatisent leurs ventes dès aujourd'hui.
+            </p>
+            <div class="pt-2">
+                <a href="{% url 'accounts:register' %}" class="btn-primary-glow text-white text-xs sm:text-sm font-heading font-extrabold px-8 py-3.5 rounded-full inline-flex items-center gap-2">
+                    <span>Créer ma boutique gratuite</span>
+                    <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                </a>
+            </div>
+        </div>
+
+    </div>
+</div>
+{% endblock %}

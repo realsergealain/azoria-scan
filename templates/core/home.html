@@ -5,13 +5,13 @@
 
 {% block content %}
 <!-- Hero Section with Mesh Gradient Background -->
-<section class="relative pt-32 pb-20 md:pt-40 md:pb-28 mesh-gradient-hero overflow-hidden">
+<section class="relative pt-20 pb-16 sm:pt-28 md:pt-40 md:pb-28 mesh-gradient-hero overflow-hidden">
     <!-- Background Glow Spheres -->
     <div class="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[650px] h-[650px] bg-brand-400/15 rounded-full blur-3xl pointer-events-none -z-10"></div>
     <div class="absolute top-1/3 left-10 w-[350px] h-[350px] bg-pink-400/10 rounded-full blur-3xl pointer-events-none -z-10"></div>
     <div class="absolute top-1/3 right-10 w-[350px] h-[350px] bg-indigo-400/10 rounded-full blur-3xl pointer-events-none -z-10"></div>
 
-    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center stagger-children">
         <!-- Top Pill Badge -->
         <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-brand-50 border border-brand-200/70 text-brand-700 text-xs sm:text-sm font-semibold mb-6 shadow-sm shadow-brand-500/10">
             <span class="flex h-2 w-2 relative">
@@ -22,7 +22,7 @@
         </div>
 
         <!-- Main Hero Title -->
-        <h1 class="font-heading text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold text-slate-900 tracking-tight leading-[1.15] max-w-4xl mx-auto">
+        <h1 class="font-heading text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold text-slate-900 tracking-tight leading-[1.15] max-w-4xl mx-auto">
             Tu perds des ventes chaque jour à cause de 
             <span class="relative inline-block px-4 py-1 mt-1 sm:mt-0 text-white rounded-2xl bg-gradient-to-r from-brand-600 via-pink-500 to-indigo-600 shadow-lg shadow-brand-500/30 overflow-hidden group animate-gradient-x">
                 <span class="absolute inset-0 bg-white/20 translate-x-[-100%] group-hover:animate-shimmer skew-x-12"></span>
@@ -56,12 +56,12 @@
         </p>
 
         <!-- CTA Action Buttons -->
-        <div class="mt-8 flex flex-col sm:flex-row items-center justify-center gap-4">
-            <a href="#simulator" class="btn-primary-glow w-full sm:w-auto text-white font-semibold text-base px-8 py-3.5 rounded-full inline-flex items-center justify-center gap-2.5 group">
+        <div class="mt-6 sm:mt-8 flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4">
+            <a href="#simulator" class="btn-primary-glow hover-glow tap-feedback w-full sm:w-auto text-white font-semibold text-base px-8 py-3.5 rounded-full inline-flex items-center justify-center gap-2.5 group active:scale-95">
                 <span>Créer ma boutique gratuite</span>
                 <i data-lucide="arrow-right" class="w-4 h-4 group-hover:translate-x-1 transition-transform"></i>
             </a>
-            <a href="#demo-preview" class="w-full sm:w-auto px-7 py-3.5 rounded-full bg-white/90 hover:bg-white text-slate-700 font-semibold text-sm border border-slate-200 shadow-sm hover:shadow transition-all inline-flex items-center justify-center gap-2">
+            <a href="#demo-preview" class="tap-feedback w-full sm:w-auto px-7 py-3.5 rounded-full bg-white/90 hover:bg-white text-slate-700 font-semibold text-sm border border-slate-200 shadow-sm hover:shadow transition-all inline-flex items-center justify-center gap-2 active:scale-95">
                 <i data-lucide="play-circle" class="w-4 h-4 text-brand-600"></i>
                 <span>Voir la démonstration</span>
             </a>
@@ -81,7 +81,7 @@
         </div>
 
         <!-- HERO SHOWCASE: Smartphone Mockup & Floating Glass Cards (Matching Reference Visual) -->
-        <div id="demo-preview" class="relative mt-14 max-w-4xl mx-auto pt-6 pb-10 parallax-container">
+        <div id="demo-preview" class="relative mt-10 sm:mt-14 max-w-4xl mx-auto pt-6 pb-10 parallax-container reveal-scale reveal-on-scroll">
             
             <!-- Floating Left Card: Orders / History -->
             <div class="hidden md:block absolute -left-6 top-16 z-20 w-72 glass-card rounded-2xl p-4 text-left animate-float-1 parallax-layer" data-speed="0.04">
@@ -261,17 +261,17 @@
 </section>
 
 <!-- PAIN POINTS & SOLUTIONS (Bento Grid) -->
-<section class="py-16 bg-[#FAFAFE]">
+<section class="py-12 sm:py-16 bg-[#FAFAFE]">
     <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="text-center mb-12">
-            <h2 class="font-heading text-3xl md:text-4xl font-extrabold text-slate-900 mb-4">Prêt à trouver tes clients parfaits ?</h2>
-            <p class="text-slate-600">Ne perds plus de temps avec les messages vocaux. Automatise tes ventes.</p>
+        <div class="text-center mb-8 sm:mb-12 reveal-on-scroll">
+            <h2 class="font-heading text-2xl sm:text-3xl md:text-4xl font-extrabold text-slate-900 mb-3 sm:mb-4">Prêt à trouver tes clients parfaits ?</h2>
+            <p class="text-sm sm:text-base text-slate-600">Ne perds plus de temps avec les messages vocaux. Automatise tes ventes.</p>
         </div>
         
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             
             <!-- Card 1 (Span 2 on desktop) -->
-            <div class="md:col-span-2 bg-white rounded-3xl p-8 border border-slate-200 shadow-sm hover:shadow-md transition-shadow relative overflow-hidden group">
+            <div class="md:col-span-2 bg-white rounded-3xl p-6 sm:p-8 border border-slate-200 shadow-sm hover:shadow-md transition-shadow relative overflow-hidden group reveal-on-scroll hover-lift hover-icon-spin">
                 <div class="absolute top-0 right-0 p-6 opacity-10 group-hover:opacity-20 transition-opacity">
                     <i data-lucide="frown" class="w-32 h-32 text-brand-600"></i>
                 </div>
@@ -280,7 +280,7 @@
             </div>
 
             <!-- Card 2 -->
-            <div class="bg-gradient-to-br from-brand-600 to-indigo-700 rounded-3xl p-8 text-white shadow-lg relative overflow-hidden">
+            <div class="bg-gradient-to-br from-brand-600 to-indigo-700 rounded-3xl p-6 sm:p-8 text-white shadow-lg relative overflow-hidden reveal-on-scroll reveal-delay-1 hover-lift">
                 <div class="absolute -right-4 -bottom-4 opacity-20">
                     <i data-lucide="trending-up" class="w-40 h-40"></i>
                 </div>
@@ -289,7 +289,7 @@
             </div>
 
             <!-- Card 3 -->
-            <div class="bg-white rounded-3xl p-8 border border-slate-200 shadow-sm hover:shadow-md transition-shadow relative overflow-hidden">
+            <div class="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200 shadow-sm hover:shadow-md transition-shadow relative overflow-hidden reveal-on-scroll reveal-delay-2 hover-lift hover-icon-spin">
                 <h3 class="font-heading text-xl font-bold text-slate-900 mb-3">De l'inscription à la 1ère vente en 2 min.</h3>
                 <p class="text-slate-600 text-sm mb-6">Aucune compétence technique requise. Remplissez vos produits, générez votre lien et mettez-le dans votre bio instantanément.</p>
                 <div class="flex items-center gap-3 text-sm font-semibold text-brand-700 bg-brand-50 rounded-xl p-3 inline-flex">
@@ -302,15 +302,15 @@
 </section>
 
 <!-- Supported Channels / Trusted Social Networks Section -->
-<section class="py-12 bg-white border-y border-slate-100">
+<section class="py-10 sm:py-12 bg-white border-y border-slate-100">
     <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-        <p class="text-xs font-bold text-slate-600 uppercase tracking-widest mb-6">
+        <p class="text-[10px] sm:text-xs font-bold text-slate-600 uppercase tracking-widest mb-4 sm:mb-6 reveal-on-scroll">
             Optimisé pour transformer vos abonnés en acheteurs sur tous vos canaux
         </p>
 
-        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4">
+        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3 sm:gap-4">
             {% for channel in channels %}
-            <div class="p-4 rounded-2xl bg-slate-50/80 hover:bg-white border border-slate-200/60 hover:border-brand-200 transition-all duration-300 flex flex-col items-center gap-2 group hover:shadow-md">
+            <div class="p-3 sm:p-4 rounded-2xl bg-slate-50/80 hover:bg-white border border-slate-200/60 hover:border-brand-200 transition-all duration-300 flex flex-col items-center gap-2 group hover:shadow-md reveal-on-scroll hover-lift">
                 <div class="w-10 h-10 rounded-xl bg-gradient-to-tr {{ channel.color }} text-white flex items-center justify-center shadow-sm group-hover:scale-110 transition-transform">
                     <i data-lucide="{{ channel.icon }}" class="w-5 h-5"></i>
                 </div>
@@ -327,7 +327,7 @@
     <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
             {% for stat in stats %}
-            <div class="reveal-on-scroll p-6 rounded-2xl bg-white border border-purple-100/70 shadow-sm transition-transform hover:-translate-y-1 hover:shadow-md">
+            <div class="reveal-on-scroll p-4 sm:p-6 rounded-2xl bg-white border border-purple-100/70 shadow-sm hover-lift">
                 <div class="font-heading font-extrabold text-3xl sm:text-4xl text-brand-700 tracking-tight stat-counter" data-val="{{ stat.value }}">{{ stat.value }}</div>
                 <div class="text-xs sm:text-sm font-medium text-slate-600 mt-1">{{ stat.label }}</div>
             </div>
@@ -340,24 +340,24 @@
 <section id="features" class="py-20 bg-white">
     <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         <!-- Section Header -->
-        <div class="text-center max-w-3xl mx-auto mb-16">
+        <div class="text-center max-w-3xl mx-auto mb-10 sm:mb-16 reveal-on-scroll">
             <div class="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-brand-50 text-brand-700 text-xs font-bold uppercase tracking-wider mb-3">
                 <i data-lucide="layers" class="w-3.5 h-3.5"></i>
                 <span>Fonctionnalités Clés</span>
             </div>
-            <h2 class="font-heading text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">
+            <h2 class="font-heading text-2xl sm:text-3xl md:text-4xl font-extrabold text-slate-900 tracking-tight">
                 Comment notre plateforme simplifie votre <span class="text-brand-600">quotidien</span>
             </h2>
-            <p class="mt-3 text-base text-slate-600 leading-relaxed">
+            <p class="mt-3 text-sm sm:text-base text-slate-600 leading-relaxed">
                 Une suite complète d'outils pensée pour le vendeur moderne, du partage de lien jusqu'à l'encaissement à la livraison.
             </p>
         </div>
 
         <!-- 2x2 Rich Feature Cards Grid -->
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-5 sm:gap-8">
             
             <!-- Card 1: Sign up & Customize -->
-            <div class="reveal-on-scroll reveal-delay-1 glass-card glass-card-hover rounded-3xl p-8 flex flex-col justify-between">
+            <div class="reveal-on-scroll reveal-delay-1 glass-card glass-card-hover hover-lift rounded-3xl p-6 sm:p-8 flex flex-col justify-between">
                 <div>
                     <div class="w-12 h-12 rounded-2xl bg-brand-100 text-brand-600 flex items-center justify-center mb-5">
                         <i data-lucide="store" class="w-6 h-6"></i>
@@ -394,7 +394,7 @@
             </div>
 
             <!-- Card 2: Link & Channels -->
-            <div class="glass-card glass-card-hover rounded-3xl p-8 flex flex-col justify-between">
+            <div class="reveal-on-scroll reveal-delay-2 glass-card glass-card-hover hover-lift rounded-3xl p-6 sm:p-8 flex flex-col justify-between">
                 <div>
                     <div class="w-12 h-12 rounded-2xl bg-indigo-100 text-indigo-600 flex items-center justify-center mb-5">
                         <i data-lucide="share-2" class="w-6 h-6"></i>
@@ -428,7 +428,7 @@
             </div>
 
             <!-- Card 3: Azoria AI -->
-            <div id="ai" class="glass-card glass-card-hover rounded-3xl p-8 flex flex-col justify-between">
+            <div id="ai" class="reveal-on-scroll reveal-delay-3 glass-card glass-card-hover hover-lift rounded-3xl p-6 sm:p-8 flex flex-col justify-between">
                 <div>
                     <div class="w-12 h-12 rounded-2xl bg-pink-100 text-pink-600 flex items-center justify-center mb-5">
                         <i data-lucide="bot" class="w-6 h-6"></i>
@@ -453,7 +453,7 @@
             </div>
 
             <!-- Card 4: Local Delivery & Cities -->
-            <div class="glass-card glass-card-hover rounded-3xl p-8 flex flex-col justify-between">
+            <div class="reveal-on-scroll reveal-delay-4 glass-card glass-card-hover hover-lift rounded-3xl p-6 sm:p-8 flex flex-col justify-between">
                 <div>
                     <div class="w-12 h-12 rounded-2xl bg-emerald-100 text-emerald-600 flex items-center justify-center mb-5">
                         <i data-lucide="truck" class="w-6 h-6"></i>
@@ -487,22 +487,22 @@
 <!-- Interactive Live Store Simulator Section -->
 <section id="simulator" class="py-20 bg-[#FAF9FF] border-t border-purple-100/60" x-data="storeSimulator()">
     <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="text-center max-w-2xl mx-auto mb-12">
+        <div class="text-center max-w-2xl mx-auto mb-8 sm:mb-12 reveal-on-scroll">
             <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-brand-100 text-brand-700 text-xs font-bold uppercase tracking-wider mb-3">
                 <i data-lucide="play" class="w-3.5 h-3.5"></i>
                 <span>Simulateur Interactif</span>
             </div>
-            <h2 class="font-heading text-3xl sm:text-4xl font-extrabold text-slate-900">
+            <h2 class="font-heading text-2xl sm:text-3xl md:text-4xl font-extrabold text-slate-900">
                 Essayez votre future boutique en <span class="text-brand-600">temps réel</span>
             </h2>
-            <p class="mt-2 text-sm sm:text-base text-slate-600">
+            <p class="mt-2 text-xs sm:text-sm md:text-base text-slate-600">
                 Tapez le nom de votre marque et voyez immédiatement à quoi ressemblera votre lien et votre vitrine client.
             </p>
         </div>
 
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
             <!-- Left Controls Form -->
-            <div class="lg:col-span-6 glass-card rounded-3xl p-6 sm:p-8 space-y-5">
+            <div class="lg:col-span-6 glass-card rounded-3xl p-5 sm:p-6 md:p-8 space-y-4 sm:space-y-5 reveal-left reveal-on-scroll">
                 <div>
                     <label class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-2">
                         Nom de votre boutique :
@@ -569,7 +569,7 @@
             </div>
 
             <!-- Right Interactive Live Mobile Simulator Display -->
-            <div class="lg:col-span-6 flex justify-center">
+            <div class="lg:col-span-6 flex justify-center reveal-right reveal-on-scroll">
                 <div class="w-full max-w-[340px] rounded-[38px] p-3 bg-slate-900 shadow-2xl border-4 border-slate-800">
                     <div class="bg-white rounded-[30px] p-4 min-h-[480px] flex flex-col justify-between text-left">
                         <!-- Simulated App Bar -->
@@ -634,18 +634,18 @@
 <!-- The Problem vs The Solution Section -->
 <section id="workflow" class="py-20 bg-white">
     <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="text-center max-w-3xl mx-auto mb-16">
-            <h2 class="font-heading text-3xl sm:text-4xl font-extrabold text-slate-900">
+        <div class="text-center max-w-3xl mx-auto mb-10 sm:mb-16 reveal-on-scroll">
+            <h2 class="font-heading text-2xl sm:text-3xl md:text-4xl font-extrabold text-slate-900">
                 Pourquoi remplacer la prise de commande manuelle ?
             </h2>
-            <p class="mt-3 text-slate-600">
+            <p class="mt-3 text-sm sm:text-base text-slate-600">
                 Comparez le calvaire des messages WhatsApp dispersés avec l'efficacité d'Azoria.
             </p>
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
             <!-- The Old Way (Frustrating) -->
-            <div class="p-8 rounded-3xl bg-rose-50/50 border border-rose-100 relative">
+            <div class="p-6 sm:p-8 rounded-3xl bg-rose-50/50 border border-rose-100 relative reveal-left reveal-on-scroll">
                 <div class="flex items-center gap-3 mb-6">
                     <div class="w-10 h-10 rounded-xl bg-rose-100 text-rose-600 flex items-center justify-center">
                         <i data-lucide="x-circle" class="w-5 h-5"></i>
@@ -677,7 +677,7 @@
             </div>
 
             <!-- The Azoria Way (Seamless) -->
-            <div class="p-8 rounded-3xl bg-brand-50/50 border border-brand-200 relative shadow-sm">
+            <div class="p-6 sm:p-8 rounded-3xl bg-brand-50/50 border border-brand-200 relative shadow-sm reveal-right reveal-on-scroll">
                 <div class="flex items-center gap-3 mb-6">
                     <div class="w-10 h-10 rounded-xl bg-brand-600 text-white flex items-center justify-center">
                         <i data-lucide="check-circle" class="w-5 h-5"></i>
@@ -714,22 +714,22 @@
 <!-- Pricing Plans Section -->
 <section id="pricing" class="py-20 bg-[#FAF9FF] border-t border-purple-100/60">
     <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="text-center max-w-2xl mx-auto mb-14">
+        <div class="text-center max-w-2xl mx-auto mb-10 sm:mb-14 reveal-on-scroll">
             <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-brand-100 text-brand-700 text-xs font-bold uppercase tracking-wider mb-3">
                 <i data-lucide="tag" class="w-3.5 h-3.5"></i>
                 <span>Tarifs Transparents</span>
             </div>
-            <h2 class="font-heading text-3xl sm:text-4xl font-extrabold text-slate-900">
+            <h2 class="font-heading text-2xl sm:text-3xl md:text-4xl font-extrabold text-slate-900">
                 Démarrez gratuitement, payez quand vous grandissez
             </h2>
-            <p class="mt-2 text-slate-600">
+            <p class="mt-2 text-sm sm:text-base text-slate-600">
                 Aucun frais caché, aucun engagement. Tout pour lancer et développer votre commerce.
             </p>
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
             <!-- Free Plan -->
-            <div class="glass-card rounded-3xl p-8 flex flex-col justify-between">
+            <div class="glass-card rounded-3xl p-6 sm:p-8 flex flex-col justify-between reveal-on-scroll hover-lift">
                 <div>
                     <div class="text-xs font-bold uppercase tracking-wider text-slate-600">Pour débuter</div>
                     <h3 class="font-heading text-2xl font-bold text-slate-900 mt-1">Plan Starter</h3>
@@ -766,7 +766,7 @@
             </div>
 
             <!-- Pro Plan -->
-            <div class="glass-card rounded-3xl p-8 border-2 border-brand-500 relative flex flex-col justify-between shadow-xl shadow-brand-500/10">
+            <div class="glass-card rounded-3xl p-6 sm:p-8 border-2 border-brand-500 relative flex flex-col justify-between shadow-xl shadow-brand-500/10 reveal-on-scroll reveal-delay-1 animate-pro-glow">
                 <div class="absolute -top-3.5 right-6 px-3 py-1 rounded-full bg-brand-600 text-white text-[10px] font-bold uppercase tracking-wider shadow-sm">
                     Recommandé
                 </div>
@@ -811,14 +811,14 @@
 <!-- FAQ Section -->
 <section id="faq" class="py-20 bg-white">
     <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="text-center mb-12">
-            <h2 class="font-heading text-3xl font-extrabold text-slate-900">Foire Aux Questions</h2>
-            <p class="mt-2 text-sm text-slate-600">Tout ce que vous devez savoir pour démarrer sereinement.</p>
+        <div class="text-center mb-8 sm:mb-12 reveal-on-scroll">
+            <h2 class="font-heading text-2xl sm:text-3xl font-extrabold text-slate-900">Foire Aux Questions</h2>
+            <p class="mt-2 text-xs sm:text-sm text-slate-600">Tout ce que vous devez savoir pour démarrer sereinement.</p>
         </div>
 
         <div class="space-y-4" x-data="{ openFaq: null }">
             {% for faq in faqs %}
-            <div class="border border-slate-200/80 rounded-2xl overflow-hidden transition-colors" :class="openFaq === {{ forloop.counter0 }} ? 'bg-brand-50/40 border-brand-200' : 'bg-white'">
+            <div class="reveal-on-scroll border border-slate-200/80 rounded-2xl overflow-hidden transition-colors" :class="openFaq === {{ forloop.counter0 }} ? 'bg-brand-50/40 border-brand-200' : 'bg-white'">
                 <button @click="openFaq = openFaq === {{ forloop.counter0 }} ? null : {{ forloop.counter0 }}" class="w-full p-5 text-left font-heading font-bold text-sm sm:text-base text-slate-900 flex items-center justify-between gap-4">
                     <span>{{ faq.q }}</span>
                     <i data-lucide="chevron-down" class="w-4 h-4 text-slate-500 transition-transform duration-200" :class="openFaq === {{ forloop.counter0 }} ? 'rotate-180 text-brand-600' : ''"></i>
@@ -851,7 +851,7 @@
             </p>
 
             <div class="mt-8 flex flex-col sm:flex-row items-center justify-center gap-4">
-                <a href="#simulator" class="w-full sm:w-auto px-8 py-4 rounded-full bg-white hover:bg-slate-50 text-brand-900 font-extrabold text-sm shadow-xl hover:scale-105 transition-all">
+            <a href="#simulator" class="w-full sm:w-auto px-8 py-4 rounded-full bg-white hover:bg-slate-50 text-brand-900 font-extrabold text-sm shadow-xl hover:scale-105 transition-all animate-pulse-soft tap-feedback active:scale-95">
                     Créer ma boutique gratuite maintenant
                 </a>
             </div>
@@ -862,8 +862,8 @@
 <!-- Animation & Interactions Script -->
 <script>
 document.addEventListener('DOMContentLoaded', () => {
-    // 1. Scroll Reveal Observer
-    const observerOptions = { root: null, rootMargin: '0px', threshold: 0.15 };
+    // 1. Scroll Reveal Observer (supports reveal-on-scroll, reveal-left, reveal-right, reveal-scale)
+    const observerOptions = { root: null, rootMargin: '0px 0px -60px 0px', threshold: 0.1 };
     const revealObserver = new IntersectionObserver((entries, observer) => {
         entries.forEach(entry => {
             if (entry.isIntersecting) {
@@ -873,7 +873,8 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }, observerOptions);
 
-    document.querySelectorAll('.reveal-on-scroll').forEach(el => revealObserver.observe(el));
+    // Observe all elements with reveal classes
+    document.querySelectorAll('.reveal-on-scroll, .reveal-left, .reveal-right, .reveal-scale').forEach(el => revealObserver.observe(el));
 
     // 2. Animated Stats Counters
     const statObserver = new IntersectionObserver((entries, observer) => {
@@ -881,27 +882,21 @@ document.addEventListener('DOMContentLoaded', () => {
             if (entry.isIntersecting) {
                 const el = entry.target;
                 const originalText = el.getAttribute('data-val');
-                // Extract only numbers for the counter
                 const numStr = originalText.replace(/[^0-9]/g, '');
                 if (numStr) {
                     const targetNum = parseInt(numStr, 10);
-                    // Extract non-number prefix/suffix
                     const prefix = originalText.replace(/[0-9].*/, '');
                     const suffix = originalText.replace(/.*[0-9]/, '');
                     
-                    let start = 0;
                     const duration = 2000;
                     const startTime = performance.now();
                     
                     const updateCounter = (currentTime) => {
                         const elapsedTime = currentTime - startTime;
                         if (elapsedTime < duration) {
-                            // easeOutExpo
                             const progress = (elapsedTime / duration);
                             const easeOut = progress === 1 ? 1 : 1 - Math.pow(2, -10 * progress);
                             const currentNum = Math.floor(easeOut * targetNum);
-                            
-                            // Format with spaces
                             el.innerText = prefix + currentNum.toLocaleString('fr-FR') + suffix;
                             requestAnimationFrame(updateCounter);
                         } else {
@@ -917,14 +912,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
     document.querySelectorAll('.stat-counter').forEach(el => statObserver.observe(el));
 
-    // 3. Mouse Parallax for Hero
+    // 3. Mouse Parallax for Hero (Desktop only — skip on touch devices)
     const parallaxContainer = document.querySelector('.parallax-container');
     const parallaxLayers = document.querySelectorAll('.parallax-layer');
+    const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
 
-    if (parallaxContainer && parallaxLayers.length > 0) {
+    if (parallaxContainer && parallaxLayers.length > 0 && !isTouchDevice) {
         parallaxContainer.addEventListener('mousemove', (e) => {
             const rect = parallaxContainer.getBoundingClientRect();
-            // Calculate mouse position relative to center of container
             const x = e.clientX - rect.left - rect.width / 2;
             const y = e.clientY - rect.top - rect.height / 2;
 
@@ -946,6 +941,17 @@ document.addEventListener('DOMContentLoaded', () => {
             }, 500);
         });
     }
+
+    // 4. Smooth scroll for anchor links (mobile-friendly)
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function(e) {
+            const target = document.querySelector(this.getAttribute('href'));
+            if (target) {
+                e.preventDefault();
+                target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        });
+    });
 });
 </script>
 {% endblock %}

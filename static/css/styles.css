@@ -611,7 +611,7 @@ img, video {
 .reveal-on-scroll {
   opacity: 0;
   transform: translateY(24px);
-  transition: opacity 0.6s ease, transform 0.6s ease;
+  transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1), transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .reveal-on-scroll.revealed {
@@ -619,10 +619,125 @@ img, video {
   transform: translateY(0);
 }
 
+/* Directional reveal variants */
+.reveal-left {
+  opacity: 0;
+  transform: translateX(-40px);
+  transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1), transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.reveal-right {
+  opacity: 0;
+  transform: translateX(40px);
+  transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1), transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.reveal-scale {
+  opacity: 0;
+  transform: scale(0.92);
+  transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1), transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.reveal-left.revealed,
+.reveal-right.revealed,
+.reveal-scale.revealed {
+  opacity: 1;
+  transform: translateX(0) scale(1);
+}
+
+/* Stagger delays (for sequential child animations) */
 .reveal-delay-1 { transition-delay: 0.1s; }
 .reveal-delay-2 { transition-delay: 0.2s; }
 .reveal-delay-3 { transition-delay: 0.3s; }
 .reveal-delay-4 { transition-delay: 0.4s; }
+.reveal-delay-5 { transition-delay: 0.5s; }
+.reveal-delay-6 { transition-delay: 0.6s; }
+
+/* ────────────────────────────────────────────
+   9b. Enhanced Interaction Animations
+──────────────────────────────────────────── */
+
+/* Hover Lift — smooth elevation on hover */
+.hover-lift {
+  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.hover-lift:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 20px 40px -12px rgba(124, 58, 237, 0.12), 0 4px 12px rgba(0, 0, 0, 0.04);
+}
+
+/* Hover Glow — brand glow on hover */
+.hover-glow {
+  transition: box-shadow 0.35s cubic-bezier(0.16, 1, 0.3, 1), transform 0.2s ease;
+}
+
+.hover-glow:hover {
+  box-shadow: 0 0 30px -5px rgba(124, 58, 237, 0.35);
+}
+
+.hover-glow:active {
+  transform: scale(0.97);
+}
+
+/* Pulse soft — subtle attention-grabbing pulse */
+@keyframes pulseSoft {
+  0%, 100% { transform: scale(1); box-shadow: 0 8px 20px -4px rgba(124, 58, 237, 0.40); }
+  50%      { transform: scale(1.02); box-shadow: 0 12px 28px -4px rgba(124, 58, 237, 0.55); }
+}
+
+.animate-pulse-soft {
+  animation: pulseSoft 3s ease-in-out infinite;
+}
+
+/* Icon spin on hover */
+.hover-icon-spin:hover i,
+.hover-icon-spin:hover [data-lucide] {
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  transform: rotate(12deg) scale(1.1);
+}
+
+/* Stagger entrance for child elements */
+@keyframes staggerFadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.stagger-children > * {
+  opacity: 0;
+  animation: staggerFadeInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.stagger-children > *:nth-child(1) { animation-delay: 0.05s; }
+.stagger-children > *:nth-child(2) { animation-delay: 0.12s; }
+.stagger-children > *:nth-child(3) { animation-delay: 0.19s; }
+.stagger-children > *:nth-child(4) { animation-delay: 0.26s; }
+.stagger-children > *:nth-child(5) { animation-delay: 0.33s; }
+.stagger-children > *:nth-child(6) { animation-delay: 0.40s; }
+
+/* Pro card persistent glow */
+@keyframes proGlow {
+  0%, 100% { box-shadow: 0 0 20px -5px rgba(124, 58, 237, 0.15), 0 20px 40px -12px rgba(124, 58, 237, 0.10); }
+  50%      { box-shadow: 0 0 35px -5px rgba(124, 58, 237, 0.25), 0 25px 50px -12px rgba(124, 58, 237, 0.15); }
+}
+
+.animate-pro-glow {
+  animation: proGlow 4s ease-in-out infinite;
+}
+
+/* Mobile tap feedback */
+@media (hover: none) {
+  .tap-feedback:active {
+    transform: scale(0.96);
+    transition: transform 0.1s ease;
+  }
+}
 
 /* ────────────────────────────────────────────
    10. Navbar Responsive Enhancements

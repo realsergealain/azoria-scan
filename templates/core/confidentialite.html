@@ -1,0 +1,87 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Politique de Confidentialité — Azoria{% endblock %}
+{% block meta_description %}Politique de confidentialité et protection des données personnelles sur la plateforme de commerce Azoria.{% endblock %}
+
+{% block content %}
+<div class="pt-24 pb-20 sm:pt-32 sm:pb-28 bg-[#FAFAFE] min-h-screen">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+        
+        <!-- Header -->
+        <div class="text-center mb-12">
+            <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-emerald-50 border border-emerald-200/70 text-emerald-700 text-xs sm:text-sm font-semibold mb-4">
+                <i data-lucide="shield-check" class="w-4 h-4 text-emerald-600"></i>
+                <span>Protection des Données</span>
+            </div>
+            <h1 class="font-heading text-3xl sm:text-4xl font-extrabold text-slate-900">
+                Politique de Confidentialité
+            </h1>
+            <p class="mt-2 text-xs sm:text-sm text-slate-500">Dernière révision : Février 2026</p>
+        </div>
+
+        <!-- Content Card -->
+        <div class="bg-white rounded-3xl p-6 sm:p-10 border border-slate-200/80 shadow-sm space-y-8 text-sm text-slate-700 leading-relaxed">
+            
+            <section class="space-y-3">
+                <h2 class="font-heading font-bold text-lg sm:text-xl text-slate-900 flex items-center gap-2">
+                    <span class="w-2 h-2 rounded-full bg-emerald-600"></span>
+                    1. Engagement de Confidentialité
+                </h2>
+                <p>
+                    Chez <strong>Azoria</strong>, nous accordons une importance capitale à la confidentialité et à la sécurité des informations de nos vendeurs et de leurs acheteurs. Cette politique détaille les données que nous collectons, comment nous les utilisons et les droits dont vous disposez.
+                </p>
+            </section>
+
+            <section class="space-y-3 border-t border-slate-100 pt-6">
+                <h2 class="font-heading font-bold text-lg sm:text-xl text-slate-900 flex items-center gap-2">
+                    <span class="w-2 h-2 rounded-full bg-emerald-600"></span>
+                    2. Données collectées
+                </h2>
+                <ul class="list-disc pl-5 space-y-2">
+                    <li><strong>Pour les Vendeurs :</strong> Nom complet, adresse email, numéro de téléphone / WhatsApp, informations sur la boutique et catalogue de produits.</li>
+                    <li><strong>Pour les Acheteurs :</strong> Nom, prénom, numéro de téléphone, ville et adresse de livraison indiqués lors du formulaire de validation de commande.</li>
+                    <li><strong>Données techniques :</strong> Logs de visite et métriques agrégées de conversion (sans transmission à des tiers publicitaires).</li>
+                </ul>
+            </section>
+
+            <section class="space-y-3 border-t border-slate-100 pt-6">
+                <h2 class="font-heading font-bold text-lg sm:text-xl text-slate-900 flex items-center gap-2">
+                    <span class="w-2 h-2 rounded-full bg-emerald-600"></span>
+                    3. Utilisation de vos données
+                </h2>
+                <p>Vos informations sont utilisées exclusivement pour :</p>
+                <ul class="list-disc pl-5 space-y-1.5">
+                    <li>Permettre la transmission directe et exacte de la commande entre l'acheteur et le vendeur.</li>
+                    <li>Générer les notifications d'expédition et les récapitulatifs de vente.</li>
+                    <li>Assurer le support technique et la sécurité de votre compte vendeur.</li>
+                </ul>
+                <p class="font-semibold text-slate-900 mt-2">
+                    Azoria ne vend, ne loue et ne cède jamais vos données personnelles ou celles de vos clients à des entreprises tierces.
+                </p>
+            </section>
+
+            <section class="space-y-3 border-t border-slate-100 pt-6">
+                <h2 class="font-heading font-bold text-lg sm:text-xl text-slate-900 flex items-center gap-2">
+                    <span class="w-2 h-2 rounded-full bg-emerald-600"></span>
+                    4. Stockage et Sécurité
+                </h2>
+                <p>
+                    Toutes les connexions vers Azoria s'effectuent via le protocole HTTPS sécurisé par chiffrement SSL/TLS. Les mots de passe sont hachés de manière irréversible selon les meilleurs standards de sécurité cryptographique.
+                </p>
+            </section>
+
+            <section class="space-y-3 border-t border-slate-100 pt-6">
+                <h2 class="font-heading font-bold text-lg sm:text-xl text-slate-900 flex items-center gap-2">
+                    <span class="w-2 h-2 rounded-full bg-emerald-600"></span>
+                    5. Vos Droits
+                </h2>
+                <p>
+                    Conformément aux réglementations sur la protection de la vie privée, vous disposez d'un droit d'accès, de rectification et de suppression de vos données personnelles. Vous pouvez exercer ce droit à tout moment en contactant notre support sur WhatsApp au <a href="https://wa.me/2250711113420" target="_blank" class="text-emerald-700 font-semibold hover:underline">+225 07 11 11 34 20</a>.
+                </p>
+            </section>
+
+        </div>
+    </div>
+</div>
+{% endblock %}
