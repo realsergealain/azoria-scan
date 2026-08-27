@@ -1,6 +1,7 @@
 {% load static %}
 <!DOCTYPE html>
 <html lang="fr" class="h-full">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
@@ -10,10 +11,13 @@
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
 
     <!-- Favicon -->
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 32 32%22><text y=%2226%22 font-size=%2226%22>🛍️</text></svg>">
+    <link rel="icon"
+        href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 32 32%22><text y=%2226%22 font-size=%2226%22>🛍️</text></svg>">
 
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -23,7 +27,7 @@
                 extend: {
                     colors: {
                         brand: {
-                            50:  '#F5F3FF',
+                            50: '#F5F3FF',
                             100: '#EDE9FE',
                             200: '#DDD6FE',
                             300: '#C4B5FD',
@@ -41,7 +45,7 @@
                         }
                     },
                     fontFamily: {
-                        sans:    ['"Plus Jakarta Sans"', 'Inter', 'sans-serif'],
+                        sans: ['"Plus Jakarta Sans"', 'Inter', 'sans-serif'],
                         heading: ['Outfit', '"Plus Jakarta Sans"', 'sans-serif'],
                     },
                     screens: {
@@ -67,113 +71,143 @@
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.8/dist/cdn.min.js"></script>
 </head>
 
-<body class="min-h-full bg-slate-50 text-slate-900 selection:bg-brand-500 selection:text-white antialiased flex flex-col justify-between"
+<body class="min-h-screen bg-slate-50 text-slate-900 selection:bg-brand-500 selection:text-white antialiased flex flex-col"
       {% block body_data %}{% endblock %}>
 
-    <!-- Top Minimalist App Bar -->
-    <header class="w-full py-4 px-4 sm:px-8 flex items-center justify-between border-b border-slate-200/70 bg-white/80 backdrop-blur-md sticky top-0 z-40">
-        <a href="{% url 'core:home' %}" class="flex items-center gap-2.5 group transition-transform active:scale-95">
-            <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-brand-700 via-brand-600 to-indigo-500 flex items-center justify-center shadow-sm text-white">
-                <svg class="w-4 h-4 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="m2 7 4.41-4.41A2 2 0 0 1 7.83 2h8.34a2 2 0 0 1 1.42.59L22 7"/>
-                    <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/>
-                    <path d="M15 22v-4a2 2 0 0 0-2-2h-2a2 2 0 0 0-2 2v4"/>
-                    <path d="M2 7h20"/>
-                    <circle cx="12" cy="12" r="1.5" fill="currentColor"/>
-                </svg>
+    <main class="flex-1 flex min-h-screen">
+        
+        <!-- LEFT SECTION: Branding & Visuals (Hidden on mobile/tablet, visible on Desktop) -->
+        <div class="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-slate-900 via-brand-900 to-indigo-900 relative overflow-hidden flex-col justify-between p-12 xl:p-16 text-white border-r border-slate-800">
+            <!-- Subtle glow effects -->
+            <div class="absolute top-[-10%] left-[-10%] w-96 h-96 bg-brand-500 rounded-full mix-blend-screen filter blur-[100px] opacity-30 animate-pulse"></div>
+            <div class="absolute bottom-[-10%] right-[-10%] w-96 h-96 bg-indigo-500 rounded-full mix-blend-screen filter blur-[100px] opacity-30"></div>
+            
+            <!-- Logo -->
+            <div class="relative z-10 flex items-center gap-3">
+                <a href="{% url 'core:home' %}" class="flex items-center gap-2.5 group transition-transform active:scale-95">
+                    <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-brand-600 to-indigo-600 flex items-center justify-center shadow-lg text-white border border-white/10">
+                        <i data-lucide="shopping-bag" class="w-5 h-5"></i>
+                    </div>
+                    <span class="font-heading font-extrabold text-2xl tracking-tight text-white group-hover:text-brand-300 transition-colors">
+                        Azoria<span class="text-brand-500">.</span>
+                    </span>
+                </a>
             </div>
-            <div class="flex flex-col">
-                <span class="font-heading font-extrabold text-lg sm:text-xl tracking-tight text-slate-900 group-hover:text-brand-600 transition-colors">
-                    Azoria<span class="text-brand-600">.</span>
-                </span>
-            </div>
-        </a>
 
-        <a href="{% url 'core:home' %}" class="md-btn-text text-xs font-medium text-slate-600 hover:text-slate-900 inline-flex items-center gap-1.5">
-            <i data-lucide="arrow-left" class="w-3.5 h-3.5"></i>
-            <span>Retour à l'accueil</span>
-        </a>
-    </header>
-
-    <!-- Main Content Area -->
-    <main class="flex-1 flex items-center justify-center p-4 sm:p-6 md:p-10">
-        <div class="w-full max-w-md">
-
-            <!-- Flash Messages / Notifications -->
-            {% if messages %}
-            <div class="mb-5 space-y-2.5">
-                {% for message in messages %}
-                <div class="p-3.5 rounded-xl text-xs sm:text-sm font-medium flex items-center gap-2.5 shadow-sm transition-all
-                            {% if message.tags == 'error' %}bg-rose-50 text-rose-900 border border-rose-200
-                            {% elif message.tags == 'info' %}bg-sky-50 text-sky-900 border border-sky-200
-                            {% else %}bg-emerald-50 text-emerald-900 border border-emerald-200{% endif %}">
-                    <i data-lucide="{% if message.tags == 'error' %}alert-circle{% elif message.tags == 'info' %}info{% else %}check-circle{% endif %}"
-                       class="w-4 h-4 shrink-0 {% if message.tags == 'error' %}text-rose-600{% elif message.tags == 'info' %}text-sky-600{% else %}text-emerald-600{% endif %}"></i>
-                    <span>{{ message }}</span>
-                </div>
-                {% endfor %}
-            </div>
-            {% endif %}
-
-            <!-- Form Validation Non-Field Errors -->
-            {% if form.non_field_errors %}
-            <div class="mb-5 p-3.5 rounded-xl bg-rose-50 border border-rose-200 text-rose-900 text-xs sm:text-sm font-medium space-y-1 shadow-sm">
-                {% for error in form.non_field_errors %}
-                <div class="flex items-center gap-2">
-                    <i data-lucide="alert-circle" class="w-4 h-4 text-rose-600 shrink-0"></i>
-                    <span>{{ error }}</span>
-                </div>
-                {% endfor %}
-            </div>
-            {% endif %}
-
-            <!-- Material Design Card Container -->
-            <div class="bg-white border border-slate-200/80 rounded-2xl sm:rounded-3xl p-6 sm:p-8 md:p-9 shadow-sm sm:shadow-md transition-shadow">
+            <!-- Value Proposition -->
+            <div class="relative z-10 max-w-lg mt-8">
+                <h2 class="font-heading font-black text-4xl xl:text-5xl leading-tight mb-6">
+                    Créez des vitrines qui <span class="text-transparent bg-clip-text bg-gradient-to-r from-brand-300 to-amber-200">convertissent.</span>
+                </h2>
+                <p class="text-slate-300 text-lg leading-relaxed mb-8">
+                    Rejoignez des milliers de vendeurs qui utilisent Azoria pour transformer leurs abonnés TikTok, Facebook et WhatsApp en clients fidèles, 100% depuis leur mobile.
+                </p>
                 
-                <!-- Card Header -->
-                {% block form_header %}{% endblock %}
-
-                <!-- Form Content -->
-                {% block form_content %}{% endblock %}
-
-                <!-- Social Sign-In Divider -->
-                <div class="relative my-6 text-center">
-                    <div class="absolute inset-0 flex items-center">
-                        <div class="w-full border-t border-slate-200"></div>
+                <!-- Social Proof -->
+                <div class="flex items-center gap-4">
+                    <div class="flex -space-x-3">
+                        <div class="w-10 h-10 rounded-full bg-slate-300 border-2 border-brand-900 overflow-hidden"><img src="https://i.pravatar.cc/100?img=1" class="w-full h-full object-cover"></div>
+                        <div class="w-10 h-10 rounded-full bg-slate-400 border-2 border-brand-900 overflow-hidden"><img src="https://i.pravatar.cc/100?img=2" class="w-full h-full object-cover"></div>
+                        <div class="w-10 h-10 rounded-full bg-slate-500 border-2 border-brand-900 overflow-hidden"><img src="https://i.pravatar.cc/100?img=3" class="w-full h-full object-cover"></div>
                     </div>
-                    <div class="relative">
-                        <span class="bg-white px-3 text-xs font-semibold text-slate-500 uppercase tracking-wider">
-                            Ou continuer avec
-                        </span>
+                    <div class="text-sm font-semibold text-slate-300">
+                        Déjà <span class="text-white font-bold">+5000</span> vendeurs actifs
                     </div>
-                </div>
-
-                <!-- Social Buttons -->
-                {% include 'accounts/includes/social_buttons.html' %}
-
-                <!-- Switch Link (Login <-> Register) -->
-                <div class="mt-6 pt-5 border-t border-slate-100 text-center text-xs sm:text-sm text-slate-600">
-                    {% block switch_link %}{% endblock %}
                 </div>
             </div>
+            
+            <!-- Footer Left -->
+            <div class="relative z-10 text-slate-400 text-sm font-medium flex items-center gap-4">
+                <span>&copy; 2026 Azoria Inc.</span>
+                <a href="#" class="hover:text-white transition-colors">Aide</a>
+                <a href="#" class="hover:text-white transition-colors">Confidentialité</a>
+            </div>
+        </div>
 
-            <!-- Footer Security Badge -->
-            <div class="mt-6 text-center text-xs text-slate-600 flex items-center justify-center gap-1.5">
-                <i data-lucide="shield-check" class="w-3.5 h-3.5 text-emerald-600"></i>
-                <span>Connexion sécurisée SSL 256-bit</span>
+        <!-- RIGHT SECTION: Form Container -->
+        <div class="w-full lg:w-1/2 flex flex-col p-4 lg:p-8 relative bg-slate-50 h-screen overflow-y-auto">
+            
+            <!-- Mobile Logo & Back (Visible only on small screens) -->
+            <div class="lg:hidden absolute top-0 left-0 right-0 p-4 flex items-center justify-between z-10 bg-slate-50/90 backdrop-blur-sm">
+                <a href="{% url 'core:home' %}" class="flex items-center gap-2 group">
+                    <div class="w-8 h-8 rounded-lg bg-gradient-to-tr from-brand-600 to-indigo-600 flex items-center justify-center shadow-sm text-white">
+                        <i data-lucide="shopping-bag" class="w-4 h-4"></i>
+                    </div>
+                    <span class="font-heading font-extrabold text-lg text-slate-900">Azoria.</span>
+                </a>
+            </div>
+
+            <!-- Global Back Button (Desktop mostly, or pushed down on mobile) -->
+            <a href="{% url 'core:home' %}" class="absolute top-4 right-4 lg:top-6 lg:right-6 text-slate-500 hover:text-slate-900 flex items-center gap-1.5 text-xs font-bold transition-colors bg-white px-3 py-1.5 rounded-full shadow-sm border border-slate-200 z-10">
+                <i data-lucide="arrow-left" class="w-3.5 h-3.5"></i>
+                <span>Retour au site</span>
+            </a>
+
+            <!-- The Form Box -->
+            <div class="w-full max-w-md mx-auto my-auto pt-16 pb-8 lg:pt-0">
+                <!-- Flash Messages -->
+                {% if messages %}
+                <div class="mb-3 space-y-2">
+                    {% for message in messages %}
+                    <div class="p-3 rounded-xl text-xs sm:text-sm font-medium flex items-center gap-2.5 shadow-sm transition-all
+                                {% if message.tags == 'error' %}bg-rose-50 text-rose-900 border border-rose-200
+                                {% elif message.tags == 'info' %}bg-sky-50 text-sky-900 border border-sky-200
+                                {% else %}bg-emerald-50 text-emerald-900 border border-emerald-200{% endif %}">
+                        <i data-lucide="{% if message.tags == 'error' %}alert-circle{% elif message.tags == 'info' %}info{% else %}check-circle{% endif %}"
+                           class="w-4 h-4 shrink-0 {% if message.tags == 'error' %}text-rose-600{% elif message.tags == 'info' %}text-sky-600{% else %}text-emerald-600{% endif %}"></i>
+                        <span>{{ message }}</span>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+
+                <!-- Form Validation Non-Field Errors -->
+                {% if form.non_field_errors %}
+                <div class="mb-3 p-3 rounded-xl bg-rose-50 border border-rose-200 text-rose-900 text-xs sm:text-sm font-medium space-y-1 shadow-sm">
+                    {% for error in form.non_field_errors %}
+                    <div class="flex items-center gap-2">
+                        <i data-lucide="alert-circle" class="w-4 h-4 text-rose-600 shrink-0"></i>
+                        <span>{{ error }}</span>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+
+                <!-- Main Card -->
+                <div class="bg-white border border-slate-200/80 rounded-[24px] p-5 sm:p-6 md:p-8 shadow-lg shadow-slate-200/50">
+                    
+                    {% block form_header %}{% endblock %}
+                    {% block form_content %}{% endblock %}
+
+                    <!-- Social Sign-In Divider -->
+                    <div class="relative my-4 text-center">
+                        <div class="absolute inset-0 flex items-center">
+                            <div class="w-full border-t border-slate-200"></div>
+                        </div>
+                        <div class="relative">
+                            <span class="bg-white px-3 text-[10px] font-bold text-slate-400 uppercase tracking-wider">
+                                Ou continuer avec
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- Social Buttons -->
+                    {% include 'accounts/includes/social_buttons.html' %}
+
+                    <!-- Switch Link -->
+                    <div class="mt-4 pt-4 border-t border-slate-100 text-center text-xs sm:text-sm text-slate-600">
+                        {% block switch_link %}{% endblock %}
+                    </div>
+                </div>
+
+                <!-- Footer Security Badge -->
+                <div class="mt-4 text-center text-[10px] text-slate-500 flex items-center justify-center gap-1.5 font-semibold">
+                    <i data-lucide="shield-check" class="w-3 h-3 text-emerald-500"></i>
+                    <span>Authentification sécurisée SSL 256-bit</span>
+                </div>
             </div>
         </div>
     </main>
-
-    <!-- Bottom Minimal Footer -->
-    <footer class="py-4 px-4 text-center text-xs text-slate-600 border-t border-slate-200/60 bg-white/60">
-        <div class="flex flex-wrap items-center justify-center gap-4">
-            <span>&copy; 2026 Azoria Inc. Tous droits réservés.</span>
-            <a href="#" class="hover:text-brand-600 transition-colors">Conditions d'utilisation</a>
-            <a href="#" class="hover:text-brand-600 transition-colors">Confidentialité</a>
-            <a href="#" class="hover:text-brand-600 transition-colors">Aide</a>
-        </div>
-    </footer>
 
     <!-- Init Lucide Icons -->
     <script>
@@ -189,23 +223,24 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
         {% if messages %}
-            {% for message in messages %}
-                Swal.fire({
-                    toast: true,
-                    position: 'top-end',
-                    icon: '{{ message.tags|default:"info" }}',
-                    title: '{{ message }}',
-                    showConfirmButton: false,
-                    timer: 3000,
-                    timerProgressBar: true,
-                    customClass: {
-                        popup: 'rounded-xl shadow-lg border border-slate-100',
-                        title: 'text-sm font-semibold text-slate-800'
-                    }
-                });
-            {% endfor %}
+        {% for message in messages %}
+        Swal.fire({
+            toast: true,
+            position: 'top-end',
+            icon: '{{ message.tags|default:"info" }}',
+            title: '{{ message }}',
+            showConfirmButton: false,
+            timer: 3000,
+            timerProgressBar: true,
+            customClass: {
+                popup: 'rounded-xl shadow-lg border border-slate-100',
+                title: 'text-sm font-semibold text-slate-800'
+            }
+        });
+        {% endfor %}
         {% endif %}
     </script>
     {% block extra_js %}{% endblock %}
 </body>
+
 </html>
