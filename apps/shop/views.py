@@ -22,10 +22,10 @@ def shop_create(request):
         # Branding par défaut (logo vide, couleur violette Azoria)
         ShopBranding.objects.create(shop=shop, primary_color='#7C3AED')
 
-        # Paiement avec le mode choisi
+        # Paiement avec les modes choisis
         ShopPayment.objects.create(
             shop=shop,
-            gateway=form.cleaned_data['gateway'],
+            accepted_payments=form.cleaned_data['accepted_payments'],
         )
 
         messages.success(request, f'🎉 Boutique « {shop.name} » créée avec succès !')

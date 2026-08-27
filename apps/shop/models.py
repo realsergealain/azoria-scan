@@ -44,7 +44,7 @@ class ShopPayment(models.Model):
         ('livraison', '🚚 Paiement à la livraison'),
         ('virement', '🏦 Virement bancaire'),
     ]
-    gateway = models.CharField(max_length=30, choices=GATEWAY_CHOICES, default='livraison', verbose_name=_("Moyen de paiement"))
+    accepted_payments = models.JSONField(default=list, verbose_name=_("Moyens de paiement acceptés"))
     api_key = models.CharField(max_length=255, blank=True, verbose_name=_("Clé API (Optionnel)"))
 
     class Meta:
@@ -52,7 +52,7 @@ class ShopPayment(models.Model):
         verbose_name_plural = _("Configurations de paiement")
 
     def __str__(self):
-        return f"Paiement ({self.get_gateway_display()}) pour {self.shop.name}"
+        return f"Paiements pour {self.shop.name}"
 
 class ShopProduct(models.Model):
     uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)

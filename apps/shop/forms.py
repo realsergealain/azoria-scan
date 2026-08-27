@@ -26,8 +26,10 @@ class ShopCreateForm(forms.Form):
         label='Description (facultative)',
     )
 
-    gateway = forms.ChoiceField(
+    accepted_payments = forms.MultipleChoiceField(
         choices=ShopPayment.GATEWAY_CHOICES,
-        initial='livraison',
-        label='Moyen de paiement accepté',
+        initial=['livraison'],
+        widget=forms.CheckboxSelectMultiple,
+        label='Moyens de paiement acceptés',
+        error_messages={'required': 'Veuillez sélectionner au moins un moyen de paiement.'},
     )

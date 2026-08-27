@@ -30,9 +30,9 @@ class ShopBrandingAdmin(admin.ModelAdmin):
 
 @admin.register(ShopPayment)
 class ShopPaymentAdmin(admin.ModelAdmin):
-    list_display = ('shop', 'gateway')
-    list_filter = ('gateway', 'shop')
-    search_fields = ('shop__name', 'gateway')
+    list_display = ('shop', 'accepted_payments')
+    list_filter = ('shop',)
+    search_fields = ('shop__name',)
     ordering = ('shop',)
 
 @admin.register(ShopProduct)
