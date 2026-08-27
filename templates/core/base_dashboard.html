@@ -165,6 +165,9 @@
                     <a href="{% url 'core:home' %}" hx-boost="false" class="flex items-center gap-2 px-4 py-2.5 text-sm font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700">
                         <i data-lucide="globe" class="w-4 h-4"></i> Voir le site public
                     </a>
+                    <a href="{% url 'accounts:settings' %}" class="flex items-center gap-2 px-4 py-2.5 text-sm font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700">
+                        <i data-lucide="settings" class="w-4 h-4"></i> Paramètres du compte
+                    </a>
                     <div class="h-px bg-slate-100 dark:bg-slate-700"></div>
                     <a href="{% url 'accounts:logout' %}" hx-boost="false" class="flex items-center gap-2 px-4 py-2.5 text-sm font-medium text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-slate-700">
                         <i data-lucide="log-out" class="w-4 h-4"></i> Déconnexion

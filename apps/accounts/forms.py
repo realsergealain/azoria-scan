@@ -142,3 +142,30 @@ class RegisterForm(forms.Form):
             phone=cleaned_data.get('phone', ''),
         )
         return user
+
+
+class UserProfileForm(forms.ModelForm):
+    """
+    Formulaire pour la mise à jour du profil utilisateur.
+    L'email est inclus en lecture seule car l'utilisateur ne doit pas pouvoir le modifier.
+    """
+    class Meta:
+        model = User
+        fields = ['first_name', 'last_name', 'phone', 'email']
+        widgets = {
+            'first_name': forms.TextInput(attrs={'class': 'md-input', 'placeholder': 'Prénom'}),
+            'last_name': forms.TextInput(attrs={'class': 'md-input', 'placeholder': 'Nom'}),
+            'phone': forms.TextInput(attrs={'class': 'md-input', 'placeholder': '+225 07 00 00 00 00'}),
+            'email': forms.EmailInput(attrs={'class': 'md-input bg-slate-100 text-slate-500 cursor-not-allowed', 'readonly': 'readonly'}),
+        }
+        labels = {
+            'first_name': _("Prénom"),
+            'last_name': _("Nom"),
+            'phone': _("Numéro WhatsApp / Téléphone"),
+            'email': _("Adresse email (non modifiable)"),
+        }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # S'assurer que l'email ne peut pas être soumis
+        self.fields['email'].disabled = True

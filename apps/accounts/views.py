@@ -1,9 +1,11 @@
 from django.contrib import messages
-from django.contrib.auth import login, logout
+from django.contrib.auth import login, logout, update_session_auth_hash
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.forms import PasswordChangeForm
 from django.shortcuts import redirect, render
 from django.utils.translation import gettext_lazy as _
 
-from apps.accounts.forms import LoginForm, RegisterForm
+from apps.accounts.forms import LoginForm, RegisterForm, UserProfileForm
 
 
 def login_view(request):
@@ -67,3 +69,36 @@ def logout_view(request):
     logout(request)
     messages.info(request, _("Vous avez été déconnecté avec succès."))
     return redirect('accounts:login')
+
+
+@login_required
+def profile_settings_view(request):
+    """
+    Vue de gestion du profil utilisateur et des paramètres de sécurité (mot de passe).
+    """
+    user = request.user
+    
+    if request.method == 'POST':
+        if 'update_profile' in request.POST:
+            profile_form = UserProfileForm(request.POST, instance=user)
+            password_form = PasswordChangeForm(user=user)
+            if profile_form.is_valid():
+                profile_form.save()
+                messages.success(request, _("Vos informations personnelles ont été mises à jour."))
+                return redirect('accounts:settings')
+        elif 'change_password' in request.POST:
+            profile_form = UserProfileForm(instance=user)
+            password_form = PasswordChangeForm(user=user, data=request.POST)
+            if password_form.is_valid():
+                password_form.save()
+                update_session_auth_hash(request, password_form.user)  # Empêche la déconnexion
+                messages.success(request, _("Votre mot de passe a été modifié avec succès."))
+                return redirect('accounts:settings')
+    else:
+        profile_form = UserProfileForm(instance=user)
+        password_form = PasswordChangeForm(user=user)
+
+    return render(request, 'accounts/settings.html', {
+        'profile_form': profile_form,
+        'password_form': password_form,
+    })
