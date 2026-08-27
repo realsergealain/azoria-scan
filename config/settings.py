@@ -34,6 +34,7 @@ ALLOWED_HOSTS = os.environ.get('DJANGO_ALLOWED_HOSTS', '*').split(',')
 # ─────────────────────────────────────────────────────────────
 
 INSTALLED_APPS = [
+    'jazzmin',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -179,3 +180,59 @@ MESSAGE_TAGS = {
 # ─────────────────────────────────────────────────────────────
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# ==========================================
+# JAZZMIN ADMIN THEME
+# ==========================================
+JAZZMIN_SETTINGS = {
+    'site_title': 'Azoria Admin',
+    'site_header': 'Azoria',
+    'site_brand': 'Azoria',
+    'welcome_sign': 'Bienvenue dans le centre de commandement Azoria',
+    'copyright': 'Azoria Technologies',
+    'search_model': ['shop.Shop', 'accounts.User'],
+    'topmenu_links': [
+        {'name': 'Accueil',  'url': 'admin:index', 'permissions': ['auth.view_user']},
+        {'name': 'Voir le site', 'url': '/', 'new_window': True},
+    ],
+    'show_sidebar': True,
+    'navigation_expanded': True,
+    'hide_apps': [],
+    'hide_models': [],
+    'icons': {
+        'auth': 'fas fa-users-cog',
+        'auth.user': 'fas fa-user',
+        'auth.Group': 'fas fa-users',
+        'accounts.User': 'fas fa-user-circle',
+        'shop.Shop': 'fas fa-store',
+        'shop.ShopProduct': 'fas fa-box-open',
+        'shop.Order': 'fas fa-shopping-cart',
+    },
+    'default_icon_parents': 'fas fa-chevron-circle-right',
+    'default_icon_children': 'fas fa-circle',
+    'related_modal_active': True,
+    'custom_css': None,
+    'custom_js': None,
+    'show_ui_builder': False,
+}
+
+JAZZMIN_UI_TWEAKS = {
+    'navbar': 'navbar-dark',
+    'theme': 'flatly',
+    'sidebar': 'sidebar-dark-primary',
+    'sidebar_nav_child_indent': True,
+    'sidebar_nav_compact_style': False,
+    'sidebar_nav_legacy_style': False,
+    'sidebar_nav_flat_style': False,
+    'theme_color': 'default',
+    'accent': 'accent-primary',
+    'button_classes': {
+        'primary': 'btn-primary',
+        'secondary': 'btn-secondary',
+        'info': 'btn-info',
+        'warning': 'btn-warning',
+        'danger': 'btn-danger',
+        'success': 'btn-success'
+    }
+}
+
