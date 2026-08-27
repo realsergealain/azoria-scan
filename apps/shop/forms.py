@@ -11,6 +11,7 @@ class ShopCreateForm(forms.Form):
             'placeholder': 'Ex : Boutique de Fatou ✨',
             'autocomplete': 'off',
             'autofocus': True,
+            'class': 'w-full px-4 py-3 rounded-2xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-brand-500 focus:border-brand-500 text-sm transition-all outline-none',
         }),
         label='Nom de votre boutique',
         error_messages={'required': 'Le nom de la boutique est obligatoire.'},
@@ -22,6 +23,7 @@ class ShopCreateForm(forms.Form):
         widget=forms.Textarea(attrs={
             'placeholder': 'Décrivez brièvement ce que vous vendez… (optionnel)',
             'rows': 3,
+            'class': 'w-full px-4 py-3 rounded-2xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-brand-500 focus:border-brand-500 text-sm transition-all outline-none resize-none',
         }),
         label='Description (facultative)',
     )
