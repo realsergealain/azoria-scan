@@ -4,29 +4,32 @@
 {% block header_title %}Produits{% endblock %}
 
 {% block content %}
-<div class="max-w-6xl mx-auto pb-12 space-y-6">
+<div class="space-y-6" x-data="{ shareModalOpen: false, shareProduct: null, linkCopied: false }">
     
     <!-- Top Header -->
-    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white dark:bg-slate-900 p-5 sm:p-6 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-sm">
         <div>
-            <h1 class="font-heading text-2xl font-extrabold text-slate-900 dark:text-white tracking-tight">Catalogue de Produits</h1>
-            <p class="text-sm text-slate-500 mt-1">Boutique : <span class="font-bold text-brand-600 dark:text-brand-400">{{ shop.name }}</span></p>
+            <h1 class="font-heading font-extrabold text-2xl sm:text-3xl text-slate-900 dark:text-white tracking-tight">Catalogue de Produits</h1>
+            <p class="text-xs sm:text-sm text-slate-500 mt-1">Boutique : <span class="font-bold text-brand-600 dark:text-brand-400">{{ shop.name }}</span> ({{ products.count }} article{{ products.count|pluralize }})</p>
         </div>
-        <button hx-get="{% url 'shop:product_create' %}" hx-target="#modal-container" 
-                class="inline-flex items-center gap-2 px-5 py-2.5 rounded-2xl bg-brand-600 hover:bg-brand-700 text-white font-bold text-xs sm:text-sm shadow-md transition-all active:scale-95">
-            <i data-lucide="plus" class="w-4 h-4"></i>
-            <span>Ajouter un produit</span>
-        </button>
+        
+        <div class="flex items-center gap-2">
+            <button hx-get="{% url 'shop:product_create' %}" hx-target="#modal-container" 
+                    class="inline-flex items-center gap-2 px-5 py-2.5 rounded-2xl bg-brand-600 hover:bg-brand-700 text-white font-bold text-xs sm:text-sm shadow-md transition-all active:scale-95">
+                <i data-lucide="plus" class="w-4 h-4"></i>
+                <span>Ajouter un produit</span>
+            </button>
+        </div>
     </div>
 
-    <!-- Product Grid -->
+    <!-- Product Grid (Fluid Multi-column) -->
     {% if products %}
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
         {% for product in products %}
-        <div class="bg-white dark:bg-slate-800 rounded-3xl border border-slate-200 dark:border-slate-700 shadow-sm overflow-hidden flex flex-col justify-between hover:shadow-md transition-all group relative">
+        <div class="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden flex flex-col justify-between hover:shadow-md transition-all group relative">
             
             <!-- Top Image Container -->
-            <div class="aspect-square bg-slate-100 dark:bg-slate-900/60 relative overflow-hidden">
+            <div class="aspect-square bg-slate-100 dark:bg-slate-800/60 relative overflow-hidden">
                 {% if product.image %}
                     <img src="{{ product.image.url }}" alt="{{ product.name }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
                 {% else %}
@@ -38,25 +41,38 @@
 
                 <!-- Discount Badge -->
                 {% if product.discount_percent > 0 %}
-                <span class="absolute top-3 left-3 bg-rose-500 text-white text-[10px] font-extrabold px-2 py-0.5 rounded-md shadow-md">
+                <span class="absolute top-3 left-3 bg-rose-500 text-white text-[10px] font-extrabold px-2.5 py-0.5 rounded-lg shadow-md">
                     -{{ product.discount_percent }}%
                 </span>
                 {% endif %}
 
-                <!-- Actions Dropdown (Alpine) -->
+                <!-- Action Menu (Alpine) -->
                 <div x-data="{ open: false }" @click.outside="open = false" class="absolute top-3 right-3 z-20">
                     <button @click="open = !open" class="p-2 rounded-xl bg-white/90 dark:bg-slate-800/90 shadow-md text-slate-700 dark:text-slate-200 hover:bg-white backdrop-blur-sm transition-colors focus:outline-none">
                         <i data-lucide="more-vertical" class="w-4 h-4"></i>
                     </button>
-                    <div x-show="open" x-transition x-cloak class="absolute right-0 mt-1.5 w-48 bg-white dark:bg-slate-800 rounded-2xl shadow-xl border border-slate-100 dark:border-slate-700 overflow-hidden text-xs font-semibold z-30 divide-y divide-slate-100 dark:divide-slate-700">
+                    
+                    <div x-show="open" x-transition x-cloak class="absolute right-0 mt-1.5 w-52 bg-white dark:bg-slate-800 rounded-2xl shadow-2xl border border-slate-100 dark:border-slate-700 overflow-hidden text-xs font-semibold z-30 divide-y divide-slate-100 dark:divide-slate-700">
+                        <!-- Quick Share Trigger -->
+                        <button @click="shareProduct = { id: '{{ product.uuid }}', name: '{{ product.name|escapejs }}', price: '{{ product.price|floatformat:0 }}', qrUrl: '{% url 'shop:product_qr' product.uuid %}', directUrl: '{{ request.scheme }}://{{ request.get_host }}{% url 'shop:detail' shop.uuid shop.slug %}?product={{ product.uuid }}' }; shareModalOpen = true; open = false;"
+                                class="w-full flex items-center gap-2.5 px-4 py-2.5 text-brand-600 dark:text-brand-400 hover:bg-brand-50 dark:hover:bg-slate-700 text-left">
+                            <i data-lucide="share-2" class="w-4 h-4"></i>
+                            <span>Partager l'article</span>
+                        </button>
+                        
+                        <!-- QR Code Direct Download -->
                         <a href="{% url 'shop:product_qr' product.uuid %}" download="qr_{{ product.slug }}.png" class="flex items-center gap-2.5 px-4 py-2.5 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700">
                             <i data-lucide="qr-code" class="w-4 h-4 text-purple-600"></i>
                             <span>Télécharger QR Code</span>
                         </a>
+                        
+                        <!-- Modify HTMX -->
                         <button hx-get="{% url 'shop:product_update' product.uuid %}" hx-target="#modal-container" @click="open = false" class="w-full flex items-center gap-2.5 px-4 py-2.5 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700 text-left">
-                            <i data-lucide="edit-2" class="w-4 h-4 text-brand-600"></i>
+                            <i data-lucide="edit-2" class="w-4 h-4 text-slate-500"></i>
                             <span>Modifier</span>
                         </button>
+                        
+                        <!-- Delete HTMX -->
                         <button hx-get="{% url 'shop:product_delete' product.uuid %}" hx-target="#modal-container" @click="open = false" class="w-full flex items-center gap-2.5 px-4 py-2.5 text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-900/20 text-left">
                             <i data-lucide="trash-2" class="w-4 h-4"></i>
                             <span>Supprimer</span>
@@ -66,13 +82,13 @@
             </div>
 
             <!-- Details Content -->
-            <div class="p-4 space-y-2 flex-1 flex flex-col justify-between">
+            <div class="p-4 space-y-2.5 flex-1 flex flex-col justify-between">
                 <div>
                     <span class="text-[10px] font-extrabold text-brand-600 dark:text-brand-400 uppercase tracking-wider">{{ product.category|default:"Article" }}</span>
                     <h3 class="font-bold text-slate-900 dark:text-white text-sm line-clamp-1 leading-snug mt-0.5">{{ product.name }}</h3>
                 </div>
 
-                <div class="flex items-baseline justify-between pt-1 border-t border-slate-100 dark:border-slate-700">
+                <div class="flex items-baseline justify-between pt-2 border-t border-slate-100 dark:border-slate-800">
                     <div class="flex items-baseline gap-1.5">
                         <span class="font-heading font-extrabold text-slate-900 dark:text-white text-base">{{ product.price|floatformat:0 }} FCFA</span>
                         {% if product.compare_price %}
@@ -90,6 +106,15 @@
                     </span>
                     {% endif %}
                 </div>
+
+                <!-- Quick Share Footer Bar -->
+                <div class="pt-2 flex items-center gap-2">
+                    <button @click="shareProduct = { id: '{{ product.uuid }}', name: '{{ product.name|escapejs }}', price: '{{ product.price|floatformat:0 }}', qrUrl: '{% url 'shop:product_qr' product.uuid %}', directUrl: '{{ request.scheme }}://{{ request.get_host }}{% url 'shop:detail' shop.uuid shop.slug %}?product={{ product.uuid }}' }; shareModalOpen = true;"
+                            class="w-full py-2 px-3 rounded-xl bg-slate-50 dark:bg-slate-800 hover:bg-brand-50 text-slate-700 dark:text-slate-300 hover:text-brand-600 text-xs font-bold flex items-center justify-center gap-1.5 transition-colors border border-slate-200/80 dark:border-slate-700">
+                        <i data-lucide="share-2" class="w-3.5 h-3.5"></i>
+                        <span>Partager le lien</span>
+                    </button>
+                </div>
             </div>
 
         </div>
@@ -97,14 +122,14 @@
     </div>
     {% else %}
     <!-- Empty State -->
-    <div class="text-center py-20 bg-white dark:bg-slate-800 rounded-3xl border border-slate-200 dark:border-slate-700 border-dashed p-8">
-        <div class="w-16 h-16 bg-brand-50 dark:bg-slate-700 rounded-2xl flex items-center justify-center mx-auto mb-4">
+    <div class="text-center py-20 bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 border-dashed p-8">
+        <div class="w-16 h-16 bg-brand-50 dark:bg-slate-800 rounded-2xl flex items-center justify-center mx-auto mb-4">
             <i data-lucide="package-plus" class="w-8 h-8 text-brand-500"></i>
         </div>
         <h3 class="font-heading font-bold text-lg text-slate-900 dark:text-white mb-1">Aucun produit dans le catalogue</h3>
         <p class="text-xs text-slate-500 max-w-sm mx-auto mb-5">Ajoutez vos premiers articles avec photos et descriptions vendeuses en 1 clic grâce à Azoria AI !</p>
         <button hx-get="{% url 'shop:product_create' %}" hx-target="#modal-container" 
-                class="inline-flex items-center gap-2 px-5 py-2.5 rounded-2xl bg-brand-600 text-white text-xs font-bold shadow-md hover:bg-brand-700 transition-all">
+                class="inline-flex items-center gap-2 px-6 py-3 rounded-2xl bg-brand-600 text-white text-xs font-bold shadow-md hover:bg-brand-700 transition-all">
             <i data-lucide="plus" class="w-4 h-4"></i>
             <span>Ajouter mon premier produit</span>
         </button>
@@ -113,5 +138,70 @@
     
     <!-- Modal Container for HTMX partials -->
     <div id="modal-container"></div>
+
+    <!-- PRODUCT SHARE MODAL (Alpine) -->
+    <div x-show="shareModalOpen" x-cloak class="fixed inset-0 z-50 flex items-center justify-center p-4">
+        <!-- Backdrop -->
+        <div x-show="shareModalOpen" x-transition.opacity class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm" @click="shareModalOpen = false"></div>
+        
+        <!-- Modal Card -->
+        <div x-show="shareModalOpen" x-transition 
+             class="relative w-full max-w-md bg-white dark:bg-slate-900 rounded-3xl p-6 shadow-2xl z-10 border border-slate-100 dark:border-slate-800 space-y-5">
+            
+            <div class="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800">
+                <div class="flex items-center gap-2.5">
+                    <div class="w-8 h-8 rounded-xl bg-brand-50 text-brand-600 flex items-center justify-center font-bold">
+                        <i data-lucide="share-2" class="w-4 h-4"></i>
+                    </div>
+                    <h3 class="font-heading font-bold text-base text-slate-900 dark:text-white">Partager cet article</h3>
+                </div>
+                <button @click="shareModalOpen = false" class="p-1 text-slate-400 hover:text-slate-600">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+
+            <template x-if="shareProduct">
+                <div class="space-y-4">
+                    <div class="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-700 text-xs">
+                        <h4 class="font-bold text-slate-900 dark:text-white" x-text="shareProduct.name"></h4>
+                        <p class="font-extrabold text-brand-600 dark:text-brand-400 mt-0.5" x-text="shareProduct.price + ' FCFA'"></p>
+                    </div>
+
+                    <!-- Direct Link Copy Box -->
+                    <div>
+                        <label class="block text-[11px] font-bold text-slate-700 dark:text-slate-300 mb-1">Lien direct de l'article :</label>
+                        <div class="flex items-center gap-2">
+                            <input type="text" readonly :value="shareProduct.directUrl" 
+                                   class="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs font-mono text-slate-600 dark:text-slate-300 outline-none">
+                            <button @click="navigator.clipboard.writeText(shareProduct.directUrl); linkCopied = true; setTimeout(() => linkCopied = false, 2500);" 
+                                    class="px-4 py-2 rounded-xl bg-brand-600 hover:bg-brand-700 text-white font-bold text-xs shrink-0 transition-colors shadow-sm">
+                                <span x-text="linkCopied ? 'Copié ! ✨' : 'Copier'"></span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Action Buttons: WhatsApp & QR Download -->
+                    <div class="grid grid-cols-2 gap-3 pt-2">
+                        <!-- Share on WhatsApp -->
+                        <a :href="'https://wa.me/?text=' + encodeURIComponent('🔥 Découvrez ' + shareProduct.name + ' (' + shareProduct.price + ' FCFA) sur notre boutique en ligne : ' + shareProduct.directUrl)" 
+                           target="_blank"
+                           class="py-3 px-4 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs flex items-center justify-center gap-1.5 shadow-sm transition-colors">
+                            <i data-lucide="message-circle" class="w-4 h-4"></i>
+                            <span>WhatsApp</span>
+                        </a>
+
+                        <!-- Download QR -->
+                        <a :href="shareProduct.qrUrl" 
+                           :download="'qr_' + shareProduct.name + '.png'"
+                           class="py-3 px-4 rounded-2xl bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-bold text-xs flex items-center justify-center gap-1.5 shadow-sm hover:bg-slate-800 transition-colors">
+                            <i data-lucide="download" class="w-4 h-4"></i>
+                            <span>QR Code HD</span>
+                        </a>
+                    </div>
+                </div>
+            </template>
+        </div>
+    </div>
+
 </div>
 {% endblock %}
