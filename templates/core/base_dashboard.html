@@ -249,8 +249,8 @@
         <nav class="lg:hidden fixed bottom-0 left-0 right-0 z-50 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border-t border-slate-200/80 dark:border-slate-800 flex justify-around items-center py-2 px-1 shadow-2xl pb-safe">
             <!-- 1. Accueil -->
             <a href="{% url 'core:dashboard' %}" 
-               class="flex flex-col items-center gap-1 py-1 px-3 rounded-2xl transition-all {% if request.resolver_match.url_name == 'dashboard' %}text-brand-600 dark:text-brand-400 font-extrabold{% else %}text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 font-medium{% endif %}">
-                <div class="p-1 rounded-xl {% if request.resolver_match.url_name == 'dashboard' %}bg-brand-50 dark:bg-brand-900/30{% endif %}">
+               class="flex flex-col items-center gap-1 py-1 px-3 rounded-2xl transition-all {% if request.resolver_match.url_name == 'dashboard' %}text-brand-700 dark:text-brand-400 font-extrabold{% else %}text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 font-medium{% endif %}">
+                <div class="p-1.5 rounded-xl transition-all {% if request.resolver_match.url_name == 'dashboard' %}bg-brand-100 dark:bg-brand-900/40 shadow-sm{% else %}bg-transparent{% endif %}">
                     <i data-lucide="layout-dashboard" class="w-5 h-5"></i>
                 </div>
                 <span class="text-[10px]">Accueil</span>
@@ -258,8 +258,8 @@
 
             <!-- 2. Produits -->
             <a href="{% url 'shop:product_list' %}" 
-               class="flex flex-col items-center gap-1 py-1 px-3 rounded-2xl transition-all {% if 'produits' in request.path %}text-brand-600 dark:text-brand-400 font-extrabold{% else %}text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 font-medium{% endif %}">
-                <div class="p-1 rounded-xl {% if 'produits' in request.path %}bg-brand-50 dark:bg-brand-900/30{% endif %}">
+               class="flex flex-col items-center gap-1 py-1 px-3 rounded-2xl transition-all {% if 'produits' in request.path %}text-brand-700 dark:text-brand-400 font-extrabold{% else %}text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 font-medium{% endif %}">
+                <div class="p-1.5 rounded-xl transition-all {% if 'produits' in request.path %}bg-brand-100 dark:bg-brand-900/40 shadow-sm{% else %}bg-transparent{% endif %}">
                     <i data-lucide="package" class="w-5 h-5"></i>
                 </div>
                 <span class="text-[10px]">Produits</span>
@@ -267,8 +267,8 @@
 
             <!-- 3. Commandes -->
             <a href="{% url 'shop:order_list' %}" 
-               class="flex flex-col items-center gap-1 py-1 px-3 rounded-2xl transition-all {% if 'commandes' in request.path %}text-brand-600 dark:text-brand-400 font-extrabold{% else %}text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 font-medium{% endif %}">
-                <div class="p-1 rounded-xl {% if 'commandes' in request.path %}bg-brand-50 dark:bg-brand-900/30{% endif %}">
+               class="flex flex-col items-center gap-1 py-1 px-3 rounded-2xl transition-all {% if 'commandes' in request.path %}text-brand-700 dark:text-brand-400 font-extrabold{% else %}text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 font-medium{% endif %}">
+                <div class="p-1.5 rounded-xl transition-all {% if 'commandes' in request.path %}bg-brand-100 dark:bg-brand-900/40 shadow-sm{% else %}bg-transparent{% endif %}">
                     <i data-lucide="shopping-cart" class="w-5 h-5"></i>
                 </div>
                 <span class="text-[10px]">Commandes</span>
@@ -276,8 +276,8 @@
 
             <!-- 4. QR Studio -->
             <a href="{% url 'shop:qr_studio' %}" 
-               class="flex flex-col items-center gap-1 py-1 px-3 rounded-2xl transition-all {% if 'qr-codes' in request.path %}text-brand-600 dark:text-brand-400 font-extrabold{% else %}text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 font-medium{% endif %}">
-                <div class="p-1 rounded-xl {% if 'qr-codes' in request.path %}bg-brand-50 dark:bg-brand-900/30{% endif %}">
+               class="flex flex-col items-center gap-1 py-1 px-3 rounded-2xl transition-all {% if 'qr-codes' in request.path %}text-brand-700 dark:text-brand-400 font-extrabold{% else %}text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 font-medium{% endif %}">
+                <div class="p-1.5 rounded-xl transition-all {% if 'qr-codes' in request.path %}bg-brand-100 dark:bg-brand-900/40 shadow-sm{% else %}bg-transparent{% endif %}">
                     <i data-lucide="qr-code" class="w-5 h-5"></i>
                 </div>
                 <span class="text-[10px]">QR Code</span>
@@ -285,8 +285,8 @@
 
             <!-- 5. Paramètres -->
             <a href="{% url 'accounts:settings' %}" 
-               class="flex flex-col items-center gap-1 py-1 px-3 rounded-2xl transition-all {% if 'mon-compte/parametres' in request.path or 'boutique/parametres' in request.path %}text-brand-600 dark:text-brand-400 font-extrabold{% else %}text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 font-medium{% endif %}">
-                <div class="p-1 rounded-xl {% if 'mon-compte/parametres' in request.path or 'boutique/parametres' in request.path %}bg-brand-50 dark:bg-brand-900/30{% endif %}">
+               class="flex flex-col items-center gap-1 py-1 px-3 rounded-2xl transition-all {% if 'mon-compte/parametres' in request.path or 'boutique/parametres' in request.path %}text-brand-700 dark:text-brand-400 font-extrabold{% else %}text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 font-medium{% endif %}">
+                <div class="p-1.5 rounded-xl transition-all {% if 'mon-compte/parametres' in request.path or 'boutique/parametres' in request.path %}bg-brand-100 dark:bg-brand-900/40 shadow-sm{% else %}bg-transparent{% endif %}">
                     <i data-lucide="settings" class="w-5 h-5"></i>
                 </div>
                 <span class="text-[10px]">Paramètres</span>
