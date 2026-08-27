@@ -24,7 +24,8 @@
         <!-- Main Hero Title -->
         <h1 class="font-heading text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold text-slate-900 tracking-tight leading-[1.15] max-w-4xl mx-auto">
             Tu perds des ventes chaque jour à cause de 
-            <span class="relative inline-block px-4 py-1 mt-1 sm:mt-0 text-white rounded-2xl bg-gradient-to-r from-brand-600 via-brand-500 to-indigo-600 shadow-lg shadow-brand-500/30">
+            <span class="relative inline-block px-4 py-1 mt-1 sm:mt-0 text-white rounded-2xl bg-gradient-to-r from-brand-600 via-pink-500 to-indigo-600 shadow-lg shadow-brand-500/30 overflow-hidden group animate-gradient-x">
+                <span class="absolute inset-0 bg-white/20 translate-x-[-100%] group-hover:animate-shimmer skew-x-12"></span>
                 WhatsApp
                 <!-- Floating mini tag -->
                 <span class="absolute -top-3 -right-3 hidden sm:inline-flex items-center text-[10px] font-bold px-2 py-0.5 bg-pink-500 text-white rounded-full shadow-md animate-pulse">
@@ -80,10 +81,10 @@
         </div>
 
         <!-- HERO SHOWCASE: Smartphone Mockup & Floating Glass Cards (Matching Reference Visual) -->
-        <div id="demo-preview" class="relative mt-14 max-w-4xl mx-auto pt-6 pb-10">
+        <div id="demo-preview" class="relative mt-14 max-w-4xl mx-auto pt-6 pb-10 parallax-container">
             
             <!-- Floating Left Card: Orders / History -->
-            <div class="hidden md:block absolute -left-6 top-16 z-20 w-72 glass-card rounded-2xl p-4 text-left animate-float-1">
+            <div class="hidden md:block absolute -left-6 top-16 z-20 w-72 glass-card rounded-2xl p-4 text-left animate-float-1 parallax-layer" data-speed="0.04">
                 <div class="flex items-center justify-between pb-3 border-b border-slate-100">
                     <div class="flex items-center gap-2">
                         <div class="w-7 h-7 rounded-lg bg-brand-100 text-brand-600 flex items-center justify-center">
@@ -130,7 +131,7 @@
             </div>
 
             <!-- Floating Right Card: Revenue / Stats -->
-            <div class="hidden md:block absolute -right-6 top-24 z-20 w-64 glass-card rounded-2xl p-4 text-left animate-float-2">
+            <div class="hidden md:block absolute -right-6 top-24 z-20 w-64 glass-card rounded-2xl p-4 text-left animate-float-2 parallax-layer" data-speed="-0.03">
                 <div class="flex items-center gap-2 pb-2">
                     <div class="w-7 h-7 rounded-lg bg-emerald-100 text-emerald-600 flex items-center justify-center">
                         <i data-lucide="trending-up" class="w-4 h-4"></i>
@@ -160,7 +161,7 @@
             </div>
 
             <!-- Floating Bottom-Right Pill: Azoria AI Badge -->
-            <div class="hidden sm:inline-flex items-center gap-2 absolute -bottom-2 right-12 z-20 px-4 py-2 rounded-2xl glass-card border border-brand-200 shadow-lg text-left animate-float-3">
+            <div class="hidden sm:inline-flex items-center gap-2 absolute -bottom-2 right-12 z-20 px-4 py-2 rounded-2xl glass-card border border-brand-200 shadow-lg text-left animate-float-3 parallax-layer" data-speed="0.05">
                 <div class="w-7 h-7 rounded-xl bg-gradient-to-tr from-pink-500 to-purple-600 text-white flex items-center justify-center text-xs">
                     <i data-lucide="sparkles" class="w-3.5 h-3.5"></i>
                 </div>
@@ -326,8 +327,8 @@
     <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
             {% for stat in stats %}
-            <div class="reveal-on-scroll p-6 rounded-2xl bg-white border border-purple-100/70 shadow-sm">
-                <div class="font-heading font-extrabold text-3xl sm:text-4xl text-brand-700 tracking-tight">{{ stat.value }}</div>
+            <div class="reveal-on-scroll p-6 rounded-2xl bg-white border border-purple-100/70 shadow-sm transition-transform hover:-translate-y-1 hover:shadow-md">
+                <div class="font-heading font-extrabold text-3xl sm:text-4xl text-brand-700 tracking-tight stat-counter" data-val="{{ stat.value }}">{{ stat.value }}</div>
                 <div class="text-xs sm:text-sm font-medium text-slate-600 mt-1">{{ stat.label }}</div>
             </div>
             {% endfor %}
@@ -857,4 +858,94 @@
         </div>
     </div>
 </section>
+
+<!-- Animation & Interactions Script -->
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    // 1. Scroll Reveal Observer
+    const observerOptions = { root: null, rootMargin: '0px', threshold: 0.15 };
+    const revealObserver = new IntersectionObserver((entries, observer) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('revealed');
+                observer.unobserve(entry.target);
+            }
+        });
+    }, observerOptions);
+
+    document.querySelectorAll('.reveal-on-scroll').forEach(el => revealObserver.observe(el));
+
+    // 2. Animated Stats Counters
+    const statObserver = new IntersectionObserver((entries, observer) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                const el = entry.target;
+                const originalText = el.getAttribute('data-val');
+                // Extract only numbers for the counter
+                const numStr = originalText.replace(/[^0-9]/g, '');
+                if (numStr) {
+                    const targetNum = parseInt(numStr, 10);
+                    // Extract non-number prefix/suffix
+                    const prefix = originalText.replace(/[0-9].*/, '');
+                    const suffix = originalText.replace(/.*[0-9]/, '');
+                    
+                    let start = 0;
+                    const duration = 2000;
+                    const startTime = performance.now();
+                    
+                    const updateCounter = (currentTime) => {
+                        const elapsedTime = currentTime - startTime;
+                        if (elapsedTime < duration) {
+                            // easeOutExpo
+                            const progress = (elapsedTime / duration);
+                            const easeOut = progress === 1 ? 1 : 1 - Math.pow(2, -10 * progress);
+                            const currentNum = Math.floor(easeOut * targetNum);
+                            
+                            // Format with spaces
+                            el.innerText = prefix + currentNum.toLocaleString('fr-FR') + suffix;
+                            requestAnimationFrame(updateCounter);
+                        } else {
+                            el.innerText = originalText;
+                        }
+                    };
+                    requestAnimationFrame(updateCounter);
+                }
+                observer.unobserve(el);
+            }
+        });
+    }, observerOptions);
+
+    document.querySelectorAll('.stat-counter').forEach(el => statObserver.observe(el));
+
+    // 3. Mouse Parallax for Hero
+    const parallaxContainer = document.querySelector('.parallax-container');
+    const parallaxLayers = document.querySelectorAll('.parallax-layer');
+
+    if (parallaxContainer && parallaxLayers.length > 0) {
+        parallaxContainer.addEventListener('mousemove', (e) => {
+            const rect = parallaxContainer.getBoundingClientRect();
+            // Calculate mouse position relative to center of container
+            const x = e.clientX - rect.left - rect.width / 2;
+            const y = e.clientY - rect.top - rect.height / 2;
+
+            parallaxLayers.forEach(layer => {
+                const speed = parseFloat(layer.getAttribute('data-speed')) || 0.05;
+                const moveX = x * speed;
+                const moveY = y * speed;
+                layer.style.transform = `translate(${moveX}px, ${moveY}px)`;
+            });
+        });
+        
+        parallaxContainer.addEventListener('mouseleave', () => {
+            parallaxLayers.forEach(layer => {
+                layer.style.transform = `translate(0, 0)`;
+                layer.style.transition = 'transform 0.5s ease-out';
+            });
+            setTimeout(() => {
+                parallaxLayers.forEach(layer => layer.style.transition = '');
+            }, 500);
+        });
+    }
+});
+</script>
 {% endblock %}
