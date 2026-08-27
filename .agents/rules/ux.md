@@ -1,5 +1,5 @@
 ---
-trigger: always_on
+trigger: glob
 ---
 
 ## 🎨 17. EXCELLENCE UI/UX & DESIGN SYSTEM (TAILWIND + ALPINE)
