@@ -1,0 +1,165 @@
+{% extends 'core/base_dashboard.html' %}
+
+{% block title %}Gestion des Commandes — Azoria{% endblock %}
+{% block header_title %}Commandes{% endblock %}
+
+{% block content %}
+<div class="max-w-6xl mx-auto pb-12 space-y-6" x-data="{ currentTab: '{{ status_filter|default:'all' }}' }">
+    
+    <!-- Top Header & Summary -->
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+            <h1 class="font-heading text-2xl font-extrabold text-slate-900 dark:text-white tracking-tight">Suivi des Commandes</h1>
+            <p class="text-sm text-slate-500 mt-1">Gérez vos expéditions, contactez vos clients et suivez vos encaissements.</p>
+        </div>
+
+        <div class="flex items-center gap-2">
+            <span class="px-3.5 py-1.5 rounded-full bg-brand-50 dark:bg-slate-800 border border-brand-200 dark:border-slate-700 text-brand-700 dark:text-brand-400 font-extrabold text-xs">
+                Total : {{ orders.count }} commande{{ orders.count|pluralize }}
+            </span>
+        </div>
+    </div>
+
+    <!-- Status Tabs (Horizontal Scrolling on Mobile) -->
+    <div class="flex items-center gap-2 overflow-x-auto pb-1 no-scrollbar border-b border-slate-200 dark:border-slate-700">
+        <a href="{% url 'shop:order_list' %}" 
+           class="px-4 py-2.5 rounded-t-xl text-xs font-bold whitespace-nowrap transition-colors flex items-center gap-2 {% if not status_filter %}border-b-2 border-brand-500 text-brand-600 dark:text-brand-400 bg-brand-50/50 dark:bg-slate-800{% else %}text-slate-500 hover:text-slate-900 dark:hover:text-white{% endif %}">
+            <span>Toutes</span>
+            <span class="px-1.5 py-0.5 rounded-md bg-slate-200 dark:bg-slate-700 text-[10px]">{{ all_count }}</span>
+        </a>
+        <a href="{% url 'shop:order_list' %}?status=pending" 
+           class="px-4 py-2.5 rounded-t-xl text-xs font-bold whitespace-nowrap transition-colors flex items-center gap-2 {% if status_filter == 'pending' %}border-b-2 border-amber-500 text-amber-600 bg-amber-50/50 dark:bg-slate-800{% else %}text-slate-500 hover:text-slate-900 dark:hover:text-white{% endif %}">
+            <span class="w-2 h-2 rounded-full bg-amber-500"></span>
+            <span>Reçues</span>
+            <span class="px-1.5 py-0.5 rounded-md bg-amber-100 text-amber-800 text-[10px]">{{ pending_count }}</span>
+        </a>
+        <a href="{% url 'shop:order_list' %}?status=confirmed" 
+           class="px-4 py-2.5 rounded-t-xl text-xs font-bold whitespace-nowrap transition-colors flex items-center gap-2 {% if status_filter == 'confirmed' %}border-b-2 border-blue-500 text-blue-600 bg-blue-50/50 dark:bg-slate-800{% else %}text-slate-500 hover:text-slate-900 dark:hover:text-white{% endif %}">
+            <span class="w-2 h-2 rounded-full bg-blue-500"></span>
+            <span>Confirmées</span>
+            <span class="px-1.5 py-0.5 rounded-md bg-blue-100 text-blue-800 text-[10px]">{{ confirmed_count }}</span>
+        </a>
+        <a href="{% url 'shop:order_list' %}?status=shipped" 
+           class="px-4 py-2.5 rounded-t-xl text-xs font-bold whitespace-nowrap transition-colors flex items-center gap-2 {% if status_filter == 'shipped' %}border-b-2 border-purple-500 text-purple-600 bg-purple-50/50 dark:bg-slate-800{% else %}text-slate-500 hover:text-slate-900 dark:hover:text-white{% endif %}">
+            <span class="w-2 h-2 rounded-full bg-purple-500"></span>
+            <span>En livraison</span>
+            <span class="px-1.5 py-0.5 rounded-md bg-purple-100 text-purple-800 text-[10px]">{{ shipped_count }}</span>
+        </a>
+        <a href="{% url 'shop:order_list' %}?status=delivered" 
+           class="px-4 py-2.5 rounded-t-xl text-xs font-bold whitespace-nowrap transition-colors flex items-center gap-2 {% if status_filter == 'delivered' %}border-b-2 border-emerald-500 text-emerald-600 bg-emerald-50/50 dark:bg-slate-800{% else %}text-slate-500 hover:text-slate-900 dark:hover:text-white{% endif %}">
+            <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+            <span>Livrées</span>
+            <span class="px-1.5 py-0.5 rounded-md bg-emerald-100 text-emerald-800 text-[10px]">{{ delivered_count }}</span>
+        </a>
+        <a href="{% url 'shop:order_list' %}?status=cancelled" 
+           class="px-4 py-2.5 rounded-t-xl text-xs font-bold whitespace-nowrap transition-colors flex items-center gap-2 {% if status_filter == 'cancelled' %}border-b-2 border-rose-500 text-rose-600 bg-rose-50/50 dark:bg-slate-800{% else %}text-slate-500 hover:text-slate-900 dark:hover:text-white{% endif %}">
+            <span class="w-2 h-2 rounded-full bg-rose-500"></span>
+            <span>Annulées</span>
+            <span class="px-1.5 py-0.5 rounded-md bg-rose-100 text-rose-800 text-[10px]">{{ cancelled_count }}</span>
+        </a>
+    </div>
+
+    <!-- Orders Cards Grid / List -->
+    {% if orders %}
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {% for order in orders %}
+        <div class="bg-white dark:bg-slate-800 rounded-3xl p-5 border border-slate-200 dark:border-slate-700 shadow-sm hover:shadow-md transition-all flex flex-col justify-between space-y-4 relative" id="order-card-{{ order.uuid }}">
+            
+            <!-- Order Card Header -->
+            <div class="flex items-start justify-between gap-3">
+                <div>
+                    <div class="flex items-center gap-2">
+                        <span class="font-heading font-extrabold text-base text-slate-900 dark:text-white">{{ order.order_number }}</span>
+                        <span class="text-[10px] text-slate-400 font-medium">{{ order.created_at|date:"d M H:i" }}</span>
+                    </div>
+                    <div class="font-bold text-sm text-slate-800 dark:text-slate-200 mt-1 flex items-center gap-1.5">
+                        <i data-lucide="user" class="w-3.5 h-3.5 text-slate-400"></i>
+                        <span>{{ order.customer_name }}</span>
+                    </div>
+                </div>
+
+                <!-- Status Badge -->
+                <span class="px-2.5 py-1 rounded-full text-[11px] font-extrabold 
+                    {% if order.status == 'pending' %}bg-amber-50 text-amber-700 border border-amber-200
+                    {% elif order.status == 'confirmed' %}bg-blue-50 text-blue-700 border border-blue-200
+                    {% elif order.status == 'shipped' %}bg-purple-50 text-purple-700 border border-purple-200
+                    {% elif order.status == 'delivered' %}bg-emerald-50 text-emerald-700 border border-emerald-200
+                    {% else %}bg-rose-50 text-rose-700 border border-rose-200{% endif %}">
+                    {{ order.get_status_display }}
+                </span>
+            </div>
+
+            <!-- Customer Delivery Details -->
+            <div class="p-3 rounded-2xl bg-slate-50 dark:bg-slate-900/50 border border-slate-100 dark:border-slate-700/60 text-xs space-y-1.5 text-slate-600 dark:text-slate-300">
+                <div class="flex items-center gap-1.5 font-semibold text-slate-900 dark:text-white">
+                    <i data-lucide="map-pin" class="w-3.5 h-3.5 text-brand-500 shrink-0"></i>
+                    <span>{{ order.customer_city }} - {{ order.customer_address }}</span>
+                </div>
+                <div class="flex items-center gap-1.5">
+                    <i data-lucide="phone" class="w-3.5 h-3.5 text-slate-400 shrink-0"></i>
+                    <span>{{ order.customer_phone }}</span>
+                </div>
+            </div>
+
+            <!-- Items Ordered List -->
+            <div class="space-y-1 text-xs">
+                <p class="text-[10px] font-bold uppercase tracking-wider text-slate-400">Articles :</p>
+                {% for item in order.items.all %}
+                <div class="flex justify-between text-slate-700 dark:text-slate-300">
+                    <span>{{ item.quantity }}x {{ item.product_name }}</span>
+                    <span class="font-bold">{{ item.total_price|floatformat:0 }} FCFA</span>
+                </div>
+                {% endfor %}
+            </div>
+
+            <!-- Financials & Quick Action Footer -->
+            <div class="pt-3 border-t border-slate-100 dark:border-slate-700 flex flex-col sm:flex-row items-center justify-between gap-3">
+                <div>
+                    <div class="text-[10px] text-slate-400">Total à encaisser :</div>
+                    <div class="font-heading font-extrabold text-base text-brand-600 dark:text-brand-400">{{ order.total_amount|floatformat:0 }} FCFA</div>
+                </div>
+
+                <div class="flex items-center gap-2 w-full sm:w-auto">
+                    <!-- Status Switcher Dropdown (HTMX) -->
+                    <select hx-post="{% url 'shop:order_status_update' order.uuid %}"
+                            hx-target="#order-card-{{ order.uuid }}"
+                            hx-swap="outerHTML"
+                            name="status"
+                            class="px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-600 outline-none">
+                        <option value="pending" {% if order.status == 'pending' %}selected{% endif %}>🟡 Reçue</option>
+                        <option value="confirmed" {% if order.status == 'confirmed' %}selected{% endif %}>🔵 Confirmée</option>
+                        <option value="shipped" {% if order.status == 'shipped' %}selected{% endif %}>🟣 En livraison</option>
+                        <option value="delivered" {% if order.status == 'delivered' %}selected{% endif %}>🟢 Livrée</option>
+                        <option value="cancelled" {% if order.status == 'cancelled' %}selected{% endif %}>🔴 Annulée</option>
+                    </select>
+
+                    <!-- Contact Customer on WhatsApp Button -->
+                    <a href="https://wa.me/{{ order.customer_phone|cut:' '|cut:'+' }}?text=Bonjour%20{{ order.customer_name|urlencode }},%20je%20suis%20le%20vendeur%20de%20la%20boutique%20{{ shop.name|urlencode }}.%20Je%20vous%20contacte%20concernant%20votre%20commande%20{{ order.order_number }}."
+                       target="_blank"
+                       class="p-2 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-white shadow-sm transition-colors"
+                       title="Écrire au client sur WhatsApp">
+                        <i data-lucide="message-circle" class="w-4 h-4"></i>
+                    </a>
+                </div>
+            </div>
+
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <!-- Empty Orders State -->
+    <div class="text-center py-20 bg-white dark:bg-slate-800 rounded-3xl border border-slate-200 dark:border-slate-700 border-dashed p-8">
+        <div class="w-16 h-16 bg-brand-50 dark:bg-slate-700 rounded-2xl flex items-center justify-center mx-auto mb-4">
+            <i data-lucide="shopping-cart" class="w-8 h-8 text-brand-500"></i>
+        </div>
+        <h3 class="font-heading font-bold text-lg text-slate-900 dark:text-white mb-1">Aucune commande trouvée</h3>
+        <p class="text-xs text-slate-500 max-w-sm mx-auto mb-5">Partagez votre lien de boutique ou votre QR code pour commencer à recevoir des commandes !</p>
+        <a href="{% url 'shop:qr_studio' %}" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-brand-600 hover:bg-brand-700 text-white text-xs font-bold shadow-sm transition-colors">
+            <i data-lucide="share-2" class="w-4 h-4"></i>
+            <span>Partager mon QR Code</span>
+        </a>
+    </div>
+    {% endif %}
+
+</div>
+{% endblock %}

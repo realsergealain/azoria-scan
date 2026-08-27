@@ -105,44 +105,41 @@
         <div class="flex-1 overflow-y-auto py-4 px-3 space-y-1">
             <p class="px-3 text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-2 mt-4">Principal</p>
             
-            <a href="{% url 'core:dashboard' %}" class="nav-link {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %} flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-colors">
+            <a href="{% url 'core:dashboard' %}" class="nav-link {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %} flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 hover:text-slate-900 dark:hover:text-white transition-colors">
                 <i data-lucide="layout-dashboard" class="w-5 h-5 text-slate-400"></i>
-                Vue d'ensemble
+                <span>Vue d'ensemble</span>
             </a>
             
-            <a href="#" @click.prevent="showComingSoonModal = true" class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-colors">
+            <a href="{% url 'shop:settings' %}" class="nav-link {% if 'parametres' in request.path and 'boutique' in request.path %}active{% endif %} flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 hover:text-slate-900 dark:hover:text-white transition-colors">
                 <i data-lucide="store" class="w-5 h-5 text-slate-400"></i>
-                Mes Boutiques
+                <span>Mes Boutiques</span>
             </a>
             
-            <a href="{% url 'shop:product_list' %}" class="nav-link {% if 'produits' in request.path %}active{% endif %} flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-colors">
+            <a href="{% url 'shop:product_list' %}" class="nav-link {% if 'produits' in request.path %}active{% endif %} flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 hover:text-slate-900 dark:hover:text-white transition-colors">
                 <i data-lucide="package" class="w-5 h-5 text-slate-400"></i>
-                Produits
+                <span>Produits</span>
             </a>
             
-            <a href="#" @click.prevent="showComingSoonModal = true" class="nav-link flex items-center justify-between px-3 py-2.5 rounded-xl text-sm font-medium text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-colors">
-                <div class="flex items-center gap-3">
-                    <i data-lucide="shopping-cart" class="w-5 h-5 text-slate-400"></i>
-                    Commandes
-                </div>
-                <span class="bg-brand-100 text-brand-700 py-0.5 px-2 rounded-full text-[10px] font-bold">12</span>
+            <a href="{% url 'shop:order_list' %}" class="nav-link {% if 'commandes' in request.path %}active{% endif %} flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 hover:text-slate-900 dark:hover:text-white transition-colors">
+                <i data-lucide="shopping-cart" class="w-5 h-5 text-slate-400"></i>
+                <span>Commandes</span>
             </a>
 
-            <a href="#" @click.prevent="showComingSoonModal = true" class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-colors">
+            <a href="{% url 'shop:customer_list' %}" class="nav-link {% if 'clients' in request.path %}active{% endif %} flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 hover:text-slate-900 dark:hover:text-white transition-colors">
                 <i data-lucide="users" class="w-5 h-5 text-slate-400"></i>
-                Clients
+                <span>Clients</span>
             </a>
 
             <p class="px-3 text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-2 mt-6">Outils</p>
             
-            <a href="#" @click.prevent="showComingSoonModal = true" class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-colors">
+            <a href="{% url 'shop:qr_studio' %}" class="nav-link {% if 'qr-codes' in request.path %}active{% endif %} flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 hover:text-slate-900 dark:hover:text-white transition-colors">
                 <i data-lucide="qr-code" class="w-5 h-5 text-slate-400"></i>
-                QR Codes & Marketing
+                <span>QR Codes & Marketing</span>
             </a>
             
-            <a href="#" @click.prevent="showComingSoonModal = true" class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-colors">
+            <a href="{% url 'accounts:settings' %}" class="nav-link {% if 'mon-compte/parametres' in request.path %}active{% endif %} flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 hover:text-slate-900 dark:hover:text-white transition-colors">
                 <i data-lucide="settings" class="w-5 h-5 text-slate-400"></i>
-                Paramètres
+                <span>Paramètres</span>
             </a>
         </div>
 

@@ -1,84 +1,117 @@
 {% extends 'core/base_dashboard.html' %}
 
-{% block title %}Mes Produits - Azoria{% endblock %}
-{% block header_title %}Mes Produits{% endblock %}
+{% block title %}Mes Produits — Azoria{% endblock %}
+{% block header_title %}Produits{% endblock %}
 
 {% block content %}
-<div class="max-w-6xl mx-auto pb-12">
-    <!-- Header -->
-    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
+<div class="max-w-6xl mx-auto pb-12 space-y-6">
+    
+    <!-- Top Header -->
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-            <h1 class="font-heading text-2xl font-extrabold text-slate-900 dark:text-white tracking-tight">Catalogue Produits</h1>
-            <p class="text-sm text-slate-500 mt-1">Boutique : <span class="font-bold text-brand-600">{{ shop.name }}</span></p>
+            <h1 class="font-heading text-2xl font-extrabold text-slate-900 dark:text-white tracking-tight">Catalogue de Produits</h1>
+            <p class="text-sm text-slate-500 mt-1">Boutique : <span class="font-bold text-brand-600 dark:text-brand-400">{{ shop.name }}</span></p>
         </div>
-        <button hx-get="{% url 'shop:product_create' %}" hx-target="#modal-container" class="inline-flex justify-center items-center gap-2 rounded-xl bg-brand-600 px-5 py-2.5 text-sm font-bold text-white shadow-sm hover:bg-brand-700 focus:outline-none transition-colors">
-            <i data-lucide="plus" class="h-4 w-4"></i>
-            Ajouter un produit
+        <button hx-get="{% url 'shop:product_create' %}" hx-target="#modal-container" 
+                class="inline-flex items-center gap-2 px-5 py-2.5 rounded-2xl bg-brand-600 hover:bg-brand-700 text-white font-bold text-xs sm:text-sm shadow-md transition-all active:scale-95">
+            <i data-lucide="plus" class="w-4 h-4"></i>
+            <span>Ajouter un produit</span>
         </button>
     </div>
 
     <!-- Product Grid -->
     {% if products %}
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
         {% for product in products %}
-        <div class="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm overflow-hidden flex flex-col hover:shadow-md transition-shadow group relative">
+        <div class="bg-white dark:bg-slate-800 rounded-3xl border border-slate-200 dark:border-slate-700 shadow-sm overflow-hidden flex flex-col justify-between hover:shadow-md transition-all group relative">
             
-            <!-- Actions Dropdown (Alpine) -->
-            <div x-data="{ open: false }" @click.outside="open = false" class="absolute top-3 right-3 z-10">
-                <button @click="open = !open" class="p-1.5 rounded-lg bg-white/90 dark:bg-slate-800/90 shadow-sm text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white hover:bg-slate-50 dark:hover:bg-slate-700 backdrop-blur-sm transition-colors focus:outline-none">
-                    <i data-lucide="more-vertical" class="h-4 w-4"></i>
-                </button>
-                <div x-show="open" x-transition x-cloak class="absolute right-0 mt-1 w-48 bg-white dark:bg-slate-800 rounded-xl shadow-lg border border-slate-100 dark:border-slate-700 overflow-hidden text-sm font-medium z-20">
-                    <a href="{% url 'shop:product_qr' product.uuid %}" download="qr_{{ product.slug }}.png" class="w-full flex items-center gap-2 px-3 py-2 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700">
-                        <i data-lucide="qr-code" class="h-4 w-4"></i> QR Code
-                    </a>
-                    <button hx-get="{% url 'shop:product_update' product.uuid %}" hx-target="#modal-container" @click="open = false" class="w-full flex items-center gap-2 px-3 py-2 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700">
-                        <i data-lucide="edit-2" class="h-4 w-4"></i> Modifier
-                    </button>
-                    <button hx-get="{% url 'shop:product_delete' product.uuid %}" hx-target="#modal-container" @click="open = false" class="w-full flex items-center gap-2 px-3 py-2 text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-900/20">
-                        <i data-lucide="trash" class="h-4 w-4"></i> Supprimer
-                    </button>
-                </div>
-            </div>
-
-            <!-- Image -->
-            <div class="aspect-square bg-slate-100 dark:bg-slate-700 flex-shrink-0 relative overflow-hidden group-hover:opacity-90 transition-opacity">
+            <!-- Top Image Container -->
+            <div class="aspect-square bg-slate-100 dark:bg-slate-900/60 relative overflow-hidden">
                 {% if product.image %}
-                    <img src="{{ product.image.url }}" alt="{{ product.name }}" class="w-full h-full object-cover">
+                    <img src="{{ product.image.url }}" alt="{{ product.name }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
                 {% else %}
-                    <div class="w-full h-full flex flex-col items-center justify-center text-slate-400 dark:text-slate-500">
-                        <i data-lucide="image" class="h-10 w-10 mb-2 opacity-50"></i>
-                        <span class="text-xs font-medium">Pas d'image</span>
+                    <div class="w-full h-full flex flex-col items-center justify-center text-slate-300 dark:text-slate-600">
+                        <i data-lucide="package" class="w-12 h-12 mb-1"></i>
+                        <span class="text-[10px] font-bold uppercase">Sans image</span>
                     </div>
                 {% endif %}
-            </div>
 
-            <!-- Details -->
-            <div class="p-4 flex-1 flex flex-col justify-between">
-                <h3 class="font-bold text-slate-900 dark:text-white line-clamp-2 leading-tight mb-2">{{ product.name }}</h3>
-                <div class="flex items-center justify-between">
-                    <span class="font-heading font-extrabold text-brand-600 dark:text-brand-400 text-lg">{{ product.price }} FCFA</span>
+                <!-- Discount Badge -->
+                {% if product.discount_percent > 0 %}
+                <span class="absolute top-3 left-3 bg-rose-500 text-white text-[10px] font-extrabold px-2 py-0.5 rounded-md shadow-md">
+                    -{{ product.discount_percent }}%
+                </span>
+                {% endif %}
+
+                <!-- Actions Dropdown (Alpine) -->
+                <div x-data="{ open: false }" @click.outside="open = false" class="absolute top-3 right-3 z-20">
+                    <button @click="open = !open" class="p-2 rounded-xl bg-white/90 dark:bg-slate-800/90 shadow-md text-slate-700 dark:text-slate-200 hover:bg-white backdrop-blur-sm transition-colors focus:outline-none">
+                        <i data-lucide="more-vertical" class="w-4 h-4"></i>
+                    </button>
+                    <div x-show="open" x-transition x-cloak class="absolute right-0 mt-1.5 w-48 bg-white dark:bg-slate-800 rounded-2xl shadow-xl border border-slate-100 dark:border-slate-700 overflow-hidden text-xs font-semibold z-30 divide-y divide-slate-100 dark:divide-slate-700">
+                        <a href="{% url 'shop:product_qr' product.uuid %}" download="qr_{{ product.slug }}.png" class="flex items-center gap-2.5 px-4 py-2.5 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700">
+                            <i data-lucide="qr-code" class="w-4 h-4 text-purple-600"></i>
+                            <span>Télécharger QR Code</span>
+                        </a>
+                        <button hx-get="{% url 'shop:product_update' product.uuid %}" hx-target="#modal-container" @click="open = false" class="w-full flex items-center gap-2.5 px-4 py-2.5 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700 text-left">
+                            <i data-lucide="edit-2" class="w-4 h-4 text-brand-600"></i>
+                            <span>Modifier</span>
+                        </button>
+                        <button hx-get="{% url 'shop:product_delete' product.uuid %}" hx-target="#modal-container" @click="open = false" class="w-full flex items-center gap-2.5 px-4 py-2.5 text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-900/20 text-left">
+                            <i data-lucide="trash-2" class="w-4 h-4"></i>
+                            <span>Supprimer</span>
+                        </button>
+                    </div>
                 </div>
             </div>
+
+            <!-- Details Content -->
+            <div class="p-4 space-y-2 flex-1 flex flex-col justify-between">
+                <div>
+                    <span class="text-[10px] font-extrabold text-brand-600 dark:text-brand-400 uppercase tracking-wider">{{ product.category|default:"Article" }}</span>
+                    <h3 class="font-bold text-slate-900 dark:text-white text-sm line-clamp-1 leading-snug mt-0.5">{{ product.name }}</h3>
+                </div>
+
+                <div class="flex items-baseline justify-between pt-1 border-t border-slate-100 dark:border-slate-700">
+                    <div class="flex items-baseline gap-1.5">
+                        <span class="font-heading font-extrabold text-slate-900 dark:text-white text-base">{{ product.price|floatformat:0 }} FCFA</span>
+                        {% if product.compare_price %}
+                        <span class="text-[11px] text-slate-400 line-through">{{ product.compare_price|floatformat:0 }} F</span>
+                        {% endif %}
+                    </div>
+                    
+                    {% if product.is_available %}
+                    <span class="inline-flex items-center gap-1 text-[10px] font-bold text-emerald-600">
+                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> En stock
+                    </span>
+                    {% else %}
+                    <span class="inline-flex items-center gap-1 text-[10px] font-bold text-rose-500">
+                        <span class="w-1.5 h-1.5 rounded-full bg-rose-500"></span> Épuisé
+                    </span>
+                    {% endif %}
+                </div>
+            </div>
+
         </div>
         {% endfor %}
     </div>
     {% else %}
     <!-- Empty State -->
-    <div class="text-center py-20 bg-white dark:bg-slate-800 rounded-3xl border border-slate-200 dark:border-slate-700 border-dashed">
-        <div class="w-16 h-16 bg-brand-50 dark:bg-slate-700 rounded-full flex items-center justify-center mx-auto mb-4">
-            <i data-lucide="package-open" class="h-8 w-8 text-brand-500"></i>
+    <div class="text-center py-20 bg-white dark:bg-slate-800 rounded-3xl border border-slate-200 dark:border-slate-700 border-dashed p-8">
+        <div class="w-16 h-16 bg-brand-50 dark:bg-slate-700 rounded-2xl flex items-center justify-center mx-auto mb-4">
+            <i data-lucide="package-plus" class="w-8 h-8 text-brand-500"></i>
         </div>
-        <h3 class="text-lg font-bold text-slate-900 dark:text-white mb-2">Aucun produit pour le moment</h3>
-        <p class="text-slate-500 max-w-sm mx-auto mb-6 text-sm">Commencez à remplir votre catalogue pour que vos clients puissent acheter !</p>
-        <button hx-get="{% url 'shop:product_create' %}" hx-target="#modal-container" class="inline-flex justify-center items-center gap-2 rounded-xl bg-brand-600 px-5 py-2.5 text-sm font-bold text-white shadow-sm hover:bg-brand-700 focus:outline-none transition-colors">
-            <i data-lucide="plus" class="h-4 w-4"></i>
-            Ajouter mon premier produit
+        <h3 class="font-heading font-bold text-lg text-slate-900 dark:text-white mb-1">Aucun produit dans le catalogue</h3>
+        <p class="text-xs text-slate-500 max-w-sm mx-auto mb-5">Ajoutez vos premiers articles avec photos et descriptions vendeuses en 1 clic grâce à Azoria AI !</p>
+        <button hx-get="{% url 'shop:product_create' %}" hx-target="#modal-container" 
+                class="inline-flex items-center gap-2 px-5 py-2.5 rounded-2xl bg-brand-600 text-white text-xs font-bold shadow-md hover:bg-brand-700 transition-all">
+            <i data-lucide="plus" class="w-4 h-4"></i>
+            <span>Ajouter mon premier produit</span>
         </button>
     </div>
     {% endif %}
     
-    <!-- Modal Container -->
+    <!-- Modal Container for HTMX partials -->
     <div id="modal-container"></div>
 </div>
 {% endblock %}

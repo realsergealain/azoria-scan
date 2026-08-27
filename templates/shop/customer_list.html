@@ -1,0 +1,74 @@
+{% extends 'core/base_dashboard.html' %}
+
+{% block title %}Mes Clients — Azoria{% endblock %}
+{% block header_title %}Clients{% endblock %}
+
+{% block content %}
+<div class="max-w-6xl mx-auto pb-12 space-y-6">
+    
+    <!-- Top Header -->
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+            <h1 class="font-heading text-2xl font-extrabold text-slate-900 dark:text-white tracking-tight">Répertoire Clients</h1>
+            <p class="text-sm text-slate-500 mt-1">Vos clients ayant déjà passé commande sur votre boutique.</p>
+        </div>
+        <span class="px-3.5 py-1.5 rounded-full bg-brand-50 dark:bg-slate-800 border border-brand-200 dark:border-slate-700 text-brand-700 dark:text-brand-400 font-extrabold text-xs">
+            {{ customers|length }} client{{ customers|length|pluralize }} enregistré{{ customers|length|pluralize }}
+        </span>
+    </div>
+
+    {% if customers %}
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        {% for customer in customers %}
+        <div class="bg-white dark:bg-slate-800 rounded-3xl p-5 border border-slate-200 dark:border-slate-700 shadow-sm hover:shadow-md transition-all flex flex-col justify-between space-y-4">
+            
+            <div class="flex items-start gap-3">
+                <div class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-brand-500 to-indigo-600 text-white font-heading font-black text-lg flex items-center justify-center shadow-sm shrink-0">
+                    {{ customer.name|make_list|first|upper }}
+                </div>
+                <div class="min-w-0 flex-1">
+                    <h3 class="font-bold text-slate-900 dark:text-white text-sm truncate">{{ customer.name }}</h3>
+                    <p class="text-xs text-slate-500 flex items-center gap-1 mt-0.5">
+                        <i data-lucide="map-pin" class="w-3.5 h-3.5 text-slate-400"></i>
+                        <span>{{ customer.city|default:"Abidjan" }}</span>
+                    </p>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-2 p-3 bg-slate-50 dark:bg-slate-900/50 rounded-2xl border border-slate-100 dark:border-slate-700/60 text-xs">
+                <div>
+                    <span class="text-[10px] text-slate-400">Commandes :</span>
+                    <p class="font-bold text-slate-900 dark:text-white">{{ customer.order_count }} commande{{ customer.order_count|pluralize }}</p>
+                </div>
+                <div>
+                    <span class="text-[10px] text-slate-400">Total dépensé :</span>
+                    <p class="font-extrabold text-brand-600 dark:text-brand-400">{{ customer.total_spent|floatformat:0 }} FCFA</p>
+                </div>
+            </div>
+
+            <div class="pt-2 flex items-center justify-between border-t border-slate-100 dark:border-slate-700 text-xs">
+                <span class="text-[11px] text-slate-400">Tél: {{ customer.phone }}</span>
+                
+                <a href="https://wa.me/{{ customer.phone|cut:' '|cut:'+' }}?text=Bonjour%20{{ customer.name|urlencode }},%20merci%20de%20votre%20confiance%20sur%20{{ shop.name|urlencode }}%20!"
+                   target="_blank"
+                   class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-white font-bold text-xs shadow-sm transition-colors">
+                    <i data-lucide="message-circle" class="w-3.5 h-3.5"></i>
+                    <span>WhatsApp</span>
+                </a>
+            </div>
+
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="text-center py-20 bg-white dark:bg-slate-800 rounded-3xl border border-slate-200 dark:border-slate-700 border-dashed p-8">
+        <div class="w-16 h-16 bg-brand-50 dark:bg-slate-700 rounded-2xl flex items-center justify-center mx-auto mb-4">
+            <i data-lucide="users" class="w-8 h-8 text-brand-500"></i>
+        </div>
+        <h3 class="font-heading font-bold text-lg text-slate-900 dark:text-white mb-1">Aucun client pour le moment</h3>
+        <p class="text-xs text-slate-500 max-w-sm mx-auto mb-5">Dès qu'un client passe commande sur votre boutique, sa fiche apparaîtra ici automatiquement.</p>
+    </div>
+    {% endif %}
+
+</div>
+{% endblock %}

@@ -14,7 +14,6 @@ class HomeView(TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         
-        # Données de démonstration et présentation
         context['stats'] = [
             {'label': 'Vendeurs actifs', 'value': '2 400+'},
             {'label': 'Commandes traitées', 'value': '85 000+'},
@@ -30,56 +29,6 @@ class HomeView(TemplateView):
             {'name': 'QR Codes', 'icon': 'qr-code', 'badge': 'Affiches & Emballages', 'color': 'from-violet-600 to-purple-800'},
         ]
         
-        context['features'] = [
-            {
-                'id': 'onboarding',
-                'badge': 'Création Express',
-                'title': 'Créez votre boutique en 2 minutes',
-                'desc': 'Renseignez votre nom, vos catégories et obtenez immédiatement votre lien unique personnalisé (ex: azoria.link/votre-boutique). Sans compétence technique requise.',
-                'icon': 'sparkles',
-            },
-            {
-                'id': 'sharing',
-                'badge': 'Social Commerce',
-                'title': 'Partagez sur WhatsApp, TikTok & Instagram',
-                'desc': 'Fini les va-et-vient infinis par messages pour demander nom, taille, couleur et adresse. Vos clients commandent directement en 30 secondes.',
-                'icon': 'share-2',
-            },
-            {
-                'id': 'ai',
-                'badge': 'Azoria AI',
-                'title': 'Génération IA de fiches produits',
-                'desc': 'Azoria AI rédige pour vous des titres percutants, des descriptions vendeuses et les points forts de vos articles en 1 clic.',
-                'icon': 'bot',
-            },
-            {
-                'id': 'delivery',
-                'badge': 'Logistique & Paiement',
-                'title': 'Livraison locale et paiement à la livraison',
-                'desc': 'Tarification automatique selon la commune (Cocody, Yopougon, Marcory...) ou expédition vers l\'intérieur avec transporteurs partenaires.',
-                'icon': 'truck',
-            },
-        ]
-        
-        context['faqs'] = [
-            {
-                'q': 'Ai-je besoin d\'un ordinateur ou de compétences en informatique ?',
-                'a': 'Non, absolument pas ! Azoria a été conçu spécialement pour être 100% géré depuis votre smartphone en quelques clics.',
-            },
-            {
-                'q': 'Comment mes clients paient-ils leurs commandes ?',
-                'a': 'Azoria intègre nativement le paiement à la livraison (Cash on Delivery / Wave / Orange Money à la réception), qui est le mode le plus plébiscité et rassurant pour les acheteurs.',
-            },
-            {
-                'q': 'Puis-je utiliser mon propre QR Code pour mes emballages et flyers ?',
-                'a': 'Oui ! Azoria génère automatiquement un QR Code haute définition pour votre boutique complète ainsi que pour chaque produit individuel ou campagne promo.',
-            },
-            {
-                'q': 'Est-ce que je peux livrer à l\'intérieur du pays ?',
-                'a': 'Absolument. Vous pouvez configurer des tarifs pour vos livraisons urbaines ainsi que des options d\'expédition par compagnies de transport partenaires (UTB, CTE, etc.) pour toutes les villes de l\'intérieur.',
-            },
-        ]
-        
         return context
 
 
@@ -89,37 +38,35 @@ def home_view(request):
 
 @login_required
 def dashboard_view(request):
-    """Tableau de bord principal du vendeur (Admin Panel layout)."""
-    from apps.shop.models import Shop, ShopProduct
+    """Tableau de bord principal du vendeur connecté avec métriques réelles."""
+    from apps.shop.models import Shop, ShopProduct, Order, VisitTracker
     from apps.shop.forms import ShopCreateForm
+    from apps.shop.services import get_shop_dashboard_analytics
+    
     shops = Shop.objects.filter(owner=request.user).select_related('branding', 'payment')
-    
-    total_products = ShopProduct.objects.filter(shop__in=shops).count()
-    
-    # Données factices pour le nouveau design du tableau de bord (sauf total_products)
-    dummy_stats = {
-        'total_revenue': '0 FCFA',
-        'revenue_trend': '0%',
-        'active_orders': '0',
-        'orders_trend': '0%',
-        'total_products': str(total_products),
-        'products_trend': 'N/A',
-        'subscription_status': 'Actif',
-        'subscription_details': 'Forfait Pro'
-    }
-    
-    dummy_recent_orders = [
-        {'id': '2501130', 'customer': 'Albert Flores', 'email': 'man@yandex.ru', 'value': '2,084 FCFA', 'status': 'Livré', 'date': '10/12/2026'},
-        {'id': '2501131', 'customer': 'Ronald Richards', 'email': 'gamaho@mail.ru', 'value': '8,264 FCFA', 'status': 'En attente', 'date': '11/12/2026'},
-        {'id': '2501132', 'customer': 'Jane Cooper', 'email': 'imsabela@gmail.com', 'value': '4,500 FCFA', 'status': 'Annulé', 'date': '12/12/2026'},
-        {'id': '2501133', 'customer': 'Brooklyn Simmons', 'email': 'mlyokoto@mail.ru', 'value': '1,200 FCFA', 'status': 'Livré', 'date': '13/12/2026'},
-        {'id': '2501134', 'customer': 'Marvin McKinney', 'email': 'fline@yandex.ru', 'value': '9,800 FCFA', 'status': 'En attente', 'date': '14/12/2026'},
-    ]
-    
+    primary_shop = shops.first()
+
+    if primary_shop:
+        analytics = get_shop_dashboard_analytics(primary_shop)
+    else:
+        analytics = {
+            'total_revenue': '0 FCFA',
+            'total_orders': 0,
+            'active_orders': 0,
+            'total_products': 0,
+            'total_visits': 0,
+            'qr_visits': 0,
+            'direct_visits': 0,
+            'days_labels': ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim'],
+            'sales_data': [0, 0, 0, 0, 0, 0, 0],
+            'visits_data': [0, 0, 0, 0, 0, 0, 0],
+            'recent_orders': [],
+        }
+
     return render(request, 'core/dashboard.html', {
         'shops': shops,
+        'primary_shop': primary_shop,
         'shop_count': shops.count(),
-        'stats': dummy_stats,
-        'recent_orders': dummy_recent_orders,
+        'analytics': analytics,
         'shop_form': ShopCreateForm(),
     })

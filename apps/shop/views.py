@@ -1,83 +1,98 @@
+import json
+from decimal import Decimal
 from django.shortcuts import redirect, render, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
+from django.views.decorators.http import require_POST
+from django.db.models import Sum, Count
 
 from .forms import ShopCreateForm, ShopProductForm
-from .models import Shop, ShopBranding, ShopPayment, ShopProduct, VisitTracker
-from .services import generate_styled_qr_code
+from .models import Shop, ShopBranding, ShopPayment, ShopProduct, Order, OrderItem, VisitTracker
+from .services import (
+    generate_styled_qr_code,
+    generate_whatsapp_order_link,
+    generate_ai_product_description,
+    get_shop_dashboard_analytics
+)
 
+
+# ==========================================
+# 🏪 GESTION DES BOUTIQUES
+# ==========================================
 
 @login_required
 def shop_create(request):
-    """Vue simple de création de boutique — 1 seul formulaire, pas de wizard."""
+    """Création simplifiée de boutique."""
     form = ShopCreateForm(request.POST or None)
 
     if request.method == 'POST' and form.is_valid():
-        # Création de la boutique
         shop = Shop.objects.create(
             owner=request.user,
             name=form.cleaned_data['name'],
             description=form.cleaned_data.get('description', ''),
         )
-
-        # Branding par défaut (logo vide, couleur violette Azoria)
         ShopBranding.objects.create(shop=shop, primary_color='#7C3AED')
-
-        # Paiement avec les modes choisis
         ShopPayment.objects.create(
             shop=shop,
             accepted_payments=form.cleaned_data['accepted_payments'],
         )
-
         messages.success(request, f'🎉 Boutique « {shop.name} » créée avec succès !')
         return redirect('core:dashboard')
 
     return render(request, 'shop/create.html', {'form': form})
 
 
-def shop_detail(request, shop_uuid, shop_slug):
-    """Vue de détail d'une boutique (stub — à enrichir ultérieurement)."""
-    # Ici, nous permettons l'accès public. La vue est censée être publique pour les acheteurs !
-    # Retrait du `login_required` dans un vrai contexte public, mais laissons-le si c'est pour l'admin.
-    # Attendez, `shop_detail` devrait être public si c'est la boutique.
-    shop = get_object_or_404(Shop, uuid=shop_uuid, slug=shop_slug)
-    
-    # Tracking
-    source = 'qr' if request.GET.get('ref') == 'qr' else 'direct'
-    VisitTracker.objects.create(shop=shop, source=source)
-    
-    return render(request, 'shop/detail.html', {'shop': shop})
+@login_required
+def shop_settings(request):
+    """Page de configuration et branding de la boutique (Mes Boutiques)."""
+    shop = Shop.objects.filter(owner=request.user).first()
+    if not shop:
+        messages.warning(request, "Veuillez d'abord créer une boutique.")
+        return redirect('core:dashboard')
 
-def shop_qr_code(request, shop_uuid):
-    """Sert l'image du QR code de la boutique."""
-    shop = get_object_or_404(Shop, uuid=shop_uuid)
-    # L'URL absolue de la boutique
-    url = request.build_absolute_uri(f"/boutique/{shop.uuid}/{shop.slug}/?ref=qr")
-    
-    # Couleur de la marque ou par défaut
-    color = shop.branding.primary_color if hasattr(shop, 'branding') else '#7C3AED'
-    
-    buffer = generate_styled_qr_code(url, color_hex=color)
-    return HttpResponse(buffer, content_type="image/png")
+    branding, _ = ShopBranding.objects.get_or_create(shop=shop)
+    payment, _ = ShopPayment.objects.get_or_create(shop=shop)
 
-def product_qr_code(request, product_uuid):
-    """Sert l'image du QR code d'un produit."""
-    product = get_object_or_404(ShopProduct, uuid=product_uuid)
-    # Dans un vrai cas, on lierait vers une page de détail produit. Ici on pointe vers la boutique avec une ancre.
-    url = request.build_absolute_uri(f"/boutique/{product.shop.uuid}/{product.shop.slug}/?product={product.uuid}&ref=qr")
-    
-    color = product.shop.branding.primary_color if hasattr(product.shop, 'branding') else '#7C3AED'
-    
-    buffer = generate_styled_qr_code(url, color_hex=color)
-    return HttpResponse(buffer, content_type="image/png")
+    if request.method == 'POST':
+        shop.name = request.POST.get('name', shop.name)
+        shop.category = request.POST.get('category', shop.category)
+        shop.description = request.POST.get('description', shop.description)
+        shop.phone = request.POST.get('phone', shop.phone)
+        shop.city = request.POST.get('city', shop.city)
+        shop.save()
 
+        # Branding
+        primary_color = request.POST.get('primary_color_text') or request.POST.get('primary_color', branding.primary_color)
+        branding.primary_color = primary_color
+        if 'logo' in request.FILES:
+            branding.logo = request.FILES['logo']
+        branding.save()
+
+        # Logistique & Paiements
+        if request.POST.get('delivery_fee'):
+            payment.delivery_fee = Decimal(request.POST.get('delivery_fee'))
+        if request.POST.get('free_delivery_threshold'):
+            payment.free_delivery_threshold = Decimal(request.POST.get('free_delivery_threshold'))
+        payment.save()
+
+        messages.success(request, "Paramètres de la boutique enregistrés avec succès.")
+        return redirect('shop:settings')
+
+    return render(request, 'shop/store_settings.html', {
+        'shop': shop,
+        'branding': branding,
+        'payment': payment,
+    })
+
+
+# ==========================================
+# 🛒 GESTION DU CATALOGUE PRODUITS
+# ==========================================
 
 @login_required
 def product_list(request):
-    """Affiche la liste des produits pour la boutique principale du vendeur."""
-    # MVP: on prend la première boutique du vendeur
+    """Liste des produits du vendeur."""
     shop = Shop.objects.filter(owner=request.user).first()
     if not shop:
         messages.warning(request, "Veuillez d'abord créer une boutique.")
@@ -90,8 +105,10 @@ def product_list(request):
         'products': products,
     })
 
+
 @login_required
 def product_create(request):
+    """Ajout d'un nouveau produit (Supporte HTMX modal)."""
     shop = Shop.objects.filter(owner=request.user).first()
     if not shop:
         return redirect('core:dashboard')
@@ -103,8 +120,6 @@ def product_create(request):
             product.shop = shop
             product.save()
             messages.success(request, f"Produit '{product.name}' ajouté avec succès.")
-            if request.headers.get('HX-Request') == 'true':
-                return redirect('shop:product_list')
             return redirect('shop:product_list')
     else:
         form = ShopProductForm()
@@ -116,8 +131,10 @@ def product_create(request):
         'is_update': False
     })
 
+
 @login_required
 def product_update(request, product_uuid):
+    """Modification d'un produit (Supporte HTMX modal)."""
     product = get_object_or_404(ShopProduct, uuid=product_uuid, shop__owner=request.user)
     
     if request.method == 'POST':
@@ -125,8 +142,6 @@ def product_update(request, product_uuid):
         if form.is_valid():
             form.save()
             messages.success(request, f"Produit '{product.name}' mis à jour.")
-            if request.headers.get('HX-Request') == 'true':
-                return redirect('shop:product_list')
             return redirect('shop:product_list')
     else:
         form = ShopProductForm(instance=product)
@@ -138,16 +153,247 @@ def product_update(request, product_uuid):
         'is_update': True
     })
 
+
 @login_required
 def product_delete(request, product_uuid):
+    """Suppression d'un produit."""
     product = get_object_or_404(ShopProduct, uuid=product_uuid, shop__owner=request.user)
     if request.method == 'POST':
         name = product.name
         product.delete()
         messages.success(request, f"Produit '{name}' supprimé.")
-        if request.headers.get('HX-Request') == 'true':
-            return redirect('shop:product_list')
         return redirect('shop:product_list')
     
     template = 'shop/partials/product_delete_modal.html' if request.headers.get('HX-Request') == 'true' else 'shop/product_confirm_delete.html'
     return render(request, template, {'product': product})
+
+
+def ai_description_api(request):
+    """API endpoint pour le bouton Azoria AI."""
+    name = request.GET.get('name', '')
+    cat = request.GET.get('cat', '')
+    if not name:
+        return JsonResponse({'error': 'Nom requis'}, status=400)
+    data = generate_ai_product_description(name, cat)
+    return JsonResponse(data)
+
+
+# ==========================================
+# 📦 GESTION DES COMMANDES & CLIENTS
+# ==========================================
+
+@login_required
+def order_list(request):
+    """Gestion des commandes pour le vendeur avec onglets de statut."""
+    shop = Shop.objects.filter(owner=request.user).first()
+    if not shop:
+        messages.warning(request, "Veuillez d'abord créer une boutique.")
+        return redirect('core:dashboard')
+
+    status_filter = request.GET.get('status', '')
+    all_orders = Order.objects.filter(shop=shop)
+    
+    # Counts
+    all_count = all_orders.count()
+    pending_count = all_orders.filter(status='pending').count()
+    confirmed_count = all_orders.filter(status='confirmed').count()
+    shipped_count = all_orders.filter(status='shipped').count()
+    delivered_count = all_orders.filter(status='delivered').count()
+    cancelled_count = all_orders.filter(status='cancelled').count()
+
+    if status_filter:
+        orders = all_orders.filter(status=status_filter)
+    else:
+        orders = all_orders
+
+    return render(request, 'shop/order_list.html', {
+        'shop': shop,
+        'orders': orders,
+        'status_filter': status_filter,
+        'all_count': all_count,
+        'pending_count': pending_count,
+        'confirmed_count': confirmed_count,
+        'shipped_count': shipped_count,
+        'delivered_count': delivered_count,
+        'cancelled_count': cancelled_count,
+    })
+
+
+@login_required
+@require_POST
+def order_status_update(request, order_uuid):
+    """Mise à jour du statut d'une commande via HTMX."""
+    order = get_object_or_404(Order, uuid=order_uuid, shop__owner=request.user)
+    new_status = request.POST.get('status')
+    if new_status in dict(Order.STATUS_CHOICES):
+        order.status = new_status
+        order.save()
+    
+    # Renvoyer la carte commande mise à jour
+    return render(request, 'shop/order_list.html#order-card', {'order': order, 'shop': order.shop})
+
+
+@login_required
+def customer_list(request):
+    """Répertoire CRM des clients généré à partir des commandes."""
+    shop = Shop.objects.filter(owner=request.user).first()
+    if not shop:
+        return redirect('core:dashboard')
+
+    # Agrégation des clients par numéro de téléphone
+    orders = Order.objects.filter(shop=shop)
+    customers_map = {}
+
+    for o in orders:
+        phone = o.customer_phone
+        if phone not in customers_map:
+            customers_map[phone] = {
+                'name': o.customer_name,
+                'phone': o.customer_phone,
+                'city': o.customer_city,
+                'order_count': 0,
+                'total_spent': Decimal('0.00'),
+            }
+        customers_map[phone]['order_count'] += 1
+        if o.status in ['confirmed', 'shipped', 'delivered']:
+            customers_map[phone]['total_spent'] += o.total_amount
+
+    customers = list(customers_map.values())
+    return render(request, 'shop/customer_list.html', {
+        'shop': shop,
+        'customers': customers
+    })
+
+
+# ==========================================
+# 🎨 STUDIO QR CODES & MARKETING
+# ==========================================
+
+@login_required
+def qr_studio(request):
+    """Studio interactif de QR codes & analytics."""
+    shop = Shop.objects.filter(owner=request.user).first()
+    if not shop:
+        return redirect('core:dashboard')
+
+    products = ShopProduct.objects.filter(shop=shop, is_available=True)
+    analytics = get_shop_dashboard_analytics(shop)
+
+    return render(request, 'shop/qr_studio.html', {
+        'shop': shop,
+        'products': products,
+        'analytics': analytics,
+    })
+
+
+def shop_qr_code(request, shop_uuid):
+    """Génère et sert l'image PNG du QR code de la boutique."""
+    shop = get_object_or_404(Shop, uuid=shop_uuid)
+    url = request.build_absolute_uri(f"/boutique/{shop.uuid}/{shop.slug}/?ref=qr")
+    color = shop.branding.primary_color if hasattr(shop, 'branding') else '#7C3AED'
+    buffer = generate_styled_qr_code(url, color_hex=color)
+    return HttpResponse(buffer, content_type="image/png")
+
+
+def product_qr_code(request, product_uuid):
+    """Génère et sert l'image PNG du QR code d'un produit."""
+    product = get_object_or_404(ShopProduct, uuid=product_uuid)
+    url = request.build_absolute_uri(f"/boutique/{product.shop.uuid}/{product.shop.slug}/?product={product.uuid}&ref=qr")
+    color = product.shop.branding.primary_color if hasattr(product.shop, 'branding') else '#7C3AED'
+    buffer = generate_styled_qr_code(url, color_hex=color)
+    return HttpResponse(buffer, content_type="image/png")
+
+
+# ==========================================
+# 📱 VITRINE PUBLIQUE & TUNNEL DE COMMANDE
+# ==========================================
+
+def shop_detail(request, shop_uuid, shop_slug):
+    """Vitrine publique 100% Mobile-First."""
+    shop = get_object_or_404(Shop, uuid=shop_uuid, slug=shop_slug, is_active=True)
+    
+    # Tracking de la visite
+    source = request.GET.get('ref', 'direct')
+    client_ip = request.META.get('HTTP_X_FORWARDED_FOR', request.META.get('REMOTE_ADDR'))
+    VisitTracker.objects.create(
+        shop=shop,
+        source=source if source in dict(VisitTracker.SOURCE_CHOICES) else 'direct',
+        ip_address=client_ip.split(',')[0] if client_ip else None
+    )
+
+    products = ShopProduct.objects.filter(shop=shop, is_available=True)
+    categories = list(set([p.category for p in products if p.category]))
+
+    return render(request, 'shop/storefront.html', {
+        'shop': shop,
+        'products': products,
+        'categories': categories,
+    })
+
+
+@require_POST
+def checkout_view(request, shop_uuid, shop_slug):
+    """Traitement de la commande express depuis la vitrine."""
+    shop = get_object_or_404(Shop, uuid=shop_uuid, slug=shop_slug)
+    
+    try:
+        data = json.loads(request.body)
+    except json.JSONDecodeError:
+        return HttpResponse("Données invalides", status=400)
+
+    items_data = data.get('items', [])
+    if not items_data:
+        return HttpResponse("Le panier est vide", status=400)
+
+    # Calcul des montants
+    subtotal = Decimal('0.00')
+    customer_city = data.get('customer_city', 'Cocody')
+    
+    # Frais de livraison selon la commune
+    if customer_city == 'Intérieur':
+        delivery_fee = Decimal('3000.00')
+    elif customer_city in ['Bingerville', 'Port-Bouët']:
+        delivery_fee = Decimal('2000.00')
+    else:
+        delivery_fee = shop.payment.delivery_fee if hasattr(shop, 'payment') else Decimal('1500.00')
+
+    # Création de la commande
+    order = Order.objects.create(
+        shop=shop,
+        customer_name=data.get('customer_name', '').strip(),
+        customer_phone=data.get('customer_phone', '').strip(),
+        customer_city=customer_city,
+        customer_address=data.get('customer_address', '').strip(),
+        payment_method=data.get('payment_method', 'livraison'),
+        delivery_fee=delivery_fee,
+    )
+
+    for item in items_data:
+        prod_id = item.get('id')
+        qty = int(item.get('qty', 1))
+        unit_price = Decimal(str(item.get('price', 0)))
+        product = ShopProduct.objects.filter(uuid=prod_id).first() if prod_id else None
+        
+        line_total = unit_price * qty
+        subtotal += line_total
+
+        OrderItem.objects.create(
+            order=order,
+            product=product,
+            product_name=item.get('name', 'Article'),
+            unit_price=unit_price,
+            quantity=qty,
+            total_price=line_total
+        )
+
+    order.subtotal = subtotal
+    order.total_amount = subtotal + delivery_fee
+    order.save()
+
+    # Lien direct WhatsApp
+    whatsapp_url = generate_whatsapp_order_link(order)
+
+    return render(request, 'shop/partials/order_success_modal.html', {
+        'order': order,
+        'whatsapp_url': whatsapp_url,
+    })
