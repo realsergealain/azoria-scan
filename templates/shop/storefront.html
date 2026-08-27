@@ -3,11 +3,11 @@
 <html lang="fr" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>{{ shop.name }} — Boutique Officielle | Azoria</title>
     
     <!-- SEO & Social Sharing (WhatsApp, TikTok, Facebook Meta Tags) -->
-    <meta name="description" content="{{ shop.description|default:'Découvrez notre catalogue et commandez en quelques clics avec paiement à la livraison.' }}">
+    <meta name="description" content="{{ shop.description|default:'Découvrez notre sélection exclusive et commandez en quelques clics avec paiement à la livraison.' }}">
     <meta property="og:type" content="website">
     <meta property="og:title" content="{{ shop.name }} — Boutique en ligne">
     <meta property="og:description" content="{{ shop.description|default:'Commandez facilement en 1 clic avec paiement à la livraison.' }}">
@@ -19,7 +19,7 @@
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -29,9 +29,12 @@
                 extend: {
                     colors: {
                         brand: {
+                            50: '#F5F3FF',
+                            100: '#EDE9FE',
                             500: '{{ shop.branding.primary_color|default:"#7C3AED" }}',
                             600: '{{ shop.branding.primary_color|default:"#7C3AED" }}',
                             700: '#5B21B6',
+                            900: '#4C1D95',
                         }
                     },
                     fontFamily: {
@@ -49,30 +52,28 @@
     <!-- Alpine.js -->
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.8/dist/cdn.min.js"></script>
 
-    <!-- HTMX -->
-    <script src="https://unpkg.com/htmx.org@1.9.10"></script>
-
     <style>
         [x-cloak] { display: none !important; }
         body { font-family: 'Plus Jakarta Sans', sans-serif; -webkit-tap-highlight-color: transparent; }
         .font-heading { font-family: 'Outfit', sans-serif; }
+        .pb-safe { padding-bottom: env(safe-area-inset-bottom, 16px); }
         /* Custom scrollbar */
         ::-webkit-scrollbar { width: 4px; height: 4px; }
         ::-webkit-scrollbar-thumb { background: #CBD5E1; border-radius: 9999px; }
     </style>
 </head>
 
-<body class="bg-slate-50 text-slate-900 min-h-screen flex flex-col antialiased selection:bg-brand-500 selection:text-white"
+<body class="bg-[#F8FAFC] text-slate-900 min-h-screen flex flex-col antialiased selection:bg-brand-500 selection:text-white pb-20 sm:pb-8"
       x-data="storefrontApp()"
       @keydown.escape="cartOpen = false; productModalOpen = false; orderModalOpen = false">
 
-    <!-- STICKY MOBILE TOP BAR -->
-    <header class="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-slate-200/80 shadow-sm transition-all">
-        <div class="max-w-xl mx-auto px-4 h-16 flex items-center justify-between gap-3">
+    <!-- STICKY MINIMALIST TOP HEADER -->
+    <header class="sticky top-0 z-40 bg-white/90 backdrop-blur-md border-b border-slate-200/80 shadow-sm transition-all">
+        <div class="max-w-3xl mx-auto px-4 h-16 flex items-center justify-between gap-3">
             
             <!-- Store Brand Info -->
-            <div class="flex items-center gap-2.5 min-w-0">
-                <div class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-brand-500 to-indigo-600 flex items-center justify-center text-white font-heading font-black text-sm shadow-md shrink-0 overflow-hidden border border-white">
+            <div class="flex items-center gap-3 min-w-0">
+                <div class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-brand-600 to-indigo-600 flex items-center justify-center text-white font-heading font-black text-sm shadow-md shadow-brand-500/20 shrink-0 overflow-hidden border border-white">
                     {% if shop.branding.logo %}
                         <img src="{{ shop.branding.logo.url }}" alt="{{ shop.name }}" class="w-full h-full object-cover">
                     {% else %}
@@ -84,30 +85,30 @@
                         <h1 class="font-heading font-extrabold text-sm sm:text-base text-slate-900 truncate">{{ shop.name }}</h1>
                         <i data-lucide="badge-check" class="w-4 h-4 text-brand-500 shrink-0"></i>
                     </div>
-                    <div class="flex items-center gap-2 text-[10px] text-slate-500">
+                    <div class="flex items-center gap-2 text-[10px] text-slate-500 font-medium">
                         <span class="inline-flex items-center gap-1 text-emerald-600 font-semibold">
-                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span> Ouvert
+                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span> Ouvert 🟢
                         </span>
                         <span>•</span>
-                        <span class="truncate">{{ shop.category|default:"Social Store" }}</span>
+                        <span class="truncate">{{ shop.city|default:"Livraison partout" }}</span>
                     </div>
                 </div>
             </div>
 
-            <!-- Right Header Actions -->
+            <!-- Header Action Controls -->
             <div class="flex items-center gap-2 shrink-0">
                 <!-- Share Storefront Button -->
                 <button @click="if (navigator.share) { navigator.share({ title: '{{ shop.name|escapejs }}', url: window.location.href }); } else { navigator.clipboard.writeText(window.location.href); alert('Lien de la boutique copié !'); }"
-                        class="p-2.5 rounded-xl bg-slate-100 text-slate-600 hover:bg-slate-200 transition-colors shadow-sm"
+                        class="p-2.5 rounded-2xl bg-slate-100 text-slate-600 hover:bg-slate-200 transition-colors"
                         title="Partager la boutique">
                     <i data-lucide="share-2" class="w-4 h-4"></i>
                 </button>
 
-                <!-- Direct WhatsApp Contact -->
+                <!-- Direct WhatsApp Chat -->
                 {% if shop.phone %}
-                <a href="https://wa.me/{{ shop.phone|cut:' '|cut:'+' }}?text=Bonjour%20{{ shop.name|urlencode }},%20j'ai%20une%20question%20sur%20vos%20produits."
+                <a href="https://wa.me/{{ shop.phone|cut:' '|cut:'+' }}?text=Bonjour%20{{ shop.name|urlencode }},%20j'aimerais%20avoir%20plus%20d'informations%20sur%20vos%20articles."
                    target="_blank"
-                   class="p-2.5 rounded-xl bg-emerald-50 text-emerald-600 hover:bg-emerald-100 transition-colors shadow-sm"
+                   class="p-2.5 rounded-2xl bg-emerald-50 text-emerald-600 hover:bg-emerald-100 transition-colors"
                    title="Contacter sur WhatsApp">
                     <i data-lucide="message-circle" class="w-4 h-4"></i>
                 </a>
@@ -115,7 +116,7 @@
 
                 <!-- Floating Cart Trigger Button -->
                 <button @click="cartOpen = true" 
-                        class="relative p-2.5 rounded-xl bg-brand-500 text-white hover:bg-brand-600 transition-transform active:scale-95 shadow-md shadow-brand-500/20 flex items-center justify-center">
+                        class="relative p-2.5 rounded-2xl bg-brand-600 hover:bg-brand-700 text-white transition-transform active:scale-95 shadow-md shadow-brand-500/25 flex items-center justify-center">
                     <i data-lucide="shopping-bag" class="w-4 h-4"></i>
                     <span x-show="cartTotalItems > 0" 
                           x-transition.scale
@@ -129,165 +130,360 @@
     </header>
 
     <!-- MAIN STORE CONTAINER -->
-    <main class="flex-1 max-w-xl w-full mx-auto px-4 py-4 space-y-5">
+    <main class="flex-1 max-w-3xl w-full mx-auto px-4 py-5 space-y-6">
         
-        <!-- Store Bio & Promo Card -->
-        <div class="bg-gradient-to-br from-white to-slate-50 rounded-3xl p-4 sm:p-5 border border-slate-200 shadow-sm relative overflow-hidden">
-            <div class="relative z-10">
-                <div class="flex items-center gap-2 mb-1.5">
-                    <span class="px-2.5 py-0.5 rounded-full bg-brand-50 text-brand-600 text-[10px] font-extrabold uppercase tracking-wider border border-brand-200">
-                        Boutique Vérifiée ✨
-                    </span>
-                    <span class="text-[11px] text-slate-500 flex items-center gap-1">
-                        <i data-lucide="truck" class="w-3.5 h-3.5 text-slate-400"></i> Paiement à la livraison
-                    </span>
-                </div>
+        <!-- Minimalist Store Banner & Guarantees -->
+        <div class="bg-white rounded-3xl p-5 border border-slate-200/80 shadow-sm space-y-3">
+            <div>
+                <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-brand-50 text-brand-700 text-[10px] font-extrabold uppercase tracking-wider mb-2">
+                    <i data-lucide="sparkles" class="w-3 h-3 text-brand-500"></i>
+                    Boutique Officielle Vérifiée
+                </span>
                 {% if shop.description %}
-                <p class="text-xs text-slate-600 leading-relaxed mt-1">{{ shop.description }}</p>
+                <p class="text-xs sm:text-sm text-slate-600 leading-relaxed">{{ shop.description }}</p>
                 {% endif %}
-                <div class="mt-3 flex items-center justify-between text-[11px] text-slate-500 pt-2.5 border-t border-slate-100">
-                    <span class="flex items-center gap-1 font-semibold text-slate-700">
-                        <i data-lucide="map-pin" class="w-3.5 h-3.5 text-brand-500"></i> {{ shop.city|default:"Abidjan & Intérieur" }}
-                    </span>
-                    <span class="text-emerald-600 font-bold flex items-center gap-1">
-                        <i data-lucide="shield-check" class="w-3.5 h-3.5"></i> Commande sécurisée
-                    </span>
+            </div>
+
+            <!-- Trust Badges (Reassurance) -->
+            <div class="grid grid-cols-3 gap-2 pt-2 border-t border-slate-100 text-[10px] sm:text-xs text-slate-600 font-semibold">
+                <div class="flex items-center gap-1.5 justify-center p-2 rounded-xl bg-slate-50">
+                    <i data-lucide="truck" class="w-3.5 h-3.5 text-brand-500 shrink-0"></i>
+                    <span class="truncate">Paiement à la livraison</span>
+                </div>
+                <div class="flex items-center gap-1.5 justify-center p-2 rounded-xl bg-slate-50">
+                    <i data-lucide="zap" class="w-3.5 h-3.5 text-amber-500 shrink-0"></i>
+                    <span class="truncate">Expédition 24/48h</span>
+                </div>
+                <div class="flex items-center gap-1.5 justify-center p-2 rounded-xl bg-slate-50">
+                    <i data-lucide="shield-check" class="w-3.5 h-3.5 text-emerald-500 shrink-0"></i>
+                    <span class="truncate">Service Garanti</span>
                 </div>
             </div>
         </div>
 
         <!-- Search & Filter Controls -->
         <div class="space-y-3">
-            <!-- Search Input -->
+            <!-- Search Bar -->
             <div class="relative">
                 <input type="text" 
                        x-model="searchQuery"
-                       placeholder="Rechercher un article..." 
-                       class="w-full pl-10 pr-4 py-2.5 rounded-2xl bg-white border border-slate-200 focus:outline-none focus:ring-2 focus:ring-brand-500 text-xs sm:text-sm shadow-sm transition-all">
-                <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-3.5 top-3"></i>
-                <button x-show="searchQuery" @click="searchQuery = ''" class="absolute right-3 top-2.5 text-slate-400 hover:text-slate-600">
+                       placeholder="Rechercher un produit..." 
+                       class="w-full pl-10 pr-4 py-3 rounded-2xl bg-white border border-slate-200 focus:outline-none focus:ring-2 focus:ring-brand-500 text-xs sm:text-sm shadow-sm transition-all">
+                <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-3.5 top-3.5"></i>
+                <button x-show="searchQuery" @click="searchQuery = ''" class="absolute right-3.5 top-3 text-slate-400 hover:text-slate-600">
                     <i data-lucide="x" class="w-4 h-4"></i>
                 </button>
             </div>
 
-            <!-- Category Pills (Horizontal Scroll) -->
+            <!-- Category Filter Pills (Horizontal Scroll) -->
             <div class="flex items-center gap-2 overflow-x-auto pb-1 no-scrollbar">
                 <button @click="selectedCategory = 'all'" 
                         :class="selectedCategory === 'all' ? 'bg-slate-900 text-white shadow-sm' : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-50'"
-                        class="px-3.5 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap transition-all">
+                        class="px-4 py-2 rounded-2xl text-xs font-bold whitespace-nowrap transition-all">
                     Tous les articles
                 </button>
                 {% for cat in categories %}
                 <button @click="selectedCategory = '{{ cat }}'" 
                         :class="selectedCategory === '{{ cat }}' ? 'bg-slate-900 text-white shadow-sm' : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-50'"
-                        class="px-3.5 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap transition-all">
+                        class="px-4 py-2 rounded-2xl text-xs font-bold whitespace-nowrap transition-all">
                     {{ cat }}
                 </button>
                 {% endfor %}
             </div>
         </div>
 
-        <!-- Product Grid List -->
-        <div class="space-y-3.5">
+        <!-- Product Catalog (Minimalist & High-Converting Cards) -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <template x-for="product in filteredProducts" :key="product.id">
-                <div class="bg-white rounded-3xl p-3 sm:p-4 border border-slate-200/90 shadow-sm hover:shadow-md transition-all flex gap-3.5 group relative">
+                <div class="bg-white rounded-3xl p-4 border border-slate-200/80 shadow-sm hover:shadow-md transition-all flex flex-col justify-between group">
                     
                     <!-- Product Image Container -->
-                    <div class="relative w-28 sm:w-32 h-28 sm:h-32 rounded-2xl bg-slate-100 overflow-hidden shrink-0 cursor-pointer"
+                    <div class="relative w-full aspect-square rounded-2xl bg-slate-100 overflow-hidden mb-3 cursor-pointer"
                          @click="openProductModal(product)">
                         <template x-if="product.image">
                             <img :src="product.image" :alt="product.name" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
                         </template>
                         <template x-if="!product.image">
                             <div class="w-full h-full flex flex-col items-center justify-center text-slate-300">
-                                <i data-lucide="package" class="w-8 h-8"></i>
+                                <i data-lucide="package" class="w-12 h-12"></i>
                             </div>
                         </template>
                         <!-- Discount Badge -->
                         <template x-if="product.discount_percent > 0">
-                            <span class="absolute top-1.5 left-1.5 bg-rose-500 text-white text-[9px] font-extrabold px-1.5 py-0.5 rounded-md shadow-sm"
+                            <span class="absolute top-2.5 left-2.5 bg-rose-500 text-white text-[10px] font-extrabold px-2 py-0.5 rounded-lg shadow-sm"
                                   x-text="'-' + product.discount_percent + '%'">
                             </span>
                         </template>
                     </div>
 
-                    <!-- Product Content & Actions -->
-                    <div class="flex-1 min-w-0 flex flex-col justify-between py-0.5">
-                        <div class="cursor-pointer" @click="openProductModal(product)">
-                            <span class="text-[10px] font-bold text-brand-500 uppercase tracking-wider" x-text="product.category || 'Article'"></span>
-                            <h2 class="font-bold text-slate-900 text-xs sm:text-sm line-clamp-2 leading-tight mt-0.5" x-text="product.name"></h2>
-                            
-                            <!-- Prices -->
-                            <div class="flex items-baseline gap-2 mt-1.5">
-                                <span class="font-heading font-extrabold text-sm sm:text-base text-slate-900" x-text="formatPrice(product.price) + ' FCFA'"></span>
-                                <template x-if="product.compare_price">
-                                    <span class="text-[10px] sm:text-xs text-slate-400 line-through" x-text="formatPrice(product.compare_price) + ' FCFA'"></span>
-                                </template>
-                            </div>
+                    <!-- Product Info -->
+                    <div class="space-y-1.5 mb-3 flex-1 flex flex-col justify-between">
+                        <div>
+                            <span class="text-[10px] font-extrabold text-brand-600 uppercase tracking-wider" x-text="product.category || 'Article'"></span>
+                            <h2 class="font-bold text-slate-900 text-sm line-clamp-2 leading-snug cursor-pointer hover:text-brand-600 transition-colors"
+                                @click="openProductModal(product)"
+                                x-text="product.name"></h2>
                         </div>
+                        
+                        <!-- Prices -->
+                        <div class="flex items-baseline gap-2 pt-1">
+                            <span class="font-heading font-black text-base sm:text-lg text-slate-900" x-text="formatPrice(product.price) + ' FCFA'"></span>
+                            <template x-if="product.compare_price">
+                                <span class="text-xs text-slate-400 line-through font-medium" x-text="formatPrice(product.compare_price) + ' FCFA'"></span>
+                            </template>
+                        </div>
+                    </div>
 
-                        <!-- Action Buttons -->
-                        <div class="flex items-center gap-2 mt-2 pt-2 border-t border-slate-100">
-                            <!-- Quick 1-Click Buy -->
-                            <button @click="buyNow(product)" 
-                                    class="flex-1 py-1.5 px-3 rounded-xl bg-brand-500 hover:bg-brand-600 text-white text-[11px] font-bold flex items-center justify-center gap-1 shadow-sm active:scale-95 transition-all">
-                                <i data-lucide="zap" class="w-3.5 h-3.5 text-amber-300"></i>
-                                <span>Commander</span>
-                            </button>
-                            
-                            <!-- Add to cart -->
-                            <button @click="addToCart(product)" 
-                                    class="p-1.5 rounded-xl bg-slate-100 hover:bg-brand-50 text-slate-700 hover:text-brand-600 transition-colors"
-                                    title="Ajouter au panier">
-                                <i data-lucide="shopping-cart" class="w-4 h-4"></i>
-                            </button>
-                        </div>
+                    <!-- Main Call To Action Buttons (High Conversion Piece) -->
+                    <div class="flex items-center gap-2 pt-2 border-t border-slate-100">
+                        <!-- Primary 1-Click Order Button -->
+                        <button @click="buyNow(product)" 
+                                class="flex-1 py-3 px-4 rounded-2xl bg-brand-600 hover:bg-brand-700 text-white text-xs font-heading font-extrabold flex items-center justify-center gap-1.5 shadow-md shadow-brand-500/25 active:scale-95 transition-all">
+                            <i data-lucide="zap" class="w-4 h-4 text-amber-300"></i>
+                            <span>Commander en 1 Clic</span>
+                        </button>
+                        
+                        <!-- Secondary Add to Cart Button -->
+                        <button @click="addToCart(product)" 
+                                class="p-3 rounded-2xl bg-slate-100 hover:bg-brand-50 text-slate-700 hover:text-brand-600 transition-colors"
+                                title="Ajouter au panier">
+                            <i data-lucide="shopping-cart" class="w-4 h-4"></i>
+                        </button>
                     </div>
 
                 </div>
             </template>
 
             <!-- Empty Products State -->
-            <div x-show="filteredProducts.length === 0" class="text-center py-12 bg-white rounded-3xl border border-slate-200 border-dashed p-6">
+            <div x-show="filteredProducts.length === 0" class="col-span-full text-center py-16 bg-white rounded-3xl border border-slate-200 border-dashed p-6">
                 <i data-lucide="package-search" class="w-12 h-12 text-slate-300 mx-auto mb-3"></i>
                 <h3 class="font-bold text-sm text-slate-700 mb-1">Aucun produit trouvé</h3>
                 <p class="text-xs text-slate-400">Essayez un autre mot-clé ou réinitialisez les filtres.</p>
-                <button @click="searchQuery = ''; selectedCategory = 'all'" class="mt-4 px-4 py-1.5 rounded-xl bg-slate-100 text-slate-700 text-xs font-bold">
-                    Voir tous les produits
+                <button @click="searchQuery = ''; selectedCategory = 'all'" class="mt-4 px-4 py-2 rounded-xl bg-slate-100 text-slate-700 text-xs font-bold">
+                    Voir tous les articles
                 </button>
             </div>
         </div>
 
     </main>
 
-    <!-- FOOTER -->
+    <!-- MINIMALIST FOOTER -->
     <footer class="mt-auto py-8 bg-white border-t border-slate-200 text-center text-xs text-slate-400">
-        <div class="max-w-xl mx-auto px-4 space-y-2">
-            <div class="flex items-center justify-center gap-1.5 font-bold text-slate-600">
+        <div class="max-w-3xl mx-auto px-4 space-y-2">
+            <div class="flex items-center justify-center gap-2 font-bold text-slate-600">
                 <span>{{ shop.name }}</span>
                 <span>•</span>
                 <span>Paiement à la livraison 🚚</span>
             </div>
-            <p class="text-[11px]">Boutique propulsée par <a href="{% url 'core:home' %}" class="text-brand-500 font-bold hover:underline">Azoria Link 🔗</a></p>
+            <p class="text-[11px]">Boutique propulsée par <a href="{% url 'core:home' %}" class="text-brand-600 font-bold hover:underline">Azoria Link 🔗</a></p>
         </div>
     </footer>
 
-    <!-- PRODUCT DETAIL MODAL (Alpine) -->
+
+    <!-- ========================================================================= -->
+    <!-- 🛒 TUNNEL DE COMMANDE : BOTTOM SHEET (Mobile) vs MODAL CENTRÉ (Desktop) -->
+    <!-- ========================================================================= -->
+    <div x-show="cartOpen" x-cloak class="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4">
+        <!-- Backdrop with blur -->
+        <div x-show="cartOpen" 
+             x-transition.opacity.duration.300ms 
+             class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm" 
+             @click="cartOpen = false"></div>
+        
+        <!-- Panel: Bottom Sheet on Mobile (< sm), Centered Modal on Desktop (sm:) -->
+        <div x-show="cartOpen" 
+             x-transition:enter="transition ease-out duration-300 transform"
+             x-transition:enter-start="translate-y-full sm:translate-y-0 sm:scale-95 sm:opacity-0"
+             x-transition:enter-end="translate-y-0 sm:scale-100 sm:opacity-100"
+             x-transition:leave="transition ease-in duration-200 transform"
+             x-transition:leave-start="translate-y-0 sm:scale-100 sm:opacity-100"
+             x-transition:leave-end="translate-y-full sm:translate-y-0 sm:scale-95 sm:opacity-0"
+             class="relative w-full sm:max-w-lg bg-white rounded-t-[32px] sm:rounded-3xl max-h-[92vh] flex flex-col justify-between overflow-hidden shadow-2xl z-10 border border-slate-100">
+            
+            <!-- Mobile Draggable Handle Bar (App-like UX) -->
+            <div class="sm:hidden pt-3 pb-1 flex justify-center cursor-grab active:cursor-grabbing" @click="cartOpen = false">
+                <div class="w-12 h-1.5 bg-slate-300 rounded-full"></div>
+            </div>
+
+            <!-- Drawer / Modal Header -->
+            <div class="p-4 sm:p-5 border-b border-slate-100 flex items-center justify-between bg-slate-50/60">
+                <div class="flex items-center gap-2.5">
+                    <div class="w-8 h-8 rounded-xl bg-brand-600 text-white flex items-center justify-center shadow-sm">
+                        <i data-lucide="shopping-bag" class="w-4 h-4"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-heading font-extrabold text-base text-slate-900">Finaliser ma commande</h3>
+                        <span class="text-[10px] text-slate-500 font-semibold" x-text="cartTotalItems + ' article(s) sélectionné(s)'"></span>
+                    </div>
+                </div>
+                <button @click="cartOpen = false" class="p-2 rounded-full hover:bg-slate-200 text-slate-400 hover:text-slate-600 transition-colors">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+
+            <!-- Scrollable Body -->
+            <div class="flex-1 overflow-y-auto p-4 sm:p-6 space-y-5">
+                
+                <!-- Cart Items List -->
+                <div class="space-y-2.5">
+                    <template x-for="(item, index) in cart" :key="item.id">
+                        <div class="p-3 rounded-2xl bg-slate-50 border border-slate-100 flex gap-3 items-center">
+                            <div class="w-12 h-12 rounded-xl bg-white overflow-hidden shrink-0 border border-slate-200/80">
+                                <template x-if="item.image">
+                                    <img :src="item.image" :alt="item.name" class="w-full h-full object-cover">
+                                </template>
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <h4 class="font-bold text-xs text-slate-900 truncate" x-text="item.name"></h4>
+                                <span class="font-extrabold text-xs text-brand-600" x-text="formatPrice(item.price) + ' FCFA'"></span>
+                            </div>
+                            <div class="flex items-center gap-2 bg-white rounded-xl p-1 border border-slate-200 shadow-sm shrink-0">
+                                <button @click="updateCartQty(index, -1)" class="w-6 h-6 text-xs font-bold text-slate-600 flex items-center justify-center">-</button>
+                                <span class="text-xs font-bold w-3 text-center" x-text="item.qty"></span>
+                                <button @click="updateCartQty(index, 1)" class="w-6 h-6 text-xs font-bold text-slate-600 flex items-center justify-center">+</button>
+                            </div>
+                            <button @click="removeFromCart(index)" class="text-slate-400 hover:text-rose-500 p-1">
+                                <i data-lucide="trash-2" class="w-4 h-4"></i>
+                            </button>
+                        </div>
+                    </template>
+
+                    <div x-show="cart.length === 0" class="text-center py-8 text-slate-400">
+                        <i data-lucide="shopping-cart" class="w-10 h-10 mx-auto mb-2 opacity-30"></i>
+                        <p class="text-xs font-semibold">Votre panier est vide</p>
+                    </div>
+                </div>
+
+                <!-- Express Checkout Form (Visible when cart has items) -->
+                <div x-show="cart.length > 0" class="space-y-3 pt-3 border-t border-slate-100">
+                    <div class="flex items-center gap-1.5 text-xs font-extrabold text-slate-900 uppercase tracking-wider">
+                        <i data-lucide="truck" class="w-4 h-4 text-brand-600"></i>
+                        <span>Coordonnées de Livraison</span>
+                    </div>
+
+                    <!-- Customer Name -->
+                    <div>
+                        <label class="block text-[11px] font-bold text-slate-700 mb-1">Votre Nom complet :</label>
+                        <input type="text" x-model="customerName" required placeholder="Ex: Aïcha Koné"
+                               class="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs focus:ring-2 focus:ring-brand-500 focus:bg-white outline-none">
+                    </div>
+
+                    <!-- WhatsApp Phone -->
+                    <div>
+                        <label class="block text-[11px] font-bold text-slate-700 mb-1">Numéro WhatsApp (pour le livreur) :</label>
+                        <input type="tel" x-model="customerPhone" required placeholder="Ex: 07 00 00 00 00"
+                               class="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs focus:ring-2 focus:ring-brand-500 focus:bg-white outline-none">
+                    </div>
+
+                    <!-- Commune / City -->
+                    <div>
+                        <label class="block text-[11px] font-bold text-slate-700 mb-1">Commune / Ville :</label>
+                        <select x-model="customerCity" @change="calculateDelivery()"
+                                class="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs focus:ring-2 focus:ring-brand-500 focus:bg-white outline-none font-medium">
+                            <option value="Cocody">Cocody (Angré, Riviera, 2 Plateaux...)</option>
+                            <option value="Yopougon">Yopougon (Selmer, Maroc, Niangon...)</option>
+                            <option value="Marcory">Marcory (Zone 4, Biétry...)</option>
+                            <option value="Plateau">Plateau</option>
+                            <option value="Koumassi">Koumassi</option>
+                            <option value="Treichville">Treichville</option>
+                            <option value="Abobo">Abobo</option>
+                            <option value="Adjamé">Adjamé</option>
+                            <option value="Port-Bouët">Port-Bouët</option>
+                            <option value="Bingerville">Bingerville</option>
+                            <option value="Intérieur">Autre ville / Intérieur (Transporteur)</option>
+                        </select>
+                    </div>
+
+                    <!-- Delivery Landmark / Address -->
+                    <div>
+                        <label class="block text-[11px] font-bold text-slate-700 mb-1">Précision d'adresse / Carrefour / Repère :</label>
+                        <input type="text" x-model="customerAddress" required placeholder="Ex: Carrefour Duncan, Pharmacie..."
+                               class="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs focus:ring-2 focus:ring-brand-500 focus:bg-white outline-none">
+                    </div>
+
+                    <!-- Payment Method -->
+                    <div>
+                        <label class="block text-[11px] font-bold text-slate-700 mb-1">Mode de règlement :</label>
+                        <div class="grid grid-cols-2 gap-2">
+                            <label class="p-2.5 rounded-xl border flex items-center gap-2 cursor-pointer text-xs"
+                                   :class="paymentMethod === 'livraison' ? 'border-brand-500 bg-brand-50 text-brand-700 font-bold' : 'border-slate-200 bg-white text-slate-600'">
+                                <input type="radio" value="livraison" x-model="paymentMethod" class="hidden">
+                                <span>🚚 À la livraison</span>
+                            </label>
+                            <label class="p-2.5 rounded-xl border flex items-center gap-2 cursor-pointer text-xs"
+                                   :class="paymentMethod === 'wave' ? 'border-brand-500 bg-brand-50 text-brand-700 font-bold' : 'border-slate-200 bg-white text-slate-600'">
+                                <input type="radio" value="wave" x-model="paymentMethod" class="hidden">
+                                <span>📱 Mobile Money</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Drawer / Modal Sticky Footer -->
+            <div x-show="cart.length > 0" class="p-4 sm:p-5 border-t border-slate-100 bg-slate-50 space-y-3 pb-safe">
+                <div class="space-y-1 text-xs text-slate-600">
+                    <div class="flex justify-between">
+                        <span>Sous-total articles :</span>
+                        <span class="font-bold text-slate-900" x-text="formatPrice(cartSubtotal) + ' FCFA'"></span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span>Frais de livraison :</span>
+                        <span class="font-bold text-slate-900" x-text="formatPrice(deliveryFee) + ' FCFA'"></span>
+                    </div>
+                    <div class="flex justify-between text-sm font-extrabold text-slate-900 pt-1 border-t border-slate-200">
+                        <span>TOTAL À PAYER :</span>
+                        <span class="text-base text-brand-600" x-text="formatPrice(cartGrandTotal) + ' FCFA'"></span>
+                    </div>
+                </div>
+
+                <button @click="submitOrder()" 
+                        :disabled="isSubmitting || !customerName || !customerPhone || !customerAddress"
+                        :class="(!customerName || !customerPhone || !customerAddress) ? 'opacity-50 cursor-not-allowed' : 'hover:scale-[1.01] active:scale-95'"
+                        class="w-full py-4 px-6 rounded-2xl bg-brand-600 hover:bg-brand-700 text-white font-heading font-extrabold text-sm shadow-xl shadow-brand-500/25 flex items-center justify-center gap-2 transition-all">
+                    <template x-if="!isSubmitting">
+                        <span class="flex items-center gap-1.5">
+                            <i data-lucide="check-circle" class="w-4 h-4"></i>
+                            <span>Confirmer ma commande</span>
+                        </span>
+                    </template>
+                    <template x-if="isSubmitting">
+                        <span class="flex items-center gap-2">
+                            <span class="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
+                            <span>Validation en cours...</span>
+                        </span>
+                    </template>
+                </button>
+            </div>
+
+        </div>
+    </div>
+
+
+    <!-- ========================================================================= -->
+    <!-- 🔍 DÉTAIL PRODUIT : BOTTOM SHEET (Mobile) vs MODAL CENTRÉ (Desktop) -->
+    <!-- ========================================================================= -->
     <div x-show="productModalOpen" x-cloak class="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4">
         <!-- Backdrop -->
         <div x-show="productModalOpen" x-transition.opacity class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm" @click="productModalOpen = false"></div>
         
-        <!-- Sheet / Modal Window -->
+        <!-- Panel -->
         <div x-show="productModalOpen" 
              x-transition:enter="transition ease-out duration-300 transform"
-             x-transition:enter-start="translate-y-full sm:scale-95 sm:opacity-0"
+             x-transition:enter-start="translate-y-full sm:translate-y-0 sm:scale-95 sm:opacity-0"
              x-transition:enter-end="translate-y-0 sm:scale-100 sm:opacity-100"
              x-transition:leave="transition ease-in duration-200 transform"
              x-transition:leave-start="translate-y-0 sm:scale-100 sm:opacity-100"
-             x-transition:leave-end="translate-y-full sm:scale-95 sm:opacity-0"
-             class="relative w-full max-w-lg bg-white rounded-t-[32px] sm:rounded-3xl max-h-[90vh] overflow-y-auto shadow-2xl z-10 p-5 sm:p-6">
+             x-transition:leave-end="translate-y-full sm:translate-y-0 sm:scale-95 sm:opacity-0"
+             class="relative w-full sm:max-w-lg bg-white rounded-t-[32px] sm:rounded-3xl max-h-[92vh] overflow-y-auto shadow-2xl z-10 p-5 sm:p-6 border border-slate-100 pb-safe">
             
-            <button @click="productModalOpen = false" class="absolute top-4 right-4 p-2 rounded-full bg-slate-100 text-slate-500 hover:bg-slate-200 z-10">
+            <!-- Mobile Handle -->
+            <div class="sm:hidden pt-1 pb-3 flex justify-center cursor-grab" @click="productModalOpen = false">
+                <div class="w-12 h-1.5 bg-slate-300 rounded-full"></div>
+            </div>
+
+            <button @click="productModalOpen = false" class="hidden sm:block absolute top-4 right-4 p-2 rounded-full bg-slate-100 text-slate-500 hover:bg-slate-200 z-10">
                 <i data-lucide="x" class="w-5 h-5"></i>
             </button>
 
@@ -307,10 +503,10 @@
 
                     <!-- Info -->
                     <div>
-                        <span class="text-[10px] font-bold text-brand-500 uppercase tracking-wider" x-text="activeProduct.category || 'Article'"></span>
+                        <span class="text-[10px] font-extrabold text-brand-600 uppercase tracking-wider" x-text="activeProduct.category || 'Article'"></span>
                         <h2 class="font-heading font-extrabold text-lg sm:text-xl text-slate-900 mt-0.5" x-text="activeProduct.name"></h2>
                         <div class="flex items-baseline gap-2 mt-2">
-                            <span class="font-heading font-extrabold text-2xl text-slate-900" x-text="formatPrice(activeProduct.price) + ' FCFA'"></span>
+                            <span class="font-heading font-black text-2xl text-slate-900" x-text="formatPrice(activeProduct.price) + ' FCFA'"></span>
                             <template x-if="activeProduct.compare_price">
                                 <span class="text-sm text-slate-400 line-through" x-text="formatPrice(activeProduct.compare_price) + ' FCFA'"></span>
                             </template>
@@ -318,29 +514,29 @@
                     </div>
 
                     <!-- Description -->
-                    <div class="p-3.5 rounded-2xl bg-slate-50 border border-slate-100 text-xs text-slate-600 leading-relaxed whitespace-pre-line"
+                    <div class="p-4 rounded-2xl bg-slate-50 border border-slate-100 text-xs text-slate-600 leading-relaxed whitespace-pre-line"
                          x-text="activeProduct.description || 'Article de qualité supérieure sélectionné avec soin.'">
                     </div>
 
                     <!-- Quantity modifier -->
-                    <div class="flex items-center justify-between pt-2">
+                    <div class="flex items-center justify-between pt-1">
                         <span class="text-xs font-bold text-slate-700">Quantité :</span>
                         <div class="flex items-center gap-3 bg-slate-100 rounded-xl p-1">
-                            <button @click="modalQty = Math.max(1, modalQty - 1)" class="w-7 h-7 rounded-lg bg-white text-slate-700 font-bold shadow-sm flex items-center justify-center">-</button>
+                            <button @click="modalQty = Math.max(1, modalQty - 1)" class="w-8 h-8 rounded-lg bg-white text-slate-700 font-bold shadow-sm flex items-center justify-center">-</button>
                             <span class="font-bold text-xs w-4 text-center" x-text="modalQty"></span>
-                            <button @click="modalQty++" class="w-7 h-7 rounded-lg bg-white text-slate-700 font-bold shadow-sm flex items-center justify-center">+</button>
+                            <button @click="modalQty++" class="w-8 h-8 rounded-lg bg-white text-slate-700 font-bold shadow-sm flex items-center justify-center">+</button>
                         </div>
                     </div>
 
                     <!-- Actions -->
                     <div class="grid grid-cols-2 gap-3 pt-2">
                         <button @click="addToCart(activeProduct, modalQty); productModalOpen = false;" 
-                                class="py-3 px-4 rounded-2xl bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold text-xs flex items-center justify-center gap-1.5 transition-colors">
+                                class="py-3.5 px-4 rounded-2xl bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold text-xs flex items-center justify-center gap-1.5 transition-colors">
                             <i data-lucide="shopping-cart" class="w-4 h-4"></i>
                             <span>Ajouter</span>
                         </button>
                         <button @click="buyNow(activeProduct, modalQty)" 
-                                class="py-3 px-4 rounded-2xl bg-brand-500 hover:bg-brand-600 text-white font-bold text-xs flex items-center justify-center gap-1.5 shadow-md shadow-brand-500/25 active:scale-95 transition-all">
+                                class="py-3.5 px-4 rounded-2xl bg-brand-600 hover:bg-brand-700 text-white font-heading font-extrabold text-xs flex items-center justify-center gap-1.5 shadow-lg shadow-brand-500/25 active:scale-95 transition-all">
                             <i data-lucide="zap" class="w-4 h-4 text-amber-300"></i>
                             <span>Commander</span>
                         </button>
@@ -350,183 +546,17 @@
         </div>
     </div>
 
-    <!-- CART & EXPRESS CHECKOUT SLIDE-OVER DRAWER -->
-    <div x-show="cartOpen" x-cloak class="fixed inset-0 z-50 flex justify-end">
-        <!-- Backdrop -->
-        <div x-show="cartOpen" x-transition.opacity class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm" @click="cartOpen = false"></div>
-        
-        <!-- Drawer Panel -->
-        <div x-show="cartOpen" 
-             x-transition:enter="transition ease-out duration-300 transform"
-             x-transition:enter-start="translate-x-full"
-             x-transition:enter-end="translate-x-0"
-             x-transition:leave="transition ease-in duration-200 transform"
-             x-transition:leave-start="translate-x-0"
-             x-transition:leave-end="translate-x-full"
-             class="relative w-full max-w-md bg-white h-full shadow-2xl z-10 flex flex-col justify-between overflow-hidden">
-            
-            <!-- Drawer Header -->
-            <div class="p-4 border-b border-slate-200 flex items-center justify-between bg-slate-50/50">
-                <div class="flex items-center gap-2">
-                    <div class="w-8 h-8 rounded-xl bg-brand-500 text-white flex items-center justify-center">
-                        <i data-lucide="shopping-bag" class="w-4 h-4"></i>
-                    </div>
-                    <div>
-                        <h3 class="font-heading font-extrabold text-base text-slate-900">Mon Panier</h3>
-                        <span class="text-[10px] text-slate-500" x-text="cartTotalItems + ' article(s)'"></span>
-                    </div>
-                </div>
-                <button @click="cartOpen = false" class="p-2 rounded-full hover:bg-slate-200 text-slate-500 transition-colors">
-                    <i data-lucide="x" class="w-5 h-5"></i>
-                </button>
-            </div>
 
-            <!-- Drawer Body -->
-            <div class="flex-1 overflow-y-auto p-4 space-y-5">
-                
-                <!-- Cart Items List -->
-                <div class="space-y-3">
-                    <template x-for="(item, index) in cart" :key="item.id">
-                        <div class="p-3 rounded-2xl bg-slate-50 border border-slate-200/70 flex gap-3 items-center">
-                            <div class="w-14 h-14 rounded-xl bg-white overflow-hidden shrink-0 border border-slate-100">
-                                <template x-if="item.image">
-                                    <img :src="item.image" :alt="item.name" class="w-full h-full object-cover">
-                                </template>
-                            </div>
-                            <div class="flex-1 min-w-0">
-                                <h4 class="font-bold text-xs text-slate-900 truncate" x-text="item.name"></h4>
-                                <span class="font-extrabold text-xs text-slate-900" x-text="formatPrice(item.price) + ' FCFA'"></span>
-                            </div>
-                            <div class="flex items-center gap-2 bg-white rounded-xl p-1 border border-slate-200 shadow-sm shrink-0">
-                                <button @click="updateCartQty(index, -1)" class="w-6 h-6 text-xs font-bold text-slate-600 flex items-center justify-center">-</button>
-                                <span class="text-xs font-bold w-3 text-center" x-text="item.qty"></span>
-                                <button @click="updateCartQty(index, 1)" class="w-6 h-6 text-xs font-bold text-slate-600 flex items-center justify-center">+</button>
-                            </div>
-                            <button @click="removeFromCart(index)" class="text-slate-400 hover:text-rose-500 p-1">
-                                <i data-lucide="trash-2" class="w-4 h-4"></i>
-                            </button>
-                        </div>
-                    </template>
-
-                    <div x-show="cart.length === 0" class="text-center py-10 text-slate-400">
-                        <i data-lucide="shopping-cart" class="w-12 h-12 mx-auto mb-2 opacity-40"></i>
-                        <p class="text-xs font-semibold">Votre panier est vide</p>
-                    </div>
-                </div>
-
-                <!-- Checkout Form Details (Visible if cart has items) -->
-                <div x-show="cart.length > 0" class="space-y-3.5 pt-3 border-t border-slate-200">
-                    <div class="flex items-center gap-1.5 text-xs font-extrabold text-slate-900 uppercase tracking-wider">
-                        <i data-lucide="truck" class="w-4 h-4 text-brand-500"></i>
-                        <span>Informations de Livraison</span>
-                    </div>
-
-                    <!-- Customer Name -->
-                    <div>
-                        <label class="block text-[11px] font-bold text-slate-700 mb-1">Votre Nom & Prénoms :</label>
-                        <input type="text" x-model="customerName" required placeholder="Ex: Aïcha Koné"
-                               class="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs focus:ring-2 focus:ring-brand-500 focus:bg-white outline-none">
-                    </div>
-
-                    <!-- WhatsApp Phone -->
-                    <div>
-                        <label class="block text-[11px] font-bold text-slate-700 mb-1">Numéro WhatsApp (pour le livreur) :</label>
-                        <input type="tel" x-model="customerPhone" required placeholder="Ex: 07 00 00 00 00"
-                               class="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs focus:ring-2 focus:ring-brand-500 focus:bg-white outline-none">
-                    </div>
-
-                    <!-- Commune / City -->
-                    <div>
-                        <label class="block text-[11px] font-bold text-slate-700 mb-1">Commune / Ville :</label>
-                        <select x-model="customerCity" @change="calculateDelivery()"
-                                class="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs focus:ring-2 focus:ring-brand-500 focus:bg-white outline-none">
-                            <option value="Cocody">Cocody (Angré, Riviera, 2 Plateaux...)</option>
-                            <option value="Yopougon">Yopougon (Selmer, Maroc, Niangon...)</option>
-                            <option value="Marcory">Marcory (Zone 4, Biétry...)</option>
-                            <option value="Plateau">Plateau</option>
-                            <option value="Koumassi">Koumassi</option>
-                            <option value="Treichville">Treichville</option>
-                            <option value="Abobo">Abobo</option>
-                            <option value="Adjamé">Adjamé</option>
-                            <option value="Port-Bouët">Port-Bouët</option>
-                            <option value="Bingerville">Bingerville</option>
-                            <option value="Intérieur">Autre ville / Intérieur (Transporteur)</option>
-                        </select>
-                    </div>
-
-                    <!-- Delivery Landmark / Address -->
-                    <div>
-                        <label class="block text-[11px] font-bold text-slate-700 mb-1">Précision d'adresse / Carrefour / Repère :</label>
-                        <input type="text" x-model="customerAddress" required placeholder="Ex: Carrefour Duncan, Pharmacie Ste Marie..."
-                               class="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs focus:ring-2 focus:ring-brand-500 focus:bg-white outline-none">
-                    </div>
-
-                    <!-- Payment Method -->
-                    <div>
-                        <label class="block text-[11px] font-bold text-slate-700 mb-1">Mode de règlement :</label>
-                        <div class="grid grid-cols-2 gap-2">
-                            <label class="p-2.5 rounded-xl border flex items-center gap-2 cursor-pointer text-xs"
-                                   :class="paymentMethod === 'livraison' ? 'border-brand-500 bg-brand-50/50 text-brand-700 font-bold' : 'border-slate-200 bg-white text-slate-600'">
-                                <input type="radio" value="livraison" x-model="paymentMethod" class="hidden">
-                                <span>🚚 À la livraison</span>
-                            </label>
-                            <label class="p-2.5 rounded-xl border flex items-center gap-2 cursor-pointer text-xs"
-                                   :class="paymentMethod === 'wave' ? 'border-brand-500 bg-brand-50/50 text-brand-700 font-bold' : 'border-slate-200 bg-white text-slate-600'">
-                                <input type="radio" value="wave" x-model="paymentMethod" class="hidden">
-                                <span>📱 Mobile Money</span>
-                            </label>
-                        </div>
-                    </div>
-                </div>
-
-            </div>
-
-            <!-- Drawer Footer (Totals & Confirm Button) -->
-            <div x-show="cart.length > 0" class="p-4 border-t border-slate-200 bg-slate-50 space-y-3">
-                <div class="space-y-1.5 text-xs text-slate-600">
-                    <div class="flex justify-between">
-                        <span>Sous-total articles :</span>
-                        <span class="font-bold text-slate-900" x-text="formatPrice(cartSubtotal) + ' FCFA'"></span>
-                    </div>
-                    <div class="flex justify-between">
-                        <span>Frais de livraison :</span>
-                        <span class="font-bold text-slate-900" x-text="formatPrice(deliveryFee) + ' FCFA'"></span>
-                    </div>
-                    <div class="flex justify-between text-sm font-extrabold text-slate-900 pt-1 border-t border-slate-200">
-                        <span>TOTAL À PAYER :</span>
-                        <span class="text-base text-brand-600" x-text="formatPrice(cartGrandTotal) + ' FCFA'"></span>
-                    </div>
-                </div>
-
-                <button @click="submitOrder()" 
-                        :disabled="isSubmitting || !customerName || !customerPhone || !customerAddress"
-                        :class="(!customerName || !customerPhone || !customerAddress) ? 'opacity-50 cursor-not-allowed' : 'hover:scale-[1.01] active:scale-95'"
-                        class="w-full py-3.5 px-5 rounded-2xl bg-brand-500 text-white font-heading font-extrabold text-sm shadow-lg shadow-brand-500/25 flex items-center justify-center gap-2 transition-all">
-                    <template x-if="!isSubmitting">
-                        <span class="flex items-center gap-1.5">
-                            <i data-lucide="check-circle" class="w-4 h-4"></i>
-                            <span>Valider la commande</span>
-                        </span>
-                    </template>
-                    <template x-if="isSubmitting">
-                        <span class="flex items-center gap-2">
-                            <span class="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
-                            <span>Enregistrement...</span>
-                        </span>
-                    </template>
-                </button>
-            </div>
-
-        </div>
-    </div>
-
-    <!-- ORDER SUCCESS MODAL CONTAINER (HTMX/Alpine Target) -->
-    <div x-show="orderModalOpen" x-cloak class="fixed inset-0 z-50 flex items-center justify-center p-4">
+    <!-- ========================================================================= -->
+    <!-- 🎉 MODALE DE CONFIRMATION COMMANDE -->
+    <!-- ========================================================================= -->
+    <div x-show="orderModalOpen" x-cloak class="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4">
         <div class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm" @click="orderModalOpen = false"></div>
-        <div id="checkout-modal-content" class="relative w-full max-w-md bg-white dark:bg-slate-800 rounded-3xl p-6 shadow-2xl z-10">
+        <div id="checkout-modal-content" class="relative w-full sm:max-w-md bg-white rounded-t-[32px] sm:rounded-3xl p-6 shadow-2xl z-10 pb-safe">
             <!-- Content will be injected here upon order confirmation -->
         </div>
     </div>
+
 
     <!-- CLIENT JAVASCRIPT LOGIC (Alpine.js) -->
     <script>
@@ -607,7 +637,6 @@
                         });
                     }
                     this.saveCart();
-                    // Micro-toast vibration on supported mobile
                     if (navigator.vibrate) navigator.vibrate(50);
                 },
 
@@ -635,6 +664,7 @@
                     this.addToCart(product, qty);
                     this.productModalOpen = false;
                     this.cartOpen = true;
+                    this.$nextTick(() => { if (typeof lucide !== 'undefined') lucide.createIcons(); });
                 },
 
                 calculateDelivery() {
@@ -654,7 +684,7 @@
 
                 async submitOrder() {
                     if (!this.customerName || !this.customerPhone || !this.customerAddress) {
-                        alert("Veuillez remplir vos coordonnées de livraison.");
+                        alert("Veuillez renseigner vos coordonnées de livraison.");
                         return;
                     }
 
