@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Page Introuvable - Azoria{% endblock %}
+
+{% block content %}
+<div class="min-h-[70vh] flex items-center justify-center px-4">
+    <div class="max-w-md w-full text-center space-y-6">
+        
+        <!-- Icon & Error Code -->
+        <div class="relative w-40 h-40 mx-auto">
+            <div class="absolute inset-0 bg-brand-50 dark:bg-slate-800 rounded-full animate-ping opacity-20"></div>
+            <div class="relative w-full h-full bg-brand-100 dark:bg-slate-800 rounded-full flex flex-col items-center justify-center text-brand-600 dark:text-brand-400">
+                <i data-lucide="compass" class="w-16 h-16 mb-2"></i>
+                <span class="font-heading font-black text-3xl">404</span>
+            </div>
+        </div>
+
+        <!-- Text Content -->
+        <div class="space-y-2">
+            <h1 class="text-2xl sm:text-3xl font-heading font-extrabold text-slate-900 dark:text-white">
+                Oups ! Vous vous êtes perdu(e)
+            </h1>
+            <p class="text-slate-500 dark:text-slate-400 text-sm sm:text-base max-w-sm mx-auto">
+                La page que vous cherchez a peut-être été déplacée, supprimée, ou n'a jamais existé.
+            </p>
+        </div>
+
+        <!-- Actions -->
+        <div class="pt-4 flex flex-col sm:flex-row items-center justify-center gap-3">
+            <button onclick="window.history.back()" 
+                    class="w-full sm:w-auto px-6 py-3 rounded-xl border-2 border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 font-bold transition-colors flex items-center justify-center gap-2">
+                <i data-lucide="arrow-left" class="w-4 h-4"></i>
+                <span>Retour</span>
+            </button>
+            <a href="{% url 'core:home' %}" 
+               class="w-full sm:w-auto px-6 py-3 rounded-xl bg-brand-600 hover:bg-brand-700 text-white font-bold transition-colors shadow-lg shadow-brand-500/30 flex items-center justify-center gap-2">
+                <i data-lucide="home" class="w-4 h-4"></i>
+                <span>Accueil</span>
+            </a>
+        </div>
+
+    </div>
+</div>
+{% endblock %}
