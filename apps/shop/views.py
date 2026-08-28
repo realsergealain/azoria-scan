@@ -58,7 +58,17 @@ def shop_settings(request):
         shop.name = request.POST.get('name', shop.name)
         shop.category = request.POST.get('category', shop.category)
         shop.description = request.POST.get('description', shop.description)
-        shop.phone = request.POST.get('phone', shop.phone)
+        # Phone cleaning
+        raw_phone = request.POST.get('phone', '')
+        if raw_phone:
+            clean_phone = ''.join(filter(str.isdigit, str(raw_phone)))
+            if len(clean_phone) == 10 and not clean_phone.startswith('225'):
+                clean_phone = '+225' + clean_phone
+            elif clean_phone.startswith('225') and len(clean_phone) == 13:
+                clean_phone = '+' + clean_phone
+            shop.phone = clean_phone
+        else:
+            shop.phone = shop.phone
         shop.city = request.POST.get('city', shop.city)
         shop.save()
 
@@ -370,11 +380,21 @@ def checkout_view(request, shop_uuid, shop_slug):
     else:
         delivery_fee = shop.payment.delivery_fee if hasattr(shop, 'payment') else Decimal('1500.00')
 
+    # Nettoyage et formatage du téléphone
+    raw_phone = data.get('customer_phone', '').strip()
+    clean_phone = ''.join(filter(str.isdigit, str(raw_phone)))
+    if len(clean_phone) == 10 and not clean_phone.startswith('225'):
+        clean_phone = '+225' + clean_phone
+    elif clean_phone.startswith('225') and len(clean_phone) == 13:
+        clean_phone = '+' + clean_phone
+    else:
+        clean_phone = raw_phone  # fallback
+
     # Création de la commande
     order = Order.objects.create(
         shop=shop,
         customer_name=data.get('customer_name', '').strip(),
-        customer_phone=data.get('customer_phone', '').strip(),
+        customer_phone=clean_phone,
         customer_city=customer_city,
         customer_address=data.get('customer_address', '').strip(),
         payment_method=data.get('payment_method', 'livraison'),

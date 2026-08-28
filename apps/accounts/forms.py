@@ -84,13 +84,16 @@ class RegisterForm(forms.Form):
     )
     phone = forms.CharField(
         label=_("Numéro WhatsApp / Téléphone"),
-        max_length=20,
-        required=False,
         widget=forms.TextInput(attrs={
-            'placeholder': '+225 07 00 00 00 00',
-            'class': 'md-input',
-            'autocomplete': 'tel',
-        })
+            'class': 'md-input pl-10', 
+            'placeholder': 'Ex: 07000000',
+            'inputmode': 'numeric',
+            'pattern': '[0-9]{10}',
+            'maxlength': '10',
+            'minlength': '10',
+            'oninput': "this.value = this.value.replace(/[^0-9]/g, '')"
+        }),
+        required=True
     )
     password = forms.CharField(
         label=_("Mot de passe"),
@@ -128,6 +131,16 @@ class RegisterForm(forms.Form):
             self.add_error('password_confirm', _("Les mots de passe ne correspondent pas."))
         return cleaned_data
 
+    def clean_phone(self):
+        phone = self.cleaned_data.get('phone', '')
+        # Garder uniquement les chiffres
+        clean_phone = ''.join(filter(str.isdigit, str(phone)))
+        if len(clean_phone) != 10:
+            raise forms.ValidationError("Le numéro doit comporter exactement 10 chiffres.")
+        if not clean_phone.startswith('225'):
+            clean_phone = '+225' + clean_phone
+        return clean_phone
+
     def save(self):
         cleaned_data = self.cleaned_data
         names = cleaned_data['full_name'].strip().split(' ', 1)
@@ -155,7 +168,15 @@ class UserProfileForm(forms.ModelForm):
         widgets = {
             'first_name': forms.TextInput(attrs={'class': 'md-input', 'placeholder': 'Prénom'}),
             'last_name': forms.TextInput(attrs={'class': 'md-input', 'placeholder': 'Nom'}),
-            'phone': forms.TextInput(attrs={'class': 'md-input', 'placeholder': '+225 07 00 00 00 00'}),
+            'phone': forms.TextInput(attrs={
+                'class': 'md-input', 
+                'placeholder': 'Ex: 0711113420',
+                'inputmode': 'numeric',
+                'pattern': '[0-9]{10}',
+                'maxlength': '10',
+                'minlength': '10',
+                'oninput': "this.value = this.value.replace(/[^0-9]/g, '')"
+            }),
             'email': forms.EmailInput(attrs={'class': 'md-input bg-slate-100 text-slate-500 cursor-not-allowed', 'readonly': 'readonly'}),
         }
         labels = {
@@ -164,6 +185,19 @@ class UserProfileForm(forms.ModelForm):
             'phone': _("Numéro WhatsApp / Téléphone"),
             'email': _("Adresse email (non modifiable)"),
         }
+
+    def clean_phone(self):
+        phone = self.cleaned_data.get('phone', '')
+        if not phone:
+            return phone
+        clean_phone = ''.join(filter(str.isdigit, str(phone)))
+        # Si le user a laissé le +225, on l'accepte mais on nettoie
+        if clean_phone.startswith('225') and len(clean_phone) == 13:
+            return '+' + clean_phone
+        
+        if len(clean_phone) != 10:
+            raise forms.ValidationError("Le numéro doit comporter exactement 10 chiffres (sans l'indicatif).")
+        return '+225' + clean_phone
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
