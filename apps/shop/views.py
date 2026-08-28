@@ -86,6 +86,19 @@ def shop_settings(request):
     })
 
 
+@login_required
+def ai_description_api(request):
+    """API Endpoint pour générer une description via OpenAI."""
+    name = request.GET.get('name', '')
+    category = request.GET.get('cat', '')
+    
+    if not name:
+        return JsonResponse({'description': ''})
+        
+    ai_data = generate_ai_product_description(name, category)
+    return JsonResponse({'description': ai_data.get('description', '')})
+
+
 # ==========================================
 # 🛒 GESTION DU CATALOGUE PRODUITS
 # ==========================================

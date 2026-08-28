@@ -93,25 +93,49 @@ def generate_whatsapp_order_link(order) -> str:
 
 def generate_ai_product_description(name: str, category: str = "") -> dict:
     """
-    Génère un titre accrocheur, une description vendeuse et des arguments percutants pour Azoria AI.
+    Génère un titre accrocheur, une description vendeuse et des arguments percutants pour Azoria AI via OpenAI.
     """
-    hooks = [
-        f"Craquez pour notre sublime {name} ! Un indispensable de votre dressing qui allie élégance et confort absolu.",
-        f"Sublimez votre style avec notre {name}. Conçu avec des finitions de qualité supérieure pour vous démarquer à coup sûr.",
-        f"Le coup de cœur de la saison : {name}. Parfait pour vos sorties, cérémonies et événements spéciaux.",
-    ]
+    import openai
+    from django.conf import settings
     
-    import random
-    selected_hook = random.choice(hooks)
-    
-    description = (
-        f"{selected_hook}\n\n"
-        f"✨ *Pourquoi vous allez l'adorer :*\n"
-        f"• Matière et confection premium, ultra agréable à porter.\n"
-        f"• Coupe moderne qui met en valeur votre silhouette.\n"
-        f"• Disponible en stock limité — livraison rapide chez vous !"
+    # Récupérer la clé API depuis .env ou settings
+    openai.api_key = getattr(settings, 'OPENAI_API_KEY', None)
+    import os
+    if not openai.api_key:
+        openai.api_key = os.environ.get('OPENAI_API_KEY')
+        
+    if not openai.api_key:
+        # Fallback de sécurité si pas de clé
+        return {
+            'title': f"{name} ✨ Tendance & Qualité",
+            'description': f"Découvrez notre {name} ! Qualité premium et design élégant. Commandez dès maintenant avec paiement à la livraison.",
+            'badge': '🔥 Meilleure Vente'
+        }
+
+    prompt = (
+        f"Tu es un expert en e-commerce, dropshipping et copywriting pour le marché africain (Côte d'Ivoire, Sénégal, etc). "
+        f"Ton but est de rédiger une description TRES VENDEUSE, accrocheuse, pour inciter les clients sur WhatsApp et TikTok à acheter.\n\n"
+        f"Produit : {name}\n"
+        f"Catégorie : {category}\n\n"
+        f"Rédige UNIQUEMENT la description du produit (pas de titre, pas de blabla). La description doit être courte (maximum 4 lignes) "
+        f"avec des emojis, et mettre en valeur la qualité, la fiabilité, et encourager à commander avec paiement à la livraison."
     )
-    
+
+    try:
+        response = openai.ChatCompletion.create(
+            model="gpt-3.5-turbo",
+            messages=[
+                {"role": "system", "content": "Tu es un expert copywriter e-commerce."},
+                {"role": "user", "content": prompt}
+            ],
+            max_tokens=150,
+            temperature=0.7
+        )
+        description = response.choices[0].message.content.strip()
+    except Exception as e:
+        print(f"Erreur OpenAI: {e}")
+        description = f"Découvrez notre magnifique {name} ! Un article de qualité supérieure qui saura vous satisfaire. Commandez dès aujourd'hui."
+
     return {
         'title': f"{name} ✨ Tendance & Qualité",
         'description': description,
