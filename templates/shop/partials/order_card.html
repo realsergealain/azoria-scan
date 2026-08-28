@@ -1,0 +1,81 @@
+<div class="bg-white dark:bg-slate-800 rounded-3xl p-5 border border-slate-200 dark:border-slate-700 shadow-sm hover:shadow-md transition-all flex flex-col justify-between space-y-4 relative" id="order-card-{{ order.uuid }}">
+    
+    <!-- Order Card Header -->
+    <div class="flex items-start justify-between gap-3">
+        <div>
+            <div class="flex items-center gap-2">
+                <span class="font-heading font-extrabold text-base text-slate-900 dark:text-white">{{ order.order_number }}</span>
+                <span class="text-[10px] text-slate-400 font-medium">{{ order.created_at|date:"d M H:i" }}</span>
+            </div>
+            <div class="font-bold text-sm text-slate-800 dark:text-slate-200 mt-1 flex items-center gap-1.5">
+                <i data-lucide="user" class="w-3.5 h-3.5 text-slate-400"></i>
+                <span>{{ order.customer_name }}</span>
+            </div>
+        </div>
+
+        <!-- Status Badge -->
+        <span class="px-2.5 py-1 rounded-full text-[11px] font-extrabold 
+            {% if order.status == 'pending' %}bg-amber-50 text-amber-700 border border-amber-200
+            {% elif order.status == 'confirmed' %}bg-blue-50 text-blue-700 border border-blue-200
+            {% elif order.status == 'shipped' %}bg-purple-50 text-purple-700 border border-purple-200
+            {% elif order.status == 'delivered' %}bg-emerald-50 text-emerald-700 border border-emerald-200
+            {% else %}bg-rose-50 text-rose-700 border border-rose-200{% endif %}">
+            {{ order.get_status_display }}
+        </span>
+    </div>
+
+    <!-- Customer Delivery Details -->
+    <div class="p-3 rounded-2xl bg-slate-50 dark:bg-slate-900/50 border border-slate-100 dark:border-slate-700/60 text-xs space-y-1.5 text-slate-600 dark:text-slate-300">
+        <div class="flex items-center gap-1.5 font-semibold text-slate-900 dark:text-white">
+            <i data-lucide="map-pin" class="w-3.5 h-3.5 text-brand-500 shrink-0"></i>
+            <span>{{ order.customer_city }} - {{ order.customer_address }}</span>
+        </div>
+        <div class="flex items-center gap-1.5">
+            <i data-lucide="phone" class="w-3.5 h-3.5 text-slate-400 shrink-0"></i>
+            <span>{{ order.customer_phone }}</span>
+        </div>
+    </div>
+
+    <!-- Items Ordered List -->
+    <div class="space-y-1 text-xs">
+        <p class="text-[10px] font-bold uppercase tracking-wider text-slate-400">Articles :</p>
+        {% for item in order.items.all %}
+        <div class="flex justify-between text-slate-700 dark:text-slate-300">
+            <span>{{ item.quantity }}x {{ item.product_name }}</span>
+            <span class="font-bold">{{ item.total_price|floatformat:0 }} FCFA</span>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- Financials & Quick Action Footer -->
+    <div class="pt-3 border-t border-slate-100 dark:border-slate-700 flex flex-col sm:flex-row items-center justify-between gap-3">
+        <div>
+            <div class="text-[10px] text-slate-400">Total à encaisser :</div>
+            <div class="font-heading font-extrabold text-base text-brand-600 dark:text-brand-400">{{ order.total_amount|floatformat:0 }} FCFA</div>
+        </div>
+
+        <div class="flex items-center gap-2 w-full sm:w-auto">
+            <!-- Status Switcher Dropdown (HTMX) -->
+            <select hx-post="{% url 'shop:order_status_update' order.uuid %}"
+                    hx-target="#order-card-{{ order.uuid }}"
+                    hx-swap="outerHTML"
+                    hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
+                    name="status"
+                    class="px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-600 outline-none">
+                <option value="pending" {% if order.status == 'pending' %}selected{% endif %}>🟡 Reçue</option>
+                <option value="confirmed" {% if order.status == 'confirmed' %}selected{% endif %}>🔵 Confirmée</option>
+                <option value="shipped" {% if order.status == 'shipped' %}selected{% endif %}>🟣 En livraison</option>
+                <option value="delivered" {% if order.status == 'delivered' %}selected{% endif %}>🟢 Livrée</option>
+                <option value="cancelled" {% if order.status == 'cancelled' %}selected{% endif %}>🔴 Annulée</option>
+            </select>
+
+            <!-- Contact Customer on WhatsApp Button -->
+            <a href="https://wa.me/{{ order.customer_phone|cut:' '|cut:'+' }}?text=Bonjour%20{{ order.customer_name|urlencode }},%20je%20suis%20le%20vendeur%20de%20la%20boutique%20{{ shop.name|urlencode }}.%20Je%20vous%20contacte%20concernant%20votre%20commande%20{{ order.order_number }}."
+               target="_blank"
+               class="p-2 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-white shadow-sm transition-colors"
+               title="Écrire au client sur WhatsApp">
+                <i data-lucide="message-circle" class="w-4 h-4"></i>
+            </a>
+        </div>
+    </div>
+</div>

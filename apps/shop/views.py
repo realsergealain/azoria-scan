@@ -267,7 +267,7 @@ def order_status_update(request, order_uuid):
         order.save()
     
     # Renvoyer la carte commande mise à jour
-    return render(request, 'shop/order_list.html#order-card', {'order': order, 'shop': order.shop})
+    return render(request, 'shop/partials/order_card.html', {'order': order, 'shop': order.shop})
 
 
 @login_required
