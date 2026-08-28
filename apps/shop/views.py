@@ -24,6 +24,10 @@ from .services import (
 @login_required
 def shop_create(request):
     """Création simplifiée de boutique."""
+    if Shop.objects.filter(owner=request.user).exists():
+        messages.error(request, "Vous possédez déjà une boutique. La création de boutiques multiples n'est pas autorisée.")
+        return redirect('core:dashboard')
+
     form = ShopCreateForm(request.POST or None)
 
     if request.method == 'POST' and form.is_valid():

@@ -217,10 +217,12 @@
                     <i data-lucide="user" class="w-4 h-4"></i>
                 </a>
 
+                {% if not request.user.shops.exists %}
                 <button @click="$dispatch('open-create-shop-modal')" class="hidden sm:inline-flex bg-brand-600 hover:bg-brand-700 text-white text-xs font-bold px-4 py-2 rounded-xl items-center gap-1.5 transition-colors shadow-sm">
                     <i data-lucide="plus" class="w-3.5 h-3.5"></i>
                     <span>Créer boutique</span>
                 </button>
+                {% endif %}
             </div>
         </header>
 
