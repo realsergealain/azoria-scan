@@ -31,7 +31,7 @@
             <!-- Top Image Container -->
             <div class="aspect-square bg-slate-100 dark:bg-slate-800/60 relative overflow-hidden">
                 {% if product.image %}
-                    <img src="{{ product.image.url }}" alt="{{ product.name }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
+                    <img src="{{ product.image.url }}" alt="{{ product.name }}" loading="lazy" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
                 {% else %}
                     <div class="w-full h-full flex flex-col items-center justify-center text-slate-300 dark:text-slate-600">
                         <i data-lucide="package" class="w-12 h-12 mb-1"></i>

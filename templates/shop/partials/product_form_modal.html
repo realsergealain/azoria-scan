@@ -100,15 +100,69 @@
                     </div>
                     
                     <div>
-                        <label for="{{ form.image.id_for_label }}" class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">{{ form.image.label }} :</label>
+                        <label for="{{ form.image.id_for_label }}" class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">Image principale :</label>
                         {% if is_update and product.image %}
                             <div class="mb-2 flex items-center gap-3 p-2 bg-slate-50 dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-700">
                                 <img src="{{ product.image.url }}" alt="Image actuelle" class="h-12 w-12 object-cover rounded-lg">
-                                <span class="text-xs text-slate-500">Image actuelle chargée</span>
+                                <span class="text-xs text-slate-500">Image principale chargée</span>
                             </div>
                         {% endif %}
                         <div class="p-3 border-2 border-dashed border-slate-200 dark:border-slate-700 rounded-xl bg-slate-50 dark:bg-slate-900/50">
                             {{ form.image }}
+                        </div>
+                    </div>
+
+                    <!-- Galerie d'images secondaires (Alpine.js Multi-upload) -->
+                    <div x-data="{
+                            files: [],
+                            handleFiles(e) {
+                                let selectedFiles = Array.from(e.target.files || e.dataTransfer.files);
+                                if (this.files.length + selectedFiles.length > 3) {
+                                    alert('Vous ne pouvez ajouter que 3 images secondaires au maximum.');
+                                    selectedFiles = selectedFiles.slice(0, 3 - this.files.length);
+                                }
+                                for (let f of selectedFiles) {
+                                    let url = URL.createObjectURL(f);
+                                    this.files.push({ file: f, url: url });
+                                }
+                                
+                                // Mettre à jour l'input file caché
+                                const dataTransfer = new DataTransfer();
+                                this.files.forEach(f => dataTransfer.items.add(f.file));
+                                $refs.multiInput.files = dataTransfer.files;
+                            },
+                            removeFile(index) {
+                                this.files.splice(index, 1);
+                                const dataTransfer = new DataTransfer();
+                                this.files.forEach(f => dataTransfer.items.add(f.file));
+                                $refs.multiInput.files = dataTransfer.files;
+                            }
+                        }">
+                        <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">Galerie d'images (jusqu'à 3 images) :</label>
+                        
+                        <!-- Zone de Drop -->
+                        <div @dragover.prevent="$el.classList.add('bg-brand-50', 'border-brand-300')"
+                             @dragleave.prevent="$el.classList.remove('bg-brand-50', 'border-brand-300')"
+                             @drop.prevent="$el.classList.remove('bg-brand-50', 'border-brand-300'); handleFiles($event)"
+                             class="p-6 border-2 border-dashed border-slate-200 dark:border-slate-700 rounded-xl bg-slate-50 dark:bg-slate-900/50 text-center transition-colors">
+                            
+                            <input type="file" name="additional_images" x-ref="multiInput" multiple accept="image/*" class="hidden" @change="handleFiles($event)">
+                            <button type="button" @click="$refs.multiInput.click()" class="px-4 py-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-600 rounded-lg text-xs font-bold text-slate-700 dark:text-slate-300 shadow-sm hover:bg-slate-50 active:scale-95 transition-all">
+                                Sélectionner les images
+                            </button>
+                            <p class="mt-2 text-[10px] text-slate-400">Ou glissez-déposez vos fichiers ici (max 3).</p>
+                        </div>
+
+                        <!-- Prévisualisations -->
+                        <div class="mt-3 flex flex-wrap gap-3" x-show="files.length > 0">
+                            <template x-for="(file, index) in files" :key="index">
+                                <div class="relative w-16 h-16 rounded-xl border border-slate-200 shadow-sm overflow-hidden group">
+                                    <img :src="file.url" class="w-full h-full object-cover">
+                                    <button type="button" @click="removeFile(index)" class="absolute top-1 right-1 w-5 h-5 bg-black/60 rounded-full flex items-center justify-center text-white opacity-0 group-hover:opacity-100 transition-opacity">
+                                        <i data-lucide="x" class="w-3 h-3"></i>
+                                    </button>
+                                </div>
+                            </template>
                         </div>
                     </div>
 

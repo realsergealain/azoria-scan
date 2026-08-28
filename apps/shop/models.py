@@ -3,7 +3,27 @@ from django.conf import settings
 from django.utils.translation import gettext_lazy as _
 import uuid
 import random
+import os
 from django.utils.text import slugify
+from imagekit.models import ProcessedImageField
+from imagekit.processors import ResizeToFill, ResizeToFit
+
+def shop_logo_path(instance, filename):
+    ext = filename.split('.')[-1]
+    return os.path.join('users', str(instance.shop.owner.id), 'shops', str(instance.shop.uuid), 'branding', f"logo.{ext}")
+
+def shop_banner_path(instance, filename):
+    ext = filename.split('.')[-1]
+    return os.path.join('users', str(instance.shop.owner.id), 'shops', str(instance.shop.uuid), 'branding', f"banner.{ext}")
+
+def product_image_path(instance, filename):
+    ext = filename.split('.')[-1]
+    return os.path.join('users', str(instance.shop.owner.id), 'shops', str(instance.shop.uuid), 'products', f"{uuid.uuid4().hex}.{ext}")
+
+def secondary_product_image_path(instance, filename):
+    ext = filename.split('.')[-1]
+    return os.path.join('users', str(instance.product.shop.owner.id), 'shops', str(instance.product.shop.uuid), 'products', f"{uuid.uuid4().hex}.{ext}")
+
 
 
 class Shop(models.Model):
@@ -40,8 +60,18 @@ class Shop(models.Model):
 
 class ShopBranding(models.Model):
     shop = models.OneToOneField(Shop, on_delete=models.CASCADE, related_name='branding', verbose_name=_("Boutique"))
-    logo = models.ImageField(upload_to='shop_logos/', blank=True, null=True, verbose_name=_("Logo"))
-    banner = models.ImageField(upload_to='shop_banners/', blank=True, null=True, verbose_name=_("Bannière"))
+    logo = ProcessedImageField(upload_to=shop_logo_path,
+                               processors=[ResizeToFill(400, 400)],
+                               format='WEBP',
+                               options={'quality': 85},
+                               max_length=255,
+                               blank=True, null=True, verbose_name=_("Logo"))
+    banner = ProcessedImageField(upload_to=shop_banner_path,
+                                 processors=[ResizeToFill(1200, 400)],
+                                 format='WEBP',
+                                 options={'quality': 85},
+                                 max_length=255,
+                                 blank=True, null=True, verbose_name=_("Bannière"))
     slogan = models.CharField(max_length=150, blank=True, verbose_name=_("Slogan"))
     primary_color = models.CharField(max_length=7, default='#7C3AED', verbose_name=_("Couleur principale (HEX)"))
 
@@ -88,7 +118,12 @@ class ShopProduct(models.Model):
     description = models.TextField(blank=True, verbose_name=_("Description du produit"))
     price = models.DecimalField(max_digits=10, decimal_places=2, verbose_name=_("Prix (FCFA)"))
     compare_price = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True, verbose_name=_("Prix barré / Promo (FCFA)"))
-    image = models.ImageField(upload_to='product_images/', blank=True, null=True, verbose_name=_("Image principale"))
+    image = ProcessedImageField(upload_to=product_image_path,
+                                processors=[ResizeToFit(1024, 1024)],
+                                format='WEBP',
+                                options={'quality': 85},
+                                max_length=255,
+                                blank=True, null=True, verbose_name=_("Image principale"))
     is_available = models.BooleanField(default=True, verbose_name=_("Disponible en stock"))
     created_at = models.DateTimeField(auto_now_add=True, verbose_name=_("Date d'ajout"))
 
@@ -117,6 +152,25 @@ class ShopProduct(models.Model):
 
     def __str__(self):
         return f"{self.name} ({self.shop.name})"
+
+
+class ProductImage(models.Model):
+    product = models.ForeignKey(ShopProduct, on_delete=models.CASCADE, related_name='images', verbose_name=_("Produit"))
+    image = ProcessedImageField(upload_to=secondary_product_image_path,
+                                processors=[ResizeToFit(1024, 1024)],
+                                format='WEBP',
+                                options={'quality': 85},
+                                max_length=255,
+                                verbose_name=_("Image supplémentaire"))
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        verbose_name = _("Image produit")
+        verbose_name_plural = _("Images produit")
+        ordering = ['created_at']
+
+    def __str__(self):
+        return f"Image de {self.product.name}"
 
 
 class Order(models.Model):

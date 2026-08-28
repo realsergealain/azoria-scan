@@ -112,6 +112,7 @@ def ai_description_api(request):
 # ==========================================
 # 🛒 GESTION DU CATALOGUE PRODUITS
 # ==========================================
+from .models import ProductImage
 
 @login_required
 def product_list(request):
@@ -142,6 +143,12 @@ def product_create(request):
             product = form.save(commit=False)
             product.shop = shop
             product.save()
+
+            # Save additional images
+            for image in request.FILES.getlist('additional_images'):
+                if product.images.count() < 3:
+                    ProductImage.objects.create(product=product, image=image)
+
             messages.success(request, f"Produit '{product.name}' ajouté avec succès.")
             return redirect('shop:product_list')
     else:
@@ -164,7 +171,14 @@ def product_update(request, product_uuid):
         form = ShopProductForm(request.POST, request.FILES, instance=product)
         if form.is_valid():
             form.save()
-            messages.success(request, f"Produit '{product.name}' mis à jour.")
+            
+            # Delete selected existing images (if any feature sends image IDs to delete)
+            # For now, we just append new images up to 3 limit
+            for image in request.FILES.getlist('additional_images'):
+                if product.images.count() < 3:
+                    ProductImage.objects.create(product=product, image=image)
+
+            messages.success(request, f"Produit '{product.name}' modifié avec succès.")
             return redirect('shop:product_list')
     else:
         form = ShopProductForm(instance=product)
@@ -344,7 +358,7 @@ def shop_detail(request, shop_uuid, shop_slug):
         ip_address=client_ip.split(',')[0] if client_ip else None
     )
 
-    products = ShopProduct.objects.filter(shop=shop, is_available=True)
+    products = ShopProduct.objects.filter(shop=shop, is_available=True).prefetch_related('images')
     categories = list(set([p.category for p in products if p.category]))
 
     return render(request, 'shop/storefront.html', {

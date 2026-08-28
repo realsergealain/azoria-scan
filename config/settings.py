@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     'import_export',
+    'imagekit',
 
     # Custom Apps
     'apps.accounts',
