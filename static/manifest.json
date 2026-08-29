@@ -1,0 +1,19 @@
+{
+  "name": "Azoria — Boutiques en Ligne Mobile",
+  "short_name": "Azoria",
+  "description": "Créez et gérez votre boutique en ligne directement depuis votre smartphone.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#FAFAFE",
+  "theme_color": "#7C3AED",
+  "orientation": "portrait",
+  "scope": "/",
+  "icons": [
+    {
+      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'><rect width='512' height='512' rx='128' fill='%237C3AED'/><text x='50%25' y='62%25' dominant-baseline='middle' text-anchor='middle' font-size='300'>🛍️</text></svg>",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

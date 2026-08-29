@@ -20,6 +20,15 @@
     {% endif %}
     <meta name="twitter:card" content="summary_large_image">
 
+    <!-- PWA & Mobile Native App Config -->
+    <link rel="manifest" href="{% static 'manifest.json' %}">
+    <meta name="theme-color" content="{{ shop.branding.primary_color|default:'#7C3AED' }}">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="{{ shop.name }}">
+    <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'><rect width='512' height='512' rx='128' fill='%237C3AED'/><text x='50%25' y='62%25' dominant-baseline='middle' text-anchor='middle' font-size='300'>🛍️</text></svg>">
+
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -68,6 +77,23 @@
         body {
             font-family: 'Plus Jakarta Sans', sans-serif;
             -webkit-tap-highlight-color: transparent;
+            overscroll-behavior-y: none;
+        }
+
+        /* Native App Touch Ergonomics */
+        * {
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        button, nav, header, a, .touch-manipulation {
+            -webkit-user-select: none;
+            user-select: none;
+            touch-action: manipulation;
+        }
+
+        input, textarea {
+            -webkit-user-select: text;
+            user-select: text;
         }
 
         .font-heading {
@@ -197,7 +223,7 @@
         <div class="space-y-3">
             <!-- Search Bar -->
             <div class="relative">
-                <input type="text" x-model="searchQuery" placeholder="Rechercher un produit..."
+                <input type="text" id="store-search-input" x-model="searchQuery" placeholder="Rechercher un produit..."
                     class="w-full pl-10 pr-4 py-3 rounded-2xl bg-white border border-slate-200 focus:outline-none focus:ring-2 focus:ring-brand-500 text-xs sm:text-sm shadow-sm transition-all">
                 <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-3.5 top-3.5"></i>
                 <button x-show="searchQuery" @click="searchQuery = ''"
@@ -495,8 +521,8 @@
 
             </div>
 
-            <!-- Drawer / Modal Sticky Footer -->
-            <div x-show="cart.length > 0" class="p-4 sm:p-5 border-t border-slate-100 bg-slate-50 space-y-3 pb-safe">
+            <!-- Drawer / Modal Sticky Footer (Fixed at bottom above thumb) -->
+            <div x-show="cart.length > 0" class="sticky bottom-0 z-30 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border-t border-slate-200/80 dark:border-slate-800 shadow-2xl p-4 sm:p-5 space-y-3 pb-safe">
                 <div class="space-y-1 text-xs text-slate-600">
                     <div class="flex justify-between">
                         <span>Sous-total articles :</span>
@@ -890,6 +916,57 @@
             }
         }
     </script>
+    <!-- ========================================================================= -->
+    <!-- 📱 MOBILE BUYER BOTTOM NAVIGATION BAR (Native App Experience) -->
+    <!-- ========================================================================= -->
+    <nav class="sm:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/95 dark:bg-slate-900/95 backdrop-blur-lg border-t border-slate-200/80 dark:border-slate-800 flex justify-around items-center h-16 px-1 shadow-2xl pb-safe">
+        <!-- 1. Accueil (Reset filters & scroll top) -->
+        <button @click="searchQuery = ''; selectedCategory = 'all'; window.scrollTo({top: 0, behavior: 'smooth'}); if(window.AzoriaUI) AzoriaUI.playPop();"
+                class="flex flex-col items-center gap-1 py-1 px-3 text-slate-500 hover:text-brand-600 active:scale-95 transition-all">
+            <i data-lucide="store" class="w-5 h-5"></i>
+            <span class="text-[10px] font-bold">Accueil</span>
+        </button>
+
+        <!-- 2. Recherche (Focus search input) -->
+        <button @click="const searchEl = document.getElementById('store-search-input'); if(searchEl) { searchEl.focus(); searchEl.scrollIntoView({behavior: 'smooth', block: 'center'}); } if(window.AzoriaUI) AzoriaUI.playPop();"
+                class="flex flex-col items-center gap-1 py-1 px-3 text-slate-500 hover:text-brand-600 active:scale-95 transition-all">
+            <i data-lucide="search" class="w-5 h-5"></i>
+            <span class="text-[10px] font-bold">Recherche</span>
+        </button>
+
+        <!-- 3. Panier (Open Cart Sheet with Dynamic Counter) -->
+        <button @click="cartOpen = true; if(window.AzoriaUI) AzoriaUI.playPop();"
+                class="flex flex-col items-center gap-1 py-1 px-3 text-brand-600 relative active:scale-95 transition-all">
+            <div class="relative">
+                <i data-lucide="shopping-bag" class="w-5 h-5"></i>
+                <span x-show="cartTotalItems > 0" 
+                      class="absolute -top-1.5 -right-2 bg-rose-500 text-white text-[9px] font-extrabold h-4 min-w-4 px-1 rounded-full flex items-center justify-center ring-2 ring-white shadow animate-pulse" 
+                      x-text="cartTotalItems">
+                </span>
+            </div>
+            <span class="text-[10px] font-extrabold">Panier</span>
+        </button>
+
+        <!-- 4. Support WhatsApp Direct -->
+        {% if shop.phone %}
+        <a href="https://wa.me/{{ shop.phone|cut:' '|cut:'+' }}?text=Bonjour%20{{ shop.name|urlencode }},%20j'aimerais%20avoir%20plus%20d'informations."
+           target="_blank"
+           @click="if(window.AzoriaUI) AzoriaUI.playPop();"
+           class="flex flex-col items-center gap-1 py-1 px-3 text-emerald-600 active:scale-95 transition-all">
+            <i data-lucide="message-circle" class="w-5 h-5"></i>
+            <span class="text-[10px] font-bold">Contact</span>
+        </a>
+        {% endif %}
+    </nav>
+
+    <!-- Service Worker Registration for PWA Standalone Mode -->
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', function() {
+                navigator.serviceWorker.register("{% static 'js/sw.js' %}").catch(function() {});
+            });
+        }
+    </script>
 </body>
 
-</html>
+</html>
