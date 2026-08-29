@@ -2,7 +2,7 @@
      hx-get="{% url 'shop:notifications_badge' %}" 
      hx-trigger="every 15s" 
      hx-swap="outerHTML"
-     x-data="{ open: false }" 
+     x-data="{ open: {% if is_open %}true{% else %}false{% endif %} }" 
      @click.outside="open = false" 
      class="relative">
 
@@ -47,7 +47,8 @@
             <button hx-post="{% url 'shop:notifications_mark_read' %}"
                     hx-target="#notifications-wrapper"
                     hx-swap="outerHTML"
-                    class="text-[11px] font-bold text-brand-600 dark:text-brand-400 hover:text-brand-700 hover:underline">
+                    @click="if(window.AzoriaUI) AzoriaUI.playSuccess();"
+                    class="text-[11px] font-bold text-brand-600 dark:text-brand-400 hover:text-brand-700 hover:underline active:scale-95 transition-all">
                 Tout marquer lu
             </button>
             {% endif %}
@@ -57,10 +58,16 @@
         <div class="max-h-80 overflow-y-auto divide-y divide-slate-100 dark:divide-slate-800">
             {% if notifications %}
                 {% for n in notifications %}
-                <div class="p-4 hover:bg-slate-50 dark:hover:bg-slate-800/60 transition-colors {% if not n.is_read %}bg-brand-50/40 dark:bg-brand-950/20{% endif %}">
+                <div {% if not n.is_read %}
+                     hx-post="{% url 'shop:notification_mark_single_read' n.uuid %}"
+                     hx-target="#notifications-wrapper"
+                     hx-swap="outerHTML"
+                     @click="if(window.AzoriaUI) AzoriaUI.playPop();"
+                     {% endif %}
+                     class="p-4 hover:bg-slate-50 dark:hover:bg-slate-800/60 transition-all cursor-pointer group {% if not n.is_read %}bg-brand-50/40 dark:bg-brand-950/20{% endif %}">
                     <div class="flex items-start gap-3">
                         <!-- Icon Avatar -->
-                        <div class="w-8 h-8 rounded-xl flex items-center justify-center shrink-0 
+                        <div class="w-8 h-8 rounded-xl flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform 
                             {% if n.notification_type == 'new_order' %}bg-emerald-100 text-emerald-600 dark:bg-emerald-950/60 dark:text-emerald-400
                             {% elif n.notification_type == 'out_of_stock' %}bg-rose-100 text-rose-600 dark:bg-rose-950/60 dark:text-rose-400
                             {% elif n.notification_type == 'low_stock' %}bg-amber-100 text-amber-600 dark:bg-amber-950/60 dark:text-amber-400
@@ -82,11 +89,20 @@
                             <div class="flex items-center justify-between gap-1">
                                 <p class="text-xs font-bold text-slate-900 dark:text-white truncate">{{ n.title }}</p>
                                 {% if not n.is_read %}
-                                <span class="w-2 h-2 rounded-full bg-brand-500 shrink-0"></span>
+                                <span class="w-2 h-2 rounded-full bg-brand-500 shrink-0 animate-pulse" title="Non lu"></span>
+                                {% else %}
+                                <span class="text-[10px] text-slate-400 opacity-0 group-hover:opacity-100 transition-opacity">Lu ✓</span>
                                 {% endif %}
                             </div>
                             <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5 line-clamp-2 leading-tight">{{ n.message }}</p>
-                            <span class="text-[9px] font-semibold text-slate-400 mt-1.5 block">{{ n.created_at|timesince }}</span>
+                            <div class="flex items-center justify-between mt-1.5">
+                                <span class="text-[9px] font-semibold text-slate-400 block">{{ n.created_at|timesince }}</span>
+                                {% if n.order %}
+                                <a href="{% url 'shop:order_list' %}" class="text-[10px] font-bold text-brand-600 dark:text-brand-400 hover:underline" @click.stop>
+                                    Voir commande →
+                                </a>
+                                {% endif %}
+                            </div>
                         </div>
                     </div>
                 </div>

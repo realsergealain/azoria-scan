@@ -511,7 +511,6 @@ def notifications_badge(request):
 
 
 @login_required
-@require_POST
 def notifications_mark_read(request):
     """Marque toutes les notifications du vendeur comme lues."""
     shop = Shop.objects.filter(owner=request.user).first()
@@ -523,5 +522,27 @@ def notifications_mark_read(request):
         'shop': shop,
         'notifications': notifications,
         'unread_count': 0,
+        'is_open': True,
     })
+
+
+@login_required
+def notification_mark_single_read(request, notification_uuid):
+    """Marque une notification individuelle comme lue."""
+    shop = Shop.objects.filter(owner=request.user).first()
+    if shop:
+        notif = Notification.objects.filter(shop=shop, uuid=notification_uuid).first()
+        if notif:
+            notif.is_read = True
+            notif.save(update_fields=['is_read'])
+            
+    notifications = Notification.objects.filter(shop=shop).order_by('-created_at')[:8]
+    unread_count = Notification.objects.filter(shop=shop, is_read=False).count()
+    return render(request, 'shop/partials/notifications_dropdown.html', {
+        'shop': shop,
+        'notifications': notifications,
+        'unread_count': unread_count,
+        'is_open': True,
+    })
+
 

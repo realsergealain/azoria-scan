@@ -28,5 +28,6 @@ urlpatterns = [
     # Notifications System (HTMX)
     path('notifications/badge/', views.notifications_badge, name='notifications_badge'),
     path('notifications/marquer-lues/', views.notifications_mark_read, name='notifications_mark_read'),
+    path('notifications/<uuid:notification_uuid>/marquer-lue/', views.notification_mark_single_read, name='notification_mark_single_read'),
 ]
 
