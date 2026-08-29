@@ -14,7 +14,7 @@
         </div>
         
         <div class="flex items-center gap-2">
-            <button hx-get="{% url 'shop:product_create' %}" hx-target="#modal-container" 
+            <button hx-get="{% url 'shop:product_create' %}" hx-target="#modal-container" hx-indicator="#modal-loader"
                     class="inline-flex items-center gap-2 px-5 py-2.5 rounded-2xl bg-brand-600 hover:bg-brand-700 text-white font-bold text-xs sm:text-sm shadow-md transition-all active:scale-95">
                 <i data-lucide="plus" class="w-4 h-4"></i>
                 <span>Ajouter un produit</span>
@@ -67,13 +67,13 @@
                         </a>
                         
                         <!-- Modify HTMX -->
-                        <button hx-get="{% url 'shop:product_update' product.uuid %}" hx-target="#modal-container" @click="open = false" class="w-full flex items-center gap-2.5 px-4 py-2.5 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700 text-left">
+                        <button hx-get="{% url 'shop:product_update' product.uuid %}" hx-target="#modal-container" hx-indicator="#modal-loader" @click="open = false" class="w-full flex items-center gap-2.5 px-4 py-2.5 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700 text-left">
                             <i data-lucide="edit-2" class="w-4 h-4 text-slate-500"></i>
                             <span>Modifier</span>
                         </button>
                         
                         <!-- Delete HTMX -->
-                        <button hx-get="{% url 'shop:product_delete' product.uuid %}" hx-target="#modal-container" @click="open = false" class="w-full flex items-center gap-2.5 px-4 py-2.5 text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-900/20 text-left">
+                        <button hx-get="{% url 'shop:product_delete' product.uuid %}" hx-target="#modal-container" hx-indicator="#modal-loader" @click="open = false" class="w-full flex items-center gap-2.5 px-4 py-2.5 text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-900/20 text-left">
                             <i data-lucide="trash-2" class="w-4 h-4"></i>
                             <span>Supprimer</span>
                         </button>
@@ -128,7 +128,7 @@
         </div>
         <h3 class="font-heading font-bold text-lg text-slate-900 dark:text-white mb-1">Aucun produit dans le catalogue</h3>
         <p class="text-xs text-slate-500 max-w-sm mx-auto mb-5">Ajoutez vos premiers articles avec photos et descriptions vendeuses en 1 clic grâce à Azoria AI !</p>
-        <button hx-get="{% url 'shop:product_create' %}" hx-target="#modal-container" 
+        <button hx-get="{% url 'shop:product_create' %}" hx-target="#modal-container" hx-indicator="#modal-loader"
                 class="inline-flex items-center gap-2 px-6 py-3 rounded-2xl bg-brand-600 text-white text-xs font-bold shadow-md hover:bg-brand-700 transition-all">
             <i data-lucide="plus" class="w-4 h-4"></i>
             <span>Ajouter mon premier produit</span>
