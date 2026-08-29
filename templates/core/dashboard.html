@@ -8,32 +8,15 @@
     showCreateModal: false, 
     copiedToast: false,
     copyLink(text) {
-        if (navigator.clipboard && window.isSecureContext) {
-            navigator.clipboard.writeText(text).then(() => {
-                this.copiedToast = true;
-                setTimeout(() => this.copiedToast = false, 2500);
-            }).catch(() => this.fallbackCopy(text));
-        } else {
-            this.fallbackCopy(text);
-        }
-    },
-    fallbackCopy(text) {
-        const textArea = document.createElement('textarea');
-        textArea.value = text;
-        textArea.style.position = 'fixed';
-        textArea.style.left = '-999999px';
-        textArea.style.top = '-999999px';
-        document.body.appendChild(textArea);
-        textArea.focus();
-        textArea.select();
-        try {
-            document.execCommand('copy');
+        if (window.AzoriaUI) {
+            AzoriaUI.copyToClipboard(text, 'Lien de votre boutique copié ! 🛍️');
             this.copiedToast = true;
             setTimeout(() => this.copiedToast = false, 2500);
-        } catch (err) {
-            console.error('Erreur copie:', err);
+        } else {
+            navigator.clipboard.writeText(text);
+            this.copiedToast = true;
+            setTimeout(() => this.copiedToast = false, 2500);
         }
-        textArea.remove();
     }
 }" @open-create-shop-modal.window="showCreateModal = true">
 

@@ -43,6 +43,25 @@ class Shop(models.Model):
         verbose_name_plural = _("Boutiques")
         ordering = ['-created_at']
 
+    @property
+    def is_name_locked(self) -> bool:
+        """Indique si le nom de la boutique est verrouillé (plus de 7 jours après création)."""
+        from django.utils import timezone
+        from datetime import timedelta
+        if not self.created_at:
+            return False
+        return (timezone.now() - self.created_at) > timedelta(days=7)
+
+    @property
+    def name_unlock_days_left(self) -> int:
+        """Nombre de jours restants avant le verrouillage définitif du nom."""
+        from django.utils import timezone
+        from datetime import timedelta
+        if not self.created_at:
+            return 7
+        diff = timedelta(days=7) - (timezone.now() - self.created_at)
+        return max(0, diff.days + 1 if diff.total_seconds() > 0 else 0)
+
     def save(self, *args, **kwargs):
         if not self.slug:
             base_slug = slugify(self.name) or "boutique"
@@ -125,6 +144,8 @@ class ShopProduct(models.Model):
                                 max_length=255,
                                 blank=True, null=True, verbose_name=_("Image principale"))
     is_available = models.BooleanField(default=True, verbose_name=_("Disponible en stock"))
+    stock = models.PositiveIntegerField(default=10, verbose_name=_("Quantité en stock"))
+    track_stock = models.BooleanField(default=True, verbose_name=_("Suivre le stock"))
     created_at = models.DateTimeField(auto_now_add=True, verbose_name=_("Date d'ajout"))
 
     class Meta:
@@ -141,7 +162,18 @@ class ShopProduct(models.Model):
                 slug = f"{base_slug}-{counter}"
                 counter += 1
             self.slug = slug
+        # Si le stock est épuisé et suivi, adapter is_available
+        if self.track_stock and self.stock <= 0:
+            self.is_available = False
         super().save(*args, **kwargs)
+
+    @property
+    def is_in_stock(self) -> bool:
+        if not self.is_available:
+            return False
+        if self.track_stock and self.stock <= 0:
+            return False
+        return True
 
     @property
     def discount_percent(self):
@@ -271,3 +303,30 @@ class VisitTracker(models.Model):
 
     def __str__(self):
         return f"Visite de {self.shop.name} via {self.source}"
+
+
+class Notification(models.Model):
+    NOTIFICATION_TYPES = [
+        ('new_order', '📦 Nouvelle commande'),
+        ('low_stock', '⚠️ Stock faible'),
+        ('out_of_stock', '🔴 Rupture de stock'),
+        ('system', 'ℹ️ Information système'),
+    ]
+
+    uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
+    shop = models.ForeignKey(Shop, on_delete=models.CASCADE, related_name='notifications', verbose_name=_("Boutique"))
+    title = models.CharField(max_length=150, verbose_name=_("Titre"))
+    message = models.TextField(verbose_name=_("Message"))
+    notification_type = models.CharField(max_length=30, choices=NOTIFICATION_TYPES, default='new_order', verbose_name=_("Type"))
+    order = models.ForeignKey(Order, on_delete=models.SET_NULL, null=True, blank=True, related_name='notifications', verbose_name=_("Commande associée"))
+    is_read = models.BooleanField(default=False, verbose_name=_("Lu"))
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name=_("Date de création"))
+
+    class Meta:
+        verbose_name = _("Notification")
+        verbose_name_plural = _("Notifications")
+        ordering = ['-created_at']
+
+    def __str__(self):
+        return f"{self.title} - {self.shop.name}"
+

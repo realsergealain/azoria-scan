@@ -205,20 +205,29 @@ window.AzoriaUI = {
       osc.connect(gain);
       gain.connect(ctx.destination);
 
-      if (type === 'order' || type === 'celebration') {
-        // Joyful chord (Shopify/Apple-like payment chime)
+      if (type === 'order' || type === 'celebration' || type === 'product_created') {
+        // Joyful ascending melody (Chime)
         [523.25, 659.25, 783.99, 1046.50].forEach((freq, i) => {
           const chordOsc = ctx.createOscillator();
           const chordGain = ctx.createGain();
           chordOsc.type = 'triangle';
           chordOsc.frequency.setValueAtTime(freq, now + i * 0.08);
-          chordGain.gain.setValueAtTime(0.12, now + i * 0.08);
+          chordGain.gain.setValueAtTime(0.15, now + i * 0.08);
           chordGain.gain.exponentialRampToValueAtTime(0.001, now + i * 0.08 + 0.6);
           chordOsc.connect(chordGain);
           chordGain.connect(ctx.destination);
           chordOsc.start(now + i * 0.08);
           chordOsc.stop(now + i * 0.08 + 0.6);
         });
+      } else if (type === 'pop' || type === 'copy') {
+        // Crisp bubble pop sound for copying links / clicks
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(800, now);
+        osc.frequency.exponentialRampToValueAtTime(1400, now + 0.06);
+        gain.gain.setValueAtTime(0.2, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.09);
+        osc.start(now);
+        osc.stop(now + 0.09);
       } else if (type === 'cart' || type === 'add') {
         // Crisp pop chime
         osc.type = 'sine';
@@ -243,6 +252,80 @@ window.AzoriaUI = {
     }
   },
 
+  // Pop sound shortcut
+  playPop() {
+    this.playChime('pop');
+    this.vibrate([10]);
+  },
+
+  // Success sound shortcut
+  playSuccess() {
+    this.playChime('celebration');
+    this.vibrate([20, 30, 20]);
+  },
+
+  // Android Material Toast / Snackbar Feedback
+  showToast(message, type = 'success') {
+    let container = document.getElementById('azoria-toast-container');
+    if (!container) {
+      container = document.createElement('div');
+      container.id = 'azoria-toast-container';
+      container.className = 'fixed bottom-6 left-1/2 -translate-x-1/2 z-[9999] flex flex-col items-center gap-2 pointer-events-none px-4 w-full max-w-sm';
+      document.body.appendChild(container);
+    }
+
+    const toast = document.createElement('div');
+    toast.className = 'pointer-events-auto flex items-center gap-3 px-4 py-3 bg-slate-900/95 dark:bg-white/95 text-white dark:text-slate-900 text-xs font-bold rounded-2xl shadow-2xl backdrop-blur-md transform transition-all duration-300 translate-y-8 opacity-0 border border-white/10 dark:border-slate-800/10';
+    
+    const icon = type === 'success' ? '✓' : 'ℹ';
+    toast.innerHTML = `<span class="flex items-center justify-center w-5 h-5 rounded-full bg-brand-500 text-white text-[10px] font-black shrink-0">${icon}</span><span>${message}</span>`;
+    
+    container.appendChild(toast);
+
+    // Animate in
+    requestAnimationFrame(() => {
+      toast.classList.remove('translate-y-8', 'opacity-0');
+      toast.classList.add('translate-y-0', 'opacity-100');
+    });
+
+    // Auto dismiss
+    setTimeout(() => {
+      toast.classList.add('opacity-0', 'scale-95');
+      setTimeout(() => toast.remove(), 300);
+    }, 2800);
+  },
+
+  // Copy to clipboard with instant pop sound and Android toast
+  copyToClipboard(text, message = 'Lien copié dans le presse-papier !') {
+    this.playPop();
+    if (navigator.clipboard && window.isSecureContext) {
+      navigator.clipboard.writeText(text).then(() => {
+        this.showToast(message);
+      }).catch(() => {
+        this.fallbackCopy(text, message);
+      });
+    } else {
+      this.fallbackCopy(text, message);
+    }
+  },
+
+  fallbackCopy(text, message) {
+    const textArea = document.createElement("textarea");
+    textArea.value = text;
+    textArea.style.position = "fixed";
+    textArea.style.opacity = "0";
+    document.body.appendChild(textArea);
+    textArea.focus();
+    textArea.select();
+    try {
+      document.execCommand('copy');
+      this.showToast(message);
+    } catch (err) {
+      alert("Lien : " + text);
+    }
+    document.body.removeChild(textArea);
+  },
+
   // Haptic feedback (Mobile vibration)
   vibrate(pattern = [15]) {
     if (typeof navigator !== 'undefined' && navigator.vibrate) {
@@ -254,12 +337,12 @@ window.AzoriaUI = {
 
   // Confetti Explosion
   celebrate() {
-    this.playChime('order');
+    this.playChime('celebration');
     this.vibrate([20, 40, 20]);
 
     if (typeof confetti === 'function') {
       confetti({
-        particleCount: 80,
+        particleCount: 90,
         spread: 70,
         origin: { y: 0.6 },
         colors: ['#7C3AED', '#3B82F6', '#10B981', '#F59E0B', '#EC4899'],
@@ -268,14 +351,14 @@ window.AzoriaUI = {
       // Second burst
       setTimeout(() => {
         confetti({
-          particleCount: 50,
+          particleCount: 60,
           angle: 60,
           spread: 55,
           origin: { x: 0 },
           colors: ['#7C3AED', '#3B82F6', '#F59E0B']
         });
         confetti({
-          particleCount: 50,
+          particleCount: 60,
           angle: 120,
           spread: 55,
           origin: { x: 1 },

@@ -129,8 +129,8 @@
             <div class="flex items-center gap-2 shrink-0">
                 <!-- Share Storefront Button -->
                 <button
-                    @click="if (navigator.share) { navigator.share({ title: '{{ shop.name|escapejs }}', url: window.location.href }); } else { navigator.clipboard.writeText(window.location.href); alert('Lien de la boutique copié !'); }"
-                    class="p-2.5 rounded-2xl bg-slate-100 text-slate-600 hover:bg-slate-200 transition-colors"
+                    @click="if(window.AzoriaUI) AzoriaUI.copyToClipboard(window.location.href, 'Lien de la boutique copié ! ✨'); else if (navigator.share) { navigator.share({ title: '{{ shop.name|escapejs }}', url: window.location.href }); } else { navigator.clipboard.writeText(window.location.href); alert('Lien copié !'); }"
+                    class="p-2.5 rounded-2xl bg-slate-100 text-slate-600 hover:bg-slate-200 transition-colors active:scale-95"
                     title="Partager la boutique">
                     <i data-lucide="share-2" class="w-4 h-4"></i>
                 </button>
@@ -242,10 +242,22 @@
                             </div>
                         </template>
                         <!-- Discount Badge -->
-                        <template x-if="product.discount_percent > 0">
+                        <template x-if="product.discount_percent > 0 && product.is_in_stock">
                             <span
                                 class="absolute top-2.5 left-2.5 bg-rose-500 text-white text-[10px] font-extrabold px-2 py-0.5 rounded-lg shadow-sm"
                                 x-text="'-' + product.discount_percent + '%'">
+                            </span>
+                        </template>
+
+                        <!-- Stock Status Badges -->
+                        <template x-if="!product.is_in_stock">
+                            <span class="absolute top-2.5 left-2.5 bg-slate-900/80 backdrop-blur-md text-white text-[10px] font-black px-2.5 py-1 rounded-xl shadow-md flex items-center gap-1 border border-white/20">
+                                <span>Rupture de stock</span>
+                            </span>
+                        </template>
+                        <template x-if="product.is_in_stock && product.track_stock && product.stock <= 5 && product.stock > 0">
+                            <span class="absolute bottom-2.5 left-2.5 bg-amber-500 text-white text-[9px] font-black px-2 py-0.5 rounded-lg shadow-sm flex items-center gap-1">
+                                <span>🔥 Plus que <span x-text="product.stock"></span> en stock !</span>
                             </span>
                         </template>
                     </div>
@@ -272,19 +284,31 @@
 
                     <!-- Main Call To Action Buttons (High Conversion Piece) -->
                     <div class="flex items-center gap-2 pt-2 border-t border-slate-100">
-                        <!-- Primary 1-Click Order Button -->
-                        <button @click="buyNow(product)"
-                            class="flex-1 py-3 px-4 rounded-2xl bg-brand-600 hover:bg-brand-700 text-white text-xs font-heading font-extrabold flex items-center justify-center gap-1.5 shadow-md shadow-brand-500/25 active:scale-95 transition-all">
-                            <i data-lucide="zap" class="w-4 h-4 text-amber-300"></i>
-                            <span>Commander en 1 Clic</span>
-                        </button>
+                        <template x-if="product.is_in_stock">
+                            <div class="flex items-center gap-2 w-full">
+                                <!-- Primary 1-Click Order Button -->
+                                <button @click="buyNow(product)"
+                                    class="flex-1 py-3 px-4 rounded-2xl bg-brand-600 hover:bg-brand-700 text-white text-xs font-heading font-extrabold flex items-center justify-center gap-1.5 shadow-md shadow-brand-500/25 active:scale-95 transition-all">
+                                    <i data-lucide="zap" class="w-4 h-4 text-amber-300"></i>
+                                    <span>Commander en 1 Clic</span>
+                                </button>
 
-                        <!-- Secondary Add to Cart Button -->
-                        <button @click="addToCart(product)"
-                            class="p-3 rounded-2xl bg-slate-100 hover:bg-brand-50 text-slate-700 hover:text-brand-600 transition-colors"
-                            title="Ajouter au panier">
-                            <i data-lucide="shopping-cart" class="w-4 h-4"></i>
-                        </button>
+                                <!-- Secondary Add to Cart Button -->
+                                <button @click="addToCart(product)"
+                                    class="p-3 rounded-2xl bg-slate-100 hover:bg-brand-50 text-slate-700 hover:text-brand-600 transition-colors active:scale-95"
+                                    title="Ajouter au panier">
+                                    <i data-lucide="shopping-cart" class="w-4 h-4"></i>
+                                </button>
+                            </div>
+                        </template>
+
+                        <template x-if="!product.is_in_stock">
+                            <button disabled
+                                class="w-full py-3 px-4 rounded-2xl bg-slate-100 text-slate-400 text-xs font-heading font-bold flex items-center justify-center gap-1.5 cursor-not-allowed select-none">
+                                <i data-lucide="alert-circle" class="w-4 h-4"></i>
+                                <span>Épuisé / Rupture de stock</span>
+                            </button>
+                        </template>
                     </div>
 
                 </div>
@@ -598,30 +622,44 @@
                     </div>
 
                     <!-- Quantity modifier -->
-                    <div class="flex items-center justify-between pt-1">
-                        <span class="text-xs font-bold text-slate-700">Quantité :</span>
-                        <div class="flex items-center gap-3 bg-slate-100 rounded-xl p-1">
-                            <button @click="modalQty = Math.max(1, modalQty - 1)"
-                                class="w-8 h-8 rounded-lg bg-white text-slate-700 font-bold shadow-sm flex items-center justify-center">-</button>
-                            <span class="font-bold text-xs w-4 text-center" x-text="modalQty"></span>
-                            <button @click="modalQty++"
-                                class="w-8 h-8 rounded-lg bg-white text-slate-700 font-bold shadow-sm flex items-center justify-center">+</button>
+                    <template x-if="activeProduct.is_in_stock">
+                        <div class="flex items-center justify-between pt-1">
+                            <span class="text-xs font-bold text-slate-700">Quantité :</span>
+                            <div class="flex items-center gap-3 bg-slate-100 rounded-xl p-1">
+                                <button @click="modalQty = Math.max(1, modalQty - 1)"
+                                    class="w-8 h-8 rounded-lg bg-white text-slate-700 font-bold shadow-sm flex items-center justify-center active:scale-95">-</button>
+                                <span class="font-bold text-xs w-4 text-center" x-text="modalQty"></span>
+                                <button @click="modalQty = Math.min(activeProduct.track_stock ? activeProduct.stock : 99, modalQty + 1)"
+                                    class="w-8 h-8 rounded-lg bg-white text-slate-700 font-bold shadow-sm flex items-center justify-center active:scale-95">+</button>
+                            </div>
                         </div>
-                    </div>
+                    </template>
 
                     <!-- Actions -->
-                    <div class="grid grid-cols-2 gap-3 pt-2">
-                        <button @click="addToCart(activeProduct, modalQty); productModalOpen = false;"
-                            class="py-3.5 px-4 rounded-2xl bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold text-xs flex items-center justify-center gap-1.5 transition-colors">
-                            <i data-lucide="shopping-cart" class="w-4 h-4"></i>
-                            <span>Ajouter</span>
-                        </button>
-                        <button @click="buyNow(activeProduct, modalQty)"
-                            class="py-3.5 px-4 rounded-2xl bg-brand-600 hover:bg-brand-700 text-white font-heading font-extrabold text-xs flex items-center justify-center gap-1.5 shadow-lg shadow-brand-500/25 active:scale-95 transition-all">
-                            <i data-lucide="zap" class="w-4 h-4 text-amber-300"></i>
-                            <span>Commander</span>
-                        </button>
-                    </div>
+                    <template x-if="activeProduct.is_in_stock">
+                        <div class="grid grid-cols-2 gap-3 pt-2">
+                            <button @click="addToCart(activeProduct, modalQty); productModalOpen = false;"
+                                class="py-3.5 px-4 rounded-2xl bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold text-xs flex items-center justify-center gap-1.5 transition-colors active:scale-95">
+                                <i data-lucide="shopping-cart" class="w-4 h-4"></i>
+                                <span>Ajouter</span>
+                            </button>
+                            <button @click="buyNow(activeProduct, modalQty)"
+                                class="py-3.5 px-4 rounded-2xl bg-brand-600 hover:bg-brand-700 text-white font-heading font-extrabold text-xs flex items-center justify-center gap-1.5 shadow-lg shadow-brand-500/25 active:scale-95 transition-all">
+                                <i data-lucide="zap" class="w-4 h-4 text-amber-300"></i>
+                                <span>Commander</span>
+                            </button>
+                        </div>
+                    </template>
+
+                    <template x-if="!activeProduct.is_in_stock">
+                        <div class="pt-2">
+                            <button disabled
+                                class="w-full py-3.5 px-4 rounded-2xl bg-slate-100 text-slate-400 font-heading font-bold text-xs flex items-center justify-center gap-2 cursor-not-allowed select-none">
+                                <i data-lucide="alert-circle" class="w-4 h-4"></i>
+                                <span>Article en rupture de stock</span>
+                            </button>
+                        </div>
+                    </template>
                 </div>
             </template>
         </div>
@@ -673,6 +711,9 @@
                         price: {{ product.price|floatformat:0 }},
                         compare_price: {% if product.compare_price %}{{ product.compare_price|floatformat:0 }}{% else %}null{% endif %},
                         discount_percent: {{ product.discount_percent|default:0 }},
+                        stock: {{ product.stock|default:0 }},
+                        track_stock: {% if product.track_stock %}true{% else %}false{% endif %},
+                        is_in_stock: {% if product.is_in_stock %}true{% else %}false{% endif %},
                         description: '{{ product.description|escapejs }}',
                         image: {% if product.image %}'{{ product.image.url }}'{% else %}null{% endif %},
                         images: [

@@ -14,8 +14,8 @@
         </div>
 
         <!-- Quick Copy Store Link -->
-        <button onclick="navigator.clipboard.writeText('{{ request.scheme }}://{{ request.get_host }}{% url 'shop:detail' shop.uuid shop.slug %}'); alert('Lien copié dans le presse-papier !');"
-                class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-brand-50 dark:bg-slate-800 text-brand-600 dark:text-brand-400 font-bold text-xs border border-brand-200 dark:border-slate-700 shadow-sm hover:bg-brand-100 transition-colors">
+        <button onclick="if(window.AzoriaUI) AzoriaUI.copyToClipboard('{{ request.scheme }}://{{ request.get_host }}{% url 'shop:detail' shop.uuid shop.slug %}', 'Lien de votre boutique copié ! ✨'); else { navigator.clipboard.writeText('{{ request.scheme }}://{{ request.get_host }}{% url 'shop:detail' shop.uuid shop.slug %}'); alert('Lien copié !'); }"
+                class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-brand-50 dark:bg-slate-800 text-brand-600 dark:text-brand-400 font-bold text-xs border border-brand-200 dark:border-slate-700 shadow-sm hover:bg-brand-100 dark:hover:bg-slate-700 transition-all active:scale-95">
             <i data-lucide="copy" class="w-4 h-4"></i>
             <span>Copier le lien public</span>
         </button>

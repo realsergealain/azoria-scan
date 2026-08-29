@@ -8,16 +8,19 @@
                 const descInput = document.getElementById('product_desc_input');
                 
                 if (!nameInput || !nameInput.value) {
-                    alert('Veuillez d\'abord saisir un nom pour l\'article.');
+                    if(window.AzoriaUI) AzoriaUI.showToast('Veuillez d\'abord saisir un nom pour l\'article.', 'info');
+                    else alert('Veuillez d\'abord saisir un nom pour l\'article.');
                     return;
                 }
                 
                 this.isAiGenerating = true;
+                if(window.AzoriaUI) AzoriaUI.playPop();
                 try {
                     const response = await fetch('/boutique/api/ai-description/?name=' + encodeURIComponent(nameInput.value) + '&cat=' + encodeURIComponent(catInput ? catInput.value : ''));
                     const data = await response.json();
                     if (data.description && descInput) {
                         descInput.value = data.description;
+                        if(window.AzoriaUI) AzoriaUI.playSuccess();
                     }
                 } catch(e) {
                     console.error(e);
@@ -26,157 +29,210 @@
                 }
             }
          }" 
-         x-show="show" style="display: none;" class="fixed inset-0 z-[100] flex items-center justify-center overflow-y-auto overflow-x-hidden p-4 sm:p-6" x-cloak>
+         x-show="show" style="display: none;" class="fixed inset-0 z-[100] flex items-end sm:items-center justify-center overflow-y-auto overflow-x-hidden p-0 sm:p-4 md:p-6" x-cloak>
+        
+        <!-- Backdrop with Blur -->
         <div x-show="show" x-transition.opacity class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm" @click="show = false; setTimeout(() => $el.closest('#modal-container').innerHTML = '', 300)"></div>
         
-        <div x-show="show" x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100" x-transition:leave="ease-in duration-200" x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100" x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" class="relative w-full max-w-lg transform overflow-hidden rounded-3xl bg-white dark:bg-slate-800 text-left align-middle shadow-2xl transition-all sm:my-8 border border-slate-100 dark:border-slate-700">
+        <!-- Material/Android Bottom-Sheet on Mobile, Broad Modal (max-w-3xl lg:max-w-4xl) on Desktop -->
+        <div x-show="show" 
+             x-transition:enter="ease-out duration-300" 
+             x-transition:enter-start="opacity-0 translate-y-full sm:translate-y-0 sm:scale-95" 
+             x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100" 
+             x-transition:leave="ease-in duration-200" 
+             x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100" 
+             x-transition:leave-end="opacity-0 translate-y-full sm:translate-y-0 sm:scale-95" 
+             class="relative w-full sm:max-w-3xl lg:max-w-4xl transform overflow-hidden rounded-t-[32px] sm:rounded-3xl bg-white dark:bg-slate-900 text-left align-middle shadow-2xl transition-all border border-slate-100 dark:border-slate-800 max-h-[92vh] flex flex-col">
             
-            <div class="absolute top-0 right-0 pt-4 pr-4">
-                <button type="button" @click="show = false; setTimeout(() => $el.closest('#modal-container').innerHTML = '', 300)" class="rounded-full p-1.5 text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition-colors focus:outline-none">
+            <!-- Mobile Grab Handle Bar -->
+            <div class="sm:hidden pt-3 pb-1 flex justify-center cursor-grab active:cursor-grabbing" @click="show = false; setTimeout(() => $el.closest('#modal-container').innerHTML = '', 300)">
+                <div class="w-12 h-1.5 bg-slate-300 dark:bg-slate-700 rounded-full"></div>
+            </div>
+
+            <!-- Modal Header -->
+            <div class="px-6 py-4 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between bg-slate-50/70 dark:bg-slate-800/50 shrink-0">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-2xl bg-brand-50 dark:bg-brand-950/60 text-brand-600 dark:text-brand-400 flex items-center justify-center font-bold shadow-sm">
+                        <i data-lucide="package" class="w-5 h-5"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-heading text-base sm:text-lg font-extrabold text-slate-900 dark:text-white">
+                            {% if is_update %}Modifier : {{ product.name }}{% else %}Ajouter un Nouvel Article{% endif %}
+                        </h3>
+                        <p class="text-[11px] text-slate-400 font-medium">Configurez les tarifs, photos et niveaux de stock pour votre vitrine.</p>
+                    </div>
+                </div>
+                
+                <button type="button" @click="show = false; setTimeout(() => $el.closest('#modal-container').innerHTML = '', 300)" class="rounded-full p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors focus:outline-none">
                     <i data-lucide="x" class="h-5 w-5"></i>
                 </button>
             </div>
             
-            <div class="px-6 pt-7 pb-6 max-h-[85vh] overflow-y-auto">
-                <div class="flex items-center gap-2.5 mb-5">
-                    <div class="w-9 h-9 rounded-xl bg-brand-50 text-brand-600 flex items-center justify-center font-bold">
-                        <i data-lucide="package" class="w-5 h-5"></i>
-                    </div>
-                    <div>
-                        <h3 class="font-heading text-lg font-bold text-slate-900 dark:text-white">{% if is_update %}Modifier : {{ product.name }}{% else %}Ajouter un Nouvel Article{% endif %}</h3>
-                        <p class="text-[11px] text-slate-400">Remplissez les détails pour publier sur votre vitrine.</p>
-                    </div>
-                </div>
-                
+            <!-- Modal Body Form -->
+            <div class="px-6 py-6 overflow-y-auto flex-1">
                 <form hx-post="{% if is_update %}{% url 'shop:product_update' product.uuid %}{% else %}{% url 'shop:product_create' %}{% endif %}" 
                       hx-encoding="multipart/form-data" 
                       hx-target="body" 
                       hx-push-url="false"
-                      class="space-y-4">
+                      @submit="if(window.AzoriaUI) AzoriaUI.celebrate();"
+                      class="space-y-6">
                     {% csrf_token %}
                     
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                        <div class="sm:col-span-2">
-                            <label for="{{ form.name.id_for_label }}" class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">{{ form.name.label }} :</label>
-                            {{ form.name }}
-                            {% if form.name.errors %}
-                                <p class="text-rose-500 text-[10px] mt-1">{{ form.name.errors.0 }}</p>
-                            {% endif %}
-                        </div>
-
-                        <div>
-                            <label for="{{ form.category.id_for_label }}" class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">{{ form.category.label }} :</label>
-                            {{ form.category }}
-                        </div>
-
-                        <div>
-                            <label for="{{ form.price.id_for_label }}" class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">{{ form.price.label }} :</label>
-                            {{ form.price }}
-                        </div>
-                    </div>
-
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                        <div>
-                            <label for="{{ form.compare_price.id_for_label }}" class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">{{ form.compare_price.label }} :</label>
-                            {{ form.compare_price }}
-                        </div>
-
-                        <div class="flex items-center gap-2 pt-6">
-                            {{ form.is_available }}
-                            <label for="{{ form.is_available.id_for_label }}" class="text-xs font-bold text-slate-700 dark:text-slate-300 cursor-pointer">En stock / Actif</label>
-                        </div>
-                    </div>
-
-                    <!-- Description with Azoria AI Assistant Trigger -->
-                    <div>
-                        <div class="flex items-center justify-between mb-1">
-                            <label for="{{ form.description.id_for_label }}" class="block text-xs font-bold text-slate-700 dark:text-slate-300">{{ form.description.label }} :</label>
-                            
-                            <button type="button" 
-                                    @click="generateWithAI()" 
-                                    :disabled="isAiGenerating"
-                                    class="inline-flex items-center gap-1 text-[11px] font-extrabold px-2.5 py-1 rounded-lg bg-gradient-to-r from-pink-500 to-purple-600 text-white shadow-sm hover:opacity-90 active:scale-95 transition-all">
-                                <i data-lucide="sparkles" class="w-3.5 h-3.5"></i>
-                                <span x-text="isAiGenerating ? 'Rédaction IA...' : 'Azoria AI : Rédiger'"></span>
-                            </button>
-                        </div>
-                        {{ form.description }}
-                    </div>
-                    
-                    <div>
-                        <label for="{{ form.image.id_for_label }}" class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">Image principale :</label>
-                        {% if is_update and product.image %}
-                            <div class="mb-2 flex items-center gap-3 p-2 bg-slate-50 dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-700">
-                                <img src="{{ product.image.url }}" alt="Image actuelle" class="h-12 w-12 object-cover rounded-lg">
-                                <span class="text-xs text-slate-500">Image principale chargée</span>
-                            </div>
-                        {% endif %}
-                        <div class="p-3 border-2 border-dashed border-slate-200 dark:border-slate-700 rounded-xl bg-slate-50 dark:bg-slate-900/50">
-                            {{ form.image }}
-                        </div>
-                    </div>
-
-                    <!-- Galerie d'images secondaires (Alpine.js Multi-upload) -->
-                    <div x-data="{
-                            files: [],
-                            handleFiles(e) {
-                                let selectedFiles = Array.from(e.target.files || e.dataTransfer.files);
-                                if (this.files.length + selectedFiles.length > 3) {
-                                    alert('Vous ne pouvez ajouter que 3 images secondaires au maximum.');
-                                    selectedFiles = selectedFiles.slice(0, 3 - this.files.length);
-                                }
-                                for (let f of selectedFiles) {
-                                    let url = URL.createObjectURL(f);
-                                    this.files.push({ file: f, url: url });
-                                }
-                                
-                                // Mettre à jour l'input file caché
-                                const dataTransfer = new DataTransfer();
-                                this.files.forEach(f => dataTransfer.items.add(f.file));
-                                $refs.multiInput.files = dataTransfer.files;
-                            },
-                            removeFile(index) {
-                                this.files.splice(index, 1);
-                                const dataTransfer = new DataTransfer();
-                                this.files.forEach(f => dataTransfer.items.add(f.file));
-                                $refs.multiInput.files = dataTransfer.files;
-                            }
-                        }">
-                        <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">Galerie d'images (jusqu'à 3 images) :</label>
+                    <div class="grid grid-cols-1 md:grid-cols-12 gap-6">
                         
-                        <!-- Zone de Drop -->
-                        <div @dragover.prevent="$el.classList.add('bg-brand-50', 'border-brand-300')"
-                             @dragleave.prevent="$el.classList.remove('bg-brand-50', 'border-brand-300')"
-                             @drop.prevent="$el.classList.remove('bg-brand-50', 'border-brand-300'); handleFiles($event)"
-                             class="p-6 border-2 border-dashed border-slate-200 dark:border-slate-700 rounded-xl bg-slate-50 dark:bg-slate-900/50 text-center transition-colors">
-                            
-                            <input type="file" name="additional_images" x-ref="multiInput" multiple accept="image/*" class="hidden" @change="handleFiles($event)">
-                            <button type="button" @click="$refs.multiInput.click()" class="px-4 py-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-600 rounded-lg text-xs font-bold text-slate-700 dark:text-slate-300 shadow-sm hover:bg-slate-50 active:scale-95 transition-all">
-                                Sélectionner les images
-                            </button>
-                            <p class="mt-2 text-[10px] text-slate-400">Ou glissez-déposez vos fichiers ici (max 3).</p>
-                        </div>
+                        <!-- Left Column: Article Core Details (7 cols) -->
+                        <div class="md:col-span-7 space-y-4">
+                            <!-- Article Name -->
+                            <div>
+                                <label for="{{ form.name.id_for_label }}" class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">{{ form.name.label }} <span class="text-rose-500">*</span></label>
+                                {{ form.name }}
+                                {% if form.name.errors %}
+                                    <p class="text-rose-500 text-[10px] mt-1">{{ form.name.errors.0 }}</p>
+                                {% endif %}
+                            </div>
 
-                        <!-- Prévisualisations -->
-                        <div class="mt-3 flex flex-wrap gap-3" x-show="files.length > 0">
-                            <template x-for="(file, index) in files" :key="index">
-                                <div class="relative w-16 h-16 rounded-xl border border-slate-200 shadow-sm overflow-hidden group">
-                                    <img :src="file.url" class="w-full h-full object-cover">
-                                    <button type="button" @click="removeFile(index)" class="absolute top-1 right-1 w-5 h-5 bg-black/60 rounded-full flex items-center justify-center text-white opacity-0 group-hover:opacity-100 transition-opacity">
-                                        <i data-lucide="x" class="w-3 h-3"></i>
+                            <!-- Category & Price Grid -->
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                <div>
+                                    <label for="{{ form.category.id_for_label }}" class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">{{ form.category.label }}</label>
+                                    {{ form.category }}
+                                </div>
+                                <div>
+                                    <label for="{{ form.price.id_for_label }}" class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">{{ form.price.label }} <span class="text-rose-500">*</span></label>
+                                    {{ form.price }}
+                                </div>
+                            </div>
+
+                            <!-- Promo Price & Stock Controls Grid -->
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                <div>
+                                    <label for="{{ form.compare_price.id_for_label }}" class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">{{ form.compare_price.label }}</label>
+                                    {{ form.compare_price }}
+                                </div>
+                                <div>
+                                    <label for="{{ form.stock.id_for_label }}" class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">{{ form.stock.label }}</label>
+                                    {{ form.stock }}
+                                </div>
+                            </div>
+
+                            <!-- Stock Tracking & Availability Checkboxes (Android Chips style) -->
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
+                                <label class="flex items-center gap-3 p-3 rounded-2xl bg-slate-50 dark:bg-slate-800/70 border border-slate-200 dark:border-slate-700 cursor-pointer hover:border-brand-500 transition-colors">
+                                    {{ form.track_stock }}
+                                    <div class="text-xs">
+                                        <span class="font-bold text-slate-900 dark:text-white block">Suivi automatique</span>
+                                        <span class="text-[10px] text-slate-400">Décompte à chaque commande</span>
+                                    </div>
+                                </label>
+
+                                <label class="flex items-center gap-3 p-3 rounded-2xl bg-slate-50 dark:bg-slate-800/70 border border-slate-200 dark:border-slate-700 cursor-pointer hover:border-brand-500 transition-colors">
+                                    {{ form.is_available }}
+                                    <div class="text-xs">
+                                        <span class="font-bold text-slate-900 dark:text-white block">Article en vente</span>
+                                        <span class="text-[10px] text-slate-400">Affiché sur la vitrine</span>
+                                    </div>
+                                </label>
+                            </div>
+
+                            <!-- Description with Azoria AI Assistant Trigger -->
+                            <div>
+                                <div class="flex items-center justify-between mb-1.5">
+                                    <label for="{{ form.description.id_for_label }}" class="block text-xs font-bold text-slate-700 dark:text-slate-300">{{ form.description.label }}</label>
+                                    
+                                    <button type="button" 
+                                            @click="generateWithAI()" 
+                                            :disabled="isAiGenerating"
+                                            class="inline-flex items-center gap-1.5 text-[11px] font-extrabold px-3 py-1.5 rounded-xl bg-gradient-to-r from-pink-500 to-purple-600 text-white shadow-sm hover:opacity-90 active:scale-95 transition-all">
+                                        <i data-lucide="sparkles" class="w-3.5 h-3.5"></i>
+                                        <span x-text="isAiGenerating ? 'Rédaction IA...' : 'Azoria AI : Rédiger'"></span>
                                     </button>
                                 </div>
-                            </template>
+                                {{ form.description }}
+                            </div>
                         </div>
+
+                        <!-- Right Column: Visual Media & Secondary Images (5 cols) -->
+                        <div class="md:col-span-5 space-y-4">
+                            <!-- Main Photo -->
+                            <div>
+                                <label for="{{ form.image.id_for_label }}" class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">Photo principale de l'article :</label>
+                                {% if is_update and product.image %}
+                                    <div class="mb-2 flex items-center gap-3 p-2 bg-slate-50 dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700">
+                                        <img src="{{ product.image.url }}" alt="Image actuelle" class="h-12 w-12 object-cover rounded-xl shadow-sm">
+                                        <span class="text-xs font-medium text-slate-500">Image principale chargée</span>
+                                    </div>
+                                {% endif %}
+                                <div class="p-3 border-2 border-dashed border-slate-200 dark:border-slate-700 rounded-2xl bg-slate-50/50 dark:bg-slate-800/40">
+                                    {{ form.image }}
+                                </div>
+                            </div>
+
+                            <!-- Additional Images Gallery (Alpine.js Multi-upload) -->
+                            <div x-data="{
+                                    files: [],
+                                    handleFiles(e) {
+                                        let selectedFiles = Array.from(e.target.files || e.dataTransfer.files);
+                                        if (this.files.length + selectedFiles.length > 3) {
+                                            if(window.AzoriaUI) AzoriaUI.showToast('Vous ne pouvez ajouter que 3 photos secondaires au maximum.', 'info');
+                                            else alert('Vous ne pouvez ajouter que 3 images secondaires au maximum.');
+                                            selectedFiles = selectedFiles.slice(0, 3 - this.files.length);
+                                        }
+                                        for (let f of selectedFiles) {
+                                            let url = URL.createObjectURL(f);
+                                            this.files.push({ file: f, url: url });
+                                        }
+                                        
+                                        const dataTransfer = new DataTransfer();
+                                        this.files.forEach(f => dataTransfer.items.add(f.file));
+                                        $refs.multiInput.files = dataTransfer.files;
+                                        if(window.AzoriaUI) AzoriaUI.playPop();
+                                    },
+                                    removeFile(index) {
+                                        this.files.splice(index, 1);
+                                        const dataTransfer = new DataTransfer();
+                                        this.files.forEach(f => dataTransfer.items.add(f.file));
+                                        $refs.multiInput.files = dataTransfer.files;
+                                    }
+                                }">
+                                <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">Photos supplémentaires (max 3) :</label>
+                                
+                                <!-- Dropzone -->
+                                <div @dragover.prevent="$el.classList.add('bg-brand-50', 'border-brand-300')"
+                                     @dragleave.prevent="$el.classList.remove('bg-brand-50', 'border-brand-300')"
+                                     @drop.prevent="$el.classList.remove('bg-brand-50', 'border-brand-300'); handleFiles($event)"
+                                     class="p-5 border-2 border-dashed border-slate-200 dark:border-slate-700 rounded-2xl bg-slate-50/50 dark:bg-slate-800/40 text-center transition-colors">
+                                    
+                                    <input type="file" name="additional_images" x-ref="multiInput" multiple accept="image/*" class="hidden" @change="handleFiles($event)">
+                                    <button type="button" @click="$refs.multiInput.click()" class="px-4 py-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-600 rounded-xl text-xs font-bold text-slate-700 dark:text-slate-300 shadow-sm hover:bg-slate-50 active:scale-95 transition-all">
+                                        + Ajouter des photos
+                                    </button>
+                                    <p class="mt-2 text-[10px] text-slate-400">Glissez vos angles ou détails supplémentaires ici.</p>
+                                </div>
+
+                                <!-- Previews -->
+                                <div class="mt-3 flex flex-wrap gap-2.5" x-show="files.length > 0">
+                                    <template x-for="(file, index) in files" :key="index">
+                                        <div class="relative w-16 h-16 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm overflow-hidden group">
+                                            <img :src="file.url" class="w-full h-full object-cover">
+                                            <button type="button" @click="removeFile(index)" class="absolute top-1 right-1 w-5 h-5 bg-black/70 rounded-full flex items-center justify-center text-white opacity-0 group-hover:opacity-100 transition-opacity">
+                                                <i data-lucide="x" class="w-3 h-3"></i>
+                                            </button>
+                                        </div>
+                                    </template>
+                                </div>
+                            </div>
+                        </div>
+
                     </div>
 
-                    <div class="pt-4 flex justify-end gap-2.5 border-t border-slate-100 dark:border-slate-700">
-                        <button type="button" @click="show = false; setTimeout(() => $el.closest('#modal-container').innerHTML = '', 300)" class="px-4 py-2.5 text-xs font-bold text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-xl transition-colors">
+                    <!-- Modal Actions Footer -->
+                    <div class="pt-4 flex items-center justify-end gap-3 border-t border-slate-100 dark:border-slate-800">
+                        <button type="button" @click="show = false; setTimeout(() => $el.closest('#modal-container').innerHTML = '', 300)" class="px-5 py-2.5 text-xs font-bold text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-colors">
                             Annuler
                         </button>
-                        <button type="submit" class="px-6 py-2.5 bg-brand-600 hover:bg-brand-700 text-white text-xs font-bold rounded-xl shadow-md transition-all active:scale-95 flex items-center gap-1.5">
+                        <button type="submit" class="px-7 py-3 bg-brand-600 hover:bg-brand-700 text-white text-xs font-bold rounded-2xl shadow-lg shadow-brand-500/25 transition-all active:scale-95 flex items-center gap-2 font-heading">
                             <i data-lucide="check" class="h-4 w-4"></i>
-                            <span>{% if is_update %}Enregistrer{% else %}Publier l'article{% endif %}</span>
+                            <span>{% if is_update %}Enregistrer les modifications{% else %}Publier mon article ✨{% endif %}</span>
                         </button>
                     </div>
                 </form>
@@ -189,3 +245,4 @@
         }
     </script>
 </div>
+

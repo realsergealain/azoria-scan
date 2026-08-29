@@ -8,7 +8,7 @@ from django.views.decorators.http import require_POST
 from django.db.models import Sum, Count
 
 from .forms import ShopCreateForm, ShopProductForm
-from .models import Shop, ShopBranding, ShopPayment, ShopProduct, Order, OrderItem, VisitTracker
+from .models import Shop, ShopBranding, ShopPayment, ShopProduct, Order, OrderItem, VisitTracker, Notification, ProductImage
 from .services import (
     generate_styled_qr_code,
     generate_whatsapp_order_link,
@@ -59,7 +59,13 @@ def shop_settings(request):
     payment, _ = ShopPayment.objects.get_or_create(shop=shop)
 
     if request.method == 'POST':
-        shop.name = request.POST.get('name', shop.name)
+        # Règle métier : Verrouillage du nom 7 jours après création
+        new_name = request.POST.get('name', '').strip()
+        if new_name and not shop.is_name_locked:
+            shop.name = new_name
+        elif new_name and shop.is_name_locked and new_name != shop.name:
+            messages.warning(request, "🔒 Le nom de la boutique ne peut plus être modifié car elle a été créée il y a plus de 7 jours.")
+
         shop.category = request.POST.get('category', shop.category)
         shop.description = request.POST.get('description', shop.description)
         # Phone cleaning
@@ -437,9 +443,42 @@ def checkout_view(request, shop_uuid, shop_slug):
             total_price=line_total
         )
 
+        # Règle métier : Décrémentation automatique des stocks et alertes
+        if product:
+            if product.track_stock:
+                product.stock = max(0, product.stock - qty)
+                if product.stock == 0:
+                    product.is_available = False
+                    # Créer une notification de rupture de stock
+                    Notification.objects.create(
+                        shop=shop,
+                        title=f"🔴 Rupture de stock : {product.name}",
+                        message=f"L'article « {product.name} » est maintenant en rupture de stock suite à la commande {order.order_number}.",
+                        notification_type='out_of_stock',
+                    )
+                elif product.stock <= 3:
+                    # Alerte stock faible
+                    Notification.objects.create(
+                        shop=shop,
+                        title=f"⚠️ Stock critique ({product.stock} restants) : {product.name}",
+                        message=f"Il ne reste plus que {product.stock} exemplaire(s) pour « {product.name} ».",
+                        notification_type='low_stock',
+                    )
+                product.save()
+
     order.subtotal = subtotal
     order.total_amount = subtotal + delivery_fee
     order.save()
+
+    # Création de la notification de nouvelle commande pour le vendeur
+    formatted_amount = f"{order.total_amount:,.0f}".replace(',', ' ')
+    Notification.objects.create(
+        shop=shop,
+        title=f"📦 Nouvelle commande {order.order_number}",
+        message=f"{order.customer_name} ({order.customer_city}) a commandé pour {formatted_amount} FCFA.",
+        notification_type='new_order',
+        order=order,
+    )
 
     # Lien direct WhatsApp
     whatsapp_url = generate_whatsapp_order_link(order)
@@ -448,3 +487,41 @@ def checkout_view(request, shop_uuid, shop_slug):
         'order': order,
         'whatsapp_url': whatsapp_url,
     })
+
+
+# ==========================================
+# 🔔 SYSTÈME DE NOTIFICATIONS EN DIRECT (HTMX)
+# ==========================================
+
+@login_required
+def notifications_badge(request):
+    """Retourne le badge et le dropdown des notifications en direct pour HTMX."""
+    shop = Shop.objects.filter(owner=request.user).first()
+    if not shop:
+        return HttpResponse("")
+    
+    notifications = Notification.objects.filter(shop=shop).order_by('-created_at')[:8]
+    unread_count = Notification.objects.filter(shop=shop, is_read=False).count()
+    
+    return render(request, 'shop/partials/notifications_dropdown.html', {
+        'shop': shop,
+        'notifications': notifications,
+        'unread_count': unread_count,
+    })
+
+
+@login_required
+@require_POST
+def notifications_mark_read(request):
+    """Marque toutes les notifications du vendeur comme lues."""
+    shop = Shop.objects.filter(owner=request.user).first()
+    if shop:
+        Notification.objects.filter(shop=shop, is_read=False).update(is_read=True)
+    
+    notifications = Notification.objects.filter(shop=shop).order_by('-created_at')[:8]
+    return render(request, 'shop/partials/notifications_dropdown.html', {
+        'shop': shop,
+        'notifications': notifications,
+        'unread_count': 0,
+    })
+

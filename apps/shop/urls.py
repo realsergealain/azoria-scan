@@ -24,4 +24,9 @@ urlpatterns = [
     # Public Storefront & Checkout
     path('<uuid:shop_uuid>/<slug:shop_slug>/checkout/', views.checkout_view, name='checkout'),
     path('<uuid:shop_uuid>/<slug:shop_slug>/', views.shop_detail, name='detail'),
+
+    # Notifications System (HTMX)
+    path('notifications/badge/', views.notifications_badge, name='notifications_badge'),
+    path('notifications/marquer-lues/', views.notifications_mark_read, name='notifications_mark_read'),
 ]
+
