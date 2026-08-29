@@ -209,8 +209,7 @@
                         {{ user.first_name|default:user.email|make_list|first|upper }}
                     </div>
                     <div class="text-left flex-1 overflow-hidden">
-                        <p class="text-xs font-bold text-slate-900 dark:text-white truncate">{{
-                            user.first_name|default:user.email }}</p>
+                        <p class="text-xs font-bold text-slate-900 dark:text-white truncate">{{ user.first_name|default:user.email }}</p>
                         <p class="text-[10px] text-slate-400 truncate">Vendeur Social</p>
                     </div>
                     <i data-lucide="chevron-up" class="w-4 h-4 text-slate-400"></i>

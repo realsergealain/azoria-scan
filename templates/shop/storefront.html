@@ -660,32 +660,31 @@
                 customerCity: 'Cocody',
                 customerAddress: '',
                 paymentMethod: 'livraison',
-                deliveryFee: {{ shop.payment.delivery_fee |default: 1500 | floatformat: 0 }
-        },
+                deliveryFee: {{ shop.payment.delivery_fee|default:1500|floatformat:0 }},
 
-        // Products from Django
-        products: [
-            {% for product in products %}
-        {
-            id: '{{ product.uuid }}',
-                name: '{{ product.name|escapejs }}',
-                    category: '{{ product.category|escapejs }}',
-                        price: { { product.price | floatformat: 0 } },
-            compare_price: {% if product.compare_price %} { { product.compare_price | floatformat: 0 } } {% else %} null{% endif %},
-            discount_percent: { { product.discount_percent |default: 0 } },
-            description: '{{ product.description|escapejs }}',
-                image: {% if product.image %} '{{ product.image.url }}'{% else %} null{% endif %},
-            images: [
-                {% for img in product.images.all %}
-        '{{ img.image.url }}',
-            {% endfor %}
+                // Products from Django
+                products: [
+                    {% for product in products %}
+                    {
+                        id: '{{ product.uuid }}',
+                        name: '{{ product.name|escapejs }}',
+                        category: '{{ product.category|escapejs }}',
+                        price: {{ product.price|floatformat:0 }},
+                        compare_price: {% if product.compare_price %}{{ product.compare_price|floatformat:0 }}{% else %}null{% endif %},
+                        discount_percent: {{ product.discount_percent|default:0 }},
+                        description: '{{ product.description|escapejs }}',
+                        image: {% if product.image %}'{{ product.image.url }}'{% else %}null{% endif %},
+                        images: [
+                            {% for img in product.images.all %}
+                            '{{ img.image.url }}',
+                            {% endfor %}
                         ]
-                    },
-        {% endfor %}
+                    }{% if not forloop.last %},{% endif %}
+                    {% endfor %}
                 ],
 
-        // Session Cart (Persisted in localStorage)
-        cart: JSON.parse(localStorage.getItem('azoria_cart_{{ shop.uuid }}') || '[]'),
+                // Session Cart (Persisted in localStorage)
+                cart: JSON.parse(localStorage.getItem('azoria_cart_{{ shop.uuid }}') || '[]'),
 
             get filteredProducts() {
             return this.products.filter(p => {
