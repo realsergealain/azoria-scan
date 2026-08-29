@@ -330,3 +330,13 @@ document.addEventListener('htmx:afterSettle', () => {
   AzoriaUI.animateCounters();
 });
 
+// Unlock Audio Context on user interaction
+['click', 'touchstart', 'keydown'].forEach(evtType => {
+  document.addEventListener(evtType, function unlock() {
+    if (window.AzoriaUI) {
+      window.AzoriaUI.getAudioContext();
+    }
+  }, { once: true, passive: true });
+});
+
+

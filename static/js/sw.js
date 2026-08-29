@@ -1,10 +1,11 @@
 // Azoria Service Worker - Fast Image & Asset Caching
-const CACHE_NAME = 'azoria-v1';
+const CACHE_NAME = 'azoria-v2';
 const STATIC_ASSETS = [
     '/static/css/styles.css',
-    '/static/js/main.js',
+    '/static/js/main.js?v=2.1',
     'https://cdn.tailwindcss.com',
     'https://unpkg.com/lucide@latest',
+    'https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js',
     'https://cdn.jsdelivr.net/npm/alpinejs@3.14.8/dist/cdn.min.js',
     'https://unpkg.com/htmx.org@1.9.10'
 ];
