@@ -5,13 +5,15 @@
     <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
 
         <!-- Top grid -->
-        <div class="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-8 pb-12 border-b border-slate-700/60">
+        <div
+            class="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-8 pb-12 border-b border-slate-700/60">
 
             <!-- Brand Column -->
             <div class="col-span-2 sm:col-span-2 md:col-span-2 lg:col-span-2 space-y-5">
                 <!-- Logo -->
                 <a href="{% url 'core:home' %}" class="inline-flex items-center gap-2.5 group">
-                    <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-brand-600 to-indigo-500 flex items-center justify-center text-white shadow-lg shadow-brand-500/30 group-hover:scale-105 transition-transform">
+                    <div
+                        class="w-9 h-9 rounded-xl bg-gradient-to-tr from-brand-600 to-indigo-500 flex items-center justify-center text-white shadow-lg shadow-brand-500/30 group-hover:scale-105 transition-transform">
                         <i data-lucide="shopping-bag" class="w-4 h-4"></i>
                     </div>
                     <span class="font-heading font-extrabold text-xl tracking-tight text-white">
@@ -21,12 +23,14 @@
 
                 <!-- Tagline -->
                 <p class="text-sm text-slate-400 max-w-xs leading-relaxed">
-                    La plateforme de social commerce conçue pour permettre à chaque vendeur de transformer ses abonnés TikTok, WhatsApp et Instagram en commandes concrètes.
+                    La plateforme de social commerce conçue pour permettre à chaque vendeur de transformer ses abonnés
+                    TikTok, WhatsApp et Instagram en commandes concrètes.
                 </p>
 
                 <!-- Status Badge -->
                 <div class="flex flex-wrap items-center gap-3">
-                    <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-900/40 text-emerald-400 border border-emerald-700/40">
+                    <span
+                        class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-900/40 text-emerald-400 border border-emerald-700/40">
                         <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
                         Service opérationnel en Côte d'Ivoire
                     </span>
@@ -34,16 +38,21 @@
 
                 <!-- Social links -->
                 <div class="flex items-center gap-3 pt-1">
-                    <a href="#" aria-label="TikTok" class="w-9 h-9 rounded-lg bg-slate-800 hover:bg-pink-500/20 border border-slate-700 hover:border-pink-500/40 flex items-center justify-center text-slate-400 hover:text-pink-400 transition-all">
+                    <a href="#" aria-label="TikTok"
+                        class="w-9 h-9 rounded-lg bg-slate-800 hover:bg-pink-500/20 border border-slate-700 hover:border-pink-500/40 flex items-center justify-center text-slate-400 hover:text-pink-400 transition-all">
                         <i data-lucide="video" class="w-4 h-4"></i>
                     </a>
-                    <a href="https://wa.me/2250711113420" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp" class="w-9 h-9 rounded-lg bg-slate-800 hover:bg-emerald-500/20 border border-slate-700 hover:border-emerald-500/40 flex items-center justify-center text-slate-400 hover:text-emerald-400 transition-all">
+                    <a href="https://wa.me/2250711113420" target="_blank" rel="noopener noreferrer"
+                        aria-label="WhatsApp"
+                        class="w-9 h-9 rounded-lg bg-slate-800 hover:bg-emerald-500/20 border border-slate-700 hover:border-emerald-500/40 flex items-center justify-center text-slate-400 hover:text-emerald-400 transition-all">
                         <i data-lucide="message-circle" class="w-4 h-4"></i>
                     </a>
-                    <a href="#" aria-label="Instagram" class="w-9 h-9 rounded-lg bg-slate-800 hover:bg-purple-500/20 border border-slate-700 hover:border-purple-500/40 flex items-center justify-center text-slate-400 hover:text-purple-400 transition-all">
+                    <a href="#" aria-label="Instagram"
+                        class="w-9 h-9 rounded-lg bg-slate-800 hover:bg-purple-500/20 border border-slate-700 hover:border-purple-500/40 flex items-center justify-center text-slate-400 hover:text-purple-400 transition-all">
                         <i data-lucide="instagram" class="w-4 h-4"></i>
                     </a>
-                    <a href="#" aria-label="Facebook" class="w-9 h-9 rounded-lg bg-slate-800 hover:bg-blue-500/20 border border-slate-700 hover:border-blue-500/40 flex items-center justify-center text-slate-400 hover:text-blue-400 transition-all">
+                    <a href="#" aria-label="Facebook"
+                        class="w-9 h-9 rounded-lg bg-slate-800 hover:bg-blue-500/20 border border-slate-700 hover:border-blue-500/40 flex items-center justify-center text-slate-400 hover:text-blue-400 transition-all">
                         <i data-lucide="facebook" class="w-4 h-4"></i>
                     </a>
                 </div>
@@ -53,12 +62,16 @@
             <div class="space-y-4">
                 <h4 class="font-heading font-bold text-sm text-white uppercase tracking-wider">Plateforme</h4>
                 <ul class="space-y-2.5">
-                    <li><a href="{% url 'core:home' %}#features"  class="footer-link hover:text-brand-400">Boutique Mobile</a></li>
-                    <li><a href="{% url 'core:home' %}#ai"        class="footer-link hover:text-brand-400">Azoria AI</a></li>
-                    <li><a href="{% url 'core:home' %}#features"  class="footer-link hover:text-brand-400">Générateur QR Code</a></li>
-                    <li><a href="{% url 'core:home' %}#features"  class="footer-link hover:text-brand-400">Paiement à la livraison</a></li>
-                    <li><a href="{% url 'core:home' %}#simulator" class="footer-link hover:text-brand-400">Simulateur en direct</a></li>
-                    <li><a href="{% url 'core:home' %}#pricing"   class="footer-link hover:text-brand-400">Tarifs</a></li>
+                    <li><a href="{% url 'core:home' %}#features" class="footer-link hover:text-brand-400">Boutique
+                            Mobile</a></li>
+                    <li><a href="{% url 'core:home' %}#ai" class="footer-link hover:text-brand-400">Azoria AI</a></li>
+                    <li><a href="{% url 'core:home' %}#features" class="footer-link hover:text-brand-400">Générateur QR
+                            Code</a></li>
+                    <li><a href="{% url 'core:home' %}#features" class="footer-link hover:text-brand-400">Paiement à la
+                            livraison</a></li>
+                    <li><a href="{% url 'core:home' %}#simulator" class="footer-link hover:text-brand-400">Simulateur en
+                            direct</a></li>
+                    <li><a href="{% url 'core:home' %}#pricing" class="footer-link hover:text-brand-400">Tarifs</a></li>
                 </ul>
             </div>
 
@@ -86,15 +99,19 @@
                 <ul class="space-y-2.5">
                     <li>
                         <a href="https://wa.me/2250711113420" target="_blank" rel="noopener noreferrer"
-                           class="footer-link hover:text-emerald-400 flex items-center gap-1.5">
+                            class="footer-link hover:text-emerald-400 flex items-center gap-1.5">
                             <i data-lucide="message-circle" class="w-3.5 h-3.5 text-emerald-500"></i>
                             Support WhatsApp
                         </a>
                     </li>
-                    <li><a href="{% url 'core:faq' %}" class="footer-link hover:text-brand-400">Foire Aux Questions</a></li>
-                    <li><a href="{% url 'core:guide_vendeur' %}" class="footer-link hover:text-brand-400">Guide du vendeur</a></li>
-                    <li><a href="{% url 'core:mentions_legales' %}" class="footer-link hover:text-slate-200">Mentions légales</a></li>
-                    <li><a href="{% url 'core:confidentialite' %}" class="footer-link hover:text-slate-200">Confidentialité</a></li>
+                    <li><a href="{% url 'core:faq' %}" class="footer-link hover:text-brand-400">Foire Aux Questions</a>
+                    </li>
+                    <li><a href="{% url 'core:guide_vendeur' %}" class="footer-link hover:text-brand-400">Guide du
+                            vendeur</a></li>
+                    <li><a href="{% url 'core:mentions_legales' %}" class="footer-link hover:text-slate-200">Mentions
+                            légales</a></li>
+                    <li><a href="{% url 'core:confidentialite' %}"
+                            class="footer-link hover:text-slate-200">Confidentialité</a></li>
                 </ul>
             </div>
         </div>

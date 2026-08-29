@@ -5,20 +5,24 @@
 
 {% block content %}
 <div class="max-w-4xl mx-auto pb-12 space-y-6">
-    
+
     <!-- Top Header -->
     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-            <h1 class="font-heading text-2xl font-extrabold text-slate-900 dark:text-white tracking-tight">Configuration de la Boutique</h1>
-            <p class="text-sm text-slate-500 mt-1">Personnalisez votre vitrine, vos coordonnées et vos options de livraison.</p>
+            <h1 class="font-heading text-2xl font-extrabold text-slate-900 dark:text-white tracking-tight">Configuration
+                de la Boutique</h1>
+            <p class="text-sm text-slate-500 mt-1">Personnalisez votre vitrine, vos coordonnées et vos options de
+                livraison.</p>
         </div>
-        
+
         <div class="flex items-center gap-2">
-            <a href="{% url 'shop:detail' shop.uuid shop.slug %}" target="_blank" class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 font-bold text-xs shadow-sm hover:bg-slate-50 transition-colors">
+            <a href="{% url 'shop:detail' shop.uuid shop.slug %}" target="_blank"
+                class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 font-bold text-xs shadow-sm hover:bg-slate-50 transition-colors">
                 <i data-lucide="external-link" class="w-4 h-4 text-brand-500"></i>
                 <span>Voir la vitrine</span>
             </a>
-            <a href="{% url 'shop:qr_studio' %}" class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-brand-500 text-white font-bold text-xs shadow-sm hover:bg-brand-600 transition-colors">
+            <a href="{% url 'shop:qr_studio' %}"
+                class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-brand-500 text-white font-bold text-xs shadow-sm hover:bg-brand-600 transition-colors">
                 <i data-lucide="qr-code" class="w-4 h-4"></i>
                 <span>QR Code Studio</span>
             </a>
@@ -26,7 +30,8 @@
     </div>
 
     <!-- Main Settings Form Container -->
-    <div class="bg-white dark:bg-slate-800 rounded-3xl border border-slate-200 dark:border-slate-700 shadow-sm overflow-hidden">
+    <div
+        class="bg-white dark:bg-slate-800 rounded-3xl border border-slate-200 dark:border-slate-700 shadow-sm overflow-hidden">
         <form method="post" enctype="multipart/form-data" class="p-6 sm:p-8 space-y-8">
             {% csrf_token %}
 
@@ -37,35 +42,48 @@
                         <i data-lucide="store" class="w-4 h-4"></i>
                     </div>
                     <div>
-                        <h2 class="font-heading font-bold text-base text-slate-900 dark:text-white">Informations Générales</h2>
+                        <h2 class="font-heading font-bold text-base text-slate-900 dark:text-white">Informations
+                            Générales</h2>
                         <p class="text-xs text-slate-400">Identité publique visible par vos acheteurs</p>
                     </div>
                 </div>
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
-                        <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">Nom de la boutique :</label>
+                        <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">Nom de la
+                            boutique :</label>
                         <input type="text" name="name" value="{{ shop.name }}" required
-                               class="w-full px-4 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-xs sm:text-sm focus:ring-2 focus:ring-brand-500 outline-none text-slate-900 dark:text-white font-medium">
+                            class="w-full px-4 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-xs sm:text-sm focus:ring-2 focus:ring-brand-500 outline-none text-slate-900 dark:text-white font-medium">
                     </div>
                     <div>
-                        <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">Catégorie d'activité :</label>
-                        <select name="category" class="w-full px-4 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-xs sm:text-sm focus:ring-2 focus:ring-brand-500 outline-none text-slate-900 dark:text-white font-medium">
-                            <option value="Mode & Habillement" {% if shop.category == 'Mode & Habillement' %}selected{% endif %}>Mode & Habillement</option>
-                            <option value="Chaussures & Sneakers" {% if shop.category == 'Chaussures & Sneakers' %}selected{% endif %}>Chaussures & Sneakers</option>
-                            <option value="Beauté, Mèches & Cosmétiques" {% if shop.category == 'Beauté, Mèches & Cosmétiques' %}selected{% endif %}>Beauté, Mèches & Cosmétiques</option>
-                            <option value="Électronique & Téléphonie" {% if shop.category == 'Électronique & Téléphonie' %}selected{% endif %}>Électronique & Téléphonie</option>
-                            <option value="Maison & Décoration" {% if shop.category == 'Maison & Décoration' %}selected{% endif %}>Maison & Décoration</option>
-                            <option value="Alimentation & Traiteur" {% if shop.category == 'Alimentation & Traiteur' %}selected{% endif %}>Alimentation & Traiteur</option>
-                            <option value="Autre" {% if shop.category == 'Autre' %}selected{% endif %}>Autre</option>
+                        <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">Catégorie
+                            d'activité :</label>
+                        <select name="category"
+                            class="w-full px-4 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-xs sm:text-sm focus:ring-2 focus:ring-brand-500 outline-none text-slate-900 dark:text-white font-medium">
+                            <option value="Mode & Habillement" {% if shop.category=='Mode & Habillement' %}selected{%
+                                endif %}>Mode & Habillement</option>
+                            <option value="Chaussures & Sneakers" {% if shop.category=='Chaussures & Sneakers'
+                                %}selected{% endif %}>Chaussures & Sneakers</option>
+                            <option value="Beauté, Mèches & Cosmétiques" {% if
+                                shop.category=='Beauté, Mèches & Cosmétiques' %}selected{% endif %}>Beauté, Mèches &
+                                Cosmétiques</option>
+                            <option value="Électronique & Téléphonie" {% if shop.category=='Électronique & Téléphonie'
+                                %}selected{% endif %}>Électronique & Téléphonie</option>
+                            <option value="Maison & Décoration" {% if shop.category=='Maison & Décoration' %}selected{%
+                                endif %}>Maison & Décoration</option>
+                            <option value="Alimentation & Traiteur" {% if shop.category=='Alimentation & Traiteur'
+                                %}selected{% endif %}>Alimentation & Traiteur</option>
+                            <option value="Autre" {% if shop.category=='Autre' %}selected{% endif %}>Autre</option>
                         </select>
                     </div>
                 </div>
 
                 <div>
-                    <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">Description de la boutique :</label>
-                    <textarea name="description" rows="3" placeholder="Présentez vos produits et vos conditions en quelques lignes..."
-                              class="w-full px-4 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-xs sm:text-sm focus:ring-2 focus:ring-brand-500 outline-none text-slate-900 dark:text-white font-medium">{{ shop.description }}</textarea>
+                    <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">Description de la
+                        boutique :</label>
+                    <textarea name="description" rows="3"
+                        placeholder="Présentez vos produits et vos conditions en quelques lignes..."
+                        class="w-full px-4 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-xs sm:text-sm focus:ring-2 focus:ring-brand-500 outline-none text-slate-900 dark:text-white font-medium">{{ shop.description }}</textarea>
                 </div>
             </div>
 
@@ -76,23 +94,29 @@
                         <i data-lucide="message-circle" class="w-4 h-4"></i>
                     </div>
                     <div>
-                        <h2 class="font-heading font-bold text-base text-slate-900 dark:text-white">Contact & Réception des Commandes</h2>
-                        <p class="text-xs text-slate-400">Le numéro qui recevra les récapitulatifs de commandes en 1 clic</p>
+                        <h2 class="font-heading font-bold text-base text-slate-900 dark:text-white">Contact & Réception
+                            des Commandes</h2>
+                        <p class="text-xs text-slate-400">Le numéro qui recevra les récapitulatifs de commandes en 1
+                            clic</p>
                     </div>
                 </div>
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
-                        <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">Numéro WhatsApp pour commandes :</label>
+                        <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">Numéro WhatsApp
+                            pour commandes :</label>
                         <input type="tel" name="phone" value="{{ shop.phone }}" placeholder="Ex: 0711113420"
-                               inputmode="numeric" pattern="[0-9]{10}" maxlength="10" minlength="10" oninput="this.value = this.value.replace(/[^0-9]/g, '')"
-                               class="w-full pl-10 pr-4 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-xs sm:text-sm focus:ring-2 focus:ring-brand-500 outline-none text-slate-900 dark:text-white font-medium">
-                        <p class="text-[10px] text-slate-400 mt-1">Vos clients cliqueront sur ce numéro pour valider leur panier.</p>
+                            inputmode="numeric" pattern="[0-9]{10}" maxlength="10" minlength="10"
+                            oninput="this.value = this.value.replace(/[^0-9]/g, '')"
+                            class="w-full pl-10 pr-4 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-xs sm:text-sm focus:ring-2 focus:ring-brand-500 outline-none text-slate-900 dark:text-white font-medium">
+                        <p class="text-[10px] text-slate-400 mt-1">Vos clients cliqueront sur ce numéro pour valider
+                            leur panier.</p>
                     </div>
                     <div>
-                        <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">Ville principale :</label>
+                        <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">Ville
+                            principale :</label>
                         <input type="text" name="city" value="{{ shop.city|default:'Abidjan' }}"
-                               class="w-full px-4 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-xs sm:text-sm focus:ring-2 focus:ring-brand-500 outline-none text-slate-900 dark:text-white font-medium">
+                            class="w-full px-4 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-xs sm:text-sm focus:ring-2 focus:ring-brand-500 outline-none text-slate-900 dark:text-white font-medium">
                     </div>
                 </div>
             </div>
@@ -104,25 +128,30 @@
                         <i data-lucide="palette" class="w-4 h-4"></i>
                     </div>
                     <div>
-                        <h2 class="font-heading font-bold text-base text-slate-900 dark:text-white">Identité Visuelle & Couleurs</h2>
+                        <h2 class="font-heading font-bold text-base text-slate-900 dark:text-white">Identité Visuelle &
+                            Couleurs</h2>
                         <p class="text-xs text-slate-400">Personnalisez les boutons, le logo et les QR codes</p>
                     </div>
                 </div>
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 items-center">
                     <div>
-                        <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">Couleur Principale (HEX) :</label>
+                        <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">Couleur
+                            Principale (HEX) :</label>
                         <div class="flex items-center gap-3">
-                            <input type="color" name="primary_color" value="{{ shop.branding.primary_color|default:'#7C3AED' }}"
-                                   class="w-12 h-10 rounded-xl cursor-pointer border border-slate-200 bg-transparent">
-                            <input type="text" name="primary_color_text" value="{{ shop.branding.primary_color|default:'#7C3AED' }}"
-                                   class="w-32 px-3 py-2 rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-xs font-mono text-slate-900 dark:text-white font-bold">
+                            <input type="color" name="primary_color"
+                                value="{{ shop.branding.primary_color|default:'#7C3AED' }}"
+                                class="w-12 h-10 rounded-xl cursor-pointer border border-slate-200 bg-transparent">
+                            <input type="text" name="primary_color_text"
+                                value="{{ shop.branding.primary_color|default:'#7C3AED' }}"
+                                class="w-32 px-3 py-2 rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-xs font-mono text-slate-900 dark:text-white font-bold">
                         </div>
                     </div>
                     <div>
-                        <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">Logo de la boutique :</label>
+                        <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">Logo de la
+                            boutique :</label>
                         <input type="file" name="logo" accept="image/*"
-                               class="w-full text-xs text-slate-500 file:mr-3 file:py-2 file:px-3 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-brand-50 file:text-brand-700 hover:file:bg-brand-100 transition-colors">
+                            class="w-full text-xs text-slate-500 file:mr-3 file:py-2 file:px-3 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-brand-50 file:text-brand-700 hover:file:bg-brand-100 transition-colors">
                     </div>
                 </div>
             </div>
@@ -134,28 +163,34 @@
                         <i data-lucide="truck" class="w-4 h-4"></i>
                     </div>
                     <div>
-                        <h2 class="font-heading font-bold text-base text-slate-900 dark:text-white">Frais de Livraison & Expédition</h2>
+                        <h2 class="font-heading font-bold text-base text-slate-900 dark:text-white">Frais de Livraison &
+                            Expédition</h2>
                         <p class="text-xs text-slate-400">Tarification automatique appliquée au panier</p>
                     </div>
                 </div>
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
-                        <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">Frais de livraison par défaut (FCFA) :</label>
-                        <input type="number" name="delivery_fee" value="{{ shop.payment.delivery_fee|default:1500|floatformat:0 }}"
-                               class="w-full px-4 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-xs sm:text-sm focus:ring-2 focus:ring-brand-500 outline-none text-slate-900 dark:text-white font-medium">
+                        <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">Frais de
+                            livraison par défaut (FCFA) :</label>
+                        <input type="number" name="delivery_fee"
+                            value="{{ shop.payment.delivery_fee|default:1500|floatformat:0 }}"
+                            class="w-full px-4 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-xs sm:text-sm focus:ring-2 focus:ring-brand-500 outline-none text-slate-900 dark:text-white font-medium">
                     </div>
                     <div>
-                        <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">Livraison offerte à partir de (Optionnel) :</label>
-                        <input type="number" name="free_delivery_threshold" value="{{ shop.payment.free_delivery_threshold|default:'' }}" placeholder="Ex: 30000"
-                               class="w-full px-4 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-xs sm:text-sm focus:ring-2 focus:ring-brand-500 outline-none text-slate-900 dark:text-white font-medium">
+                        <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">Livraison
+                            offerte à partir de (Optionnel) :</label>
+                        <input type="number" name="free_delivery_threshold"
+                            value="{{ shop.payment.free_delivery_threshold|default:'' }}" placeholder="Ex: 30000"
+                            class="w-full px-4 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-xs sm:text-sm focus:ring-2 focus:ring-brand-500 outline-none text-slate-900 dark:text-white font-medium">
                     </div>
                 </div>
             </div>
 
             <!-- Submit Action -->
             <div class="pt-6 border-t border-slate-100 dark:border-slate-700 flex justify-end">
-                <button type="submit" class="inline-flex items-center gap-2 px-6 py-3 rounded-2xl bg-brand-600 hover:bg-brand-700 text-white font-bold text-sm shadow-md hover:shadow-lg transition-all active:scale-95">
+                <button type="submit"
+                    class="inline-flex items-center gap-2 px-6 py-3 rounded-2xl bg-brand-600 hover:bg-brand-700 text-white font-bold text-sm shadow-md hover:shadow-lg transition-all active:scale-95">
                     <i data-lucide="save" class="w-4 h-4"></i>
                     <span>Enregistrer les modifications</span>
                 </button>

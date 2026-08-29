@@ -162,3 +162,21 @@ def dashboard_view(request):
         'analytics': analytics,
         'shop_form': ShopCreateForm(),
     })
+
+
+@login_required
+def dashboard_live_stats(request):
+    """Fragment HTMX pour l'actualisation en temps réel (Polling) des KPIs et commandes récentes."""
+    from apps.shop.models import Shop
+    from apps.shop.services import get_shop_dashboard_analytics
+    
+    shop = Shop.objects.filter(owner=request.user).select_related('branding', 'payment').first()
+    if not shop:
+        return render(request, 'core/partials/dashboard_live_feed.html', {'analytics': {}, 'primary_shop': None})
+    
+    analytics = get_shop_dashboard_analytics(shop)
+    return render(request, 'core/partials/dashboard_live_feed.html', {
+        'primary_shop': shop,
+        'analytics': analytics,
+    })
+

@@ -1,17 +1,21 @@
 {% load static %}
 <!DOCTYPE html>
 <html lang="fr" class="h-full antialiased selection:bg-brand-500 selection:text-white">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover">
     <title>{% block title %}Tableau de bord — Azoria{% endblock %}</title>
-    
+
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><text y='26' font-size='26'>🛍️</text></svg>">
-    
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="icon"
+        href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><text y='26' font-size='26'>🛍️</text></svg>">
+
     <!-- Dark Mode Init -->
     <script>
         if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
@@ -20,7 +24,7 @@
             document.documentElement.classList.remove('dark')
         }
     </script>
-    
+
     <!-- Tailwind CSS (Shared config) -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -39,7 +43,7 @@
             }
         }
     </script>
-    
+
     <!-- Custom CSS (Design System) -->
     <link rel="stylesheet" href="{% static 'css/styles.css' %}">
 
@@ -52,61 +56,95 @@
 
     <!-- Custom Dashboard Styles -->
     <style>
-        [x-cloak] { display: none !important; }
-        .glass-card { background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.4); }
-        .dark .glass-card { background: rgba(30, 41, 59, 0.85); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.05); }
-        .nav-link.active { background-color: #EDE9FE; color: #6D28D9; font-weight: 700; box-shadow: inset 4px 0 0 0 #7C3AED, 0 1px 2px 0 rgba(0, 0, 0, 0.05); }
-        .dark .nav-link.active { background-color: rgba(124, 58, 237, 0.15); color: #C4B5FD; box-shadow: inset 4px 0 0 0 #8B5CF6; }
-        .nav-link.active i { color: #7C3AED; }
-        .dark .nav-link.active i { color: #A78BFA; }
-        
+        [x-cloak] {
+            display: none !important;
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+        }
+
+        .dark .glass-card {
+            background: rgba(30, 41, 59, 0.85);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .nav-link.active {
+            background-color: #EDE9FE;
+            color: #6D28D9;
+            font-weight: 700;
+            box-shadow: inset 4px 0 0 0 #7C3AED, 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+        }
+
+        .dark .nav-link.active {
+            background-color: rgba(124, 58, 237, 0.15);
+            color: #C4B5FD;
+            box-shadow: inset 4px 0 0 0 #8B5CF6;
+        }
+
+        .nav-link.active i {
+            color: #7C3AED;
+        }
+
+        .dark .nav-link.active i {
+            color: #A78BFA;
+        }
+
         /* Mobile safe bottom */
-        .pb-safe { padding-bottom: env(safe-area-inset-bottom, 16px); }
+        .pb-safe {
+            padding-bottom: env(safe-area-inset-bottom, 16px);
+        }
     </style>
 </head>
-<body class="h-full flex overflow-hidden bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-slate-100 transition-colors duration-300" x-data="{ sidebarOpen: false, showComingSoonModal: false }" hx-boost="true">
+
+<body class="h-full flex overflow-hidden bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-slate-100 transition-colors duration-300"
+      x-data="{ sidebarOpen: false, showComingSoonModal: false }">
 
     <!-- Page Loader (Azoria Branding) -->
-    <div id="page-loader" class="fixed inset-0 z-[100] bg-slate-50/80 dark:bg-slate-900/80 backdrop-blur-sm flex flex-col items-center justify-center transition-opacity duration-300" style="display: none; opacity: 0;">
+    <div id="page-loader"
+        class="fixed inset-0 z-[100] bg-slate-50/80 dark:bg-slate-900/80 backdrop-blur-sm flex flex-col items-center justify-center transition-opacity duration-300 pointer-events-none"
+        style="display: none; opacity: 0;">
         <div class="relative w-12 h-12">
             <div class="absolute inset-0 border-4 border-brand-100 dark:border-slate-700 rounded-full"></div>
             <div class="absolute inset-0 border-4 border-brand-600 rounded-full border-t-transparent animate-spin"></div>
         </div>
     </div>
-    
+
     <script>
-        document.body.addEventListener('htmx:beforeRequest', function (evt) {
-            if (evt.detail.elt.hasAttribute('hx-swap') && !evt.detail.elt.hasAttribute('data-no-loader')) {
-                const loader = document.getElementById('page-loader');
-                if (loader) { loader.style.display = 'flex'; requestAnimationFrame(() => loader.style.opacity = '1'); }
-            }
-        });
-        document.body.addEventListener('htmx:afterSettle', function () {
-            const loader = document.getElementById('page-loader');
-            if (loader) { loader.style.opacity = '0'; setTimeout(() => loader.style.display = 'none', 300); }
+        // Lucide re-initialization on dynamic HTMX content load
+        document.addEventListener('htmx:afterSwap', function () {
             if (typeof lucide !== 'undefined') lucide.createIcons();
         });
-        document.body.addEventListener('htmx:afterSwap', function () {
+        document.addEventListener('htmx:afterSettle', function () {
             if (typeof lucide !== 'undefined') lucide.createIcons();
         });
     </script>
 
     <!-- Mobile sidebar backdrop -->
-    <div x-show="sidebarOpen" x-transition.opacity class="fixed inset-0 z-40 bg-slate-900/50 lg:hidden" @click="sidebarOpen = false" x-cloak></div>
+    <div x-show="sidebarOpen" x-transition.opacity class="fixed inset-0 z-40 bg-slate-900/50 lg:hidden"
+        @click="sidebarOpen = false" x-cloak></div>
 
     <!-- DESKTOP SIDEBAR -->
-    <aside class="fixed inset-y-0 left-0 z-50 w-64 bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800 transform transition-transform duration-300 lg:translate-x-0 lg:static lg:inset-0 flex flex-col shrink-0"
-           :class="{'translate-x-0': sidebarOpen, '-translate-x-full': !sidebarOpen}">
-        
+    <aside
+        class="fixed inset-y-0 left-0 z-50 w-64 bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800 transform transition-transform duration-300 lg:translate-x-0 lg:static lg:inset-0 flex flex-col shrink-0"
+        :class="{'translate-x-0': sidebarOpen, '-translate-x-full': !sidebarOpen}">
+
         <!-- Logo -->
         <div class="h-16 flex items-center px-6 border-b border-slate-100 dark:border-slate-800 shrink-0">
             <a href="{% url 'core:dashboard' %}" class="flex items-center gap-3">
-                <div class="w-8 h-8 rounded-xl bg-gradient-to-tr from-brand-600 to-indigo-600 flex items-center justify-center shadow-md shadow-brand-500/20">
+                <div
+                    class="w-8 h-8 rounded-xl bg-gradient-to-tr from-brand-600 to-indigo-600 flex items-center justify-center shadow-md shadow-brand-500/20">
                     <i data-lucide="shopping-bag" class="w-4 h-4 text-white"></i>
                 </div>
-                <span class="font-heading font-extrabold text-xl tracking-tight text-slate-900 dark:text-white">Azoria<span class="text-brand-600">.</span></span>
+                <span
+                    class="font-heading font-extrabold text-xl tracking-tight text-slate-900 dark:text-white">Azoria<span
+                        class="text-brand-600">.</span></span>
             </a>
-            <button @click="sidebarOpen = false" class="lg:hidden ml-auto text-slate-500 hover:text-slate-800 dark:hover:text-white">
+            <button @click="sidebarOpen = false"
+                class="lg:hidden ml-auto text-slate-500 hover:text-slate-800 dark:hover:text-white">
                 <i data-lucide="x" class="w-5 h-5"></i>
             </button>
         </div>
@@ -114,40 +152,47 @@
         <!-- Navigation Links (Desktop) -->
         <div class="flex-1 overflow-y-auto py-4 px-3 space-y-1">
             <p class="px-3 text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-2 mt-4">Principal</p>
-            
-            <a href="{% url 'core:dashboard' %}" class="nav-link {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %} flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white transition-colors">
+
+            <a href="{% url 'core:dashboard' %}"
+                class="nav-link {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %} flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white transition-colors">
                 <i data-lucide="layout-dashboard" class="w-5 h-5 text-slate-400"></i>
                 <span>Vue d'ensemble</span>
             </a>
-            
-            <a href="{% url 'shop:settings' %}" class="nav-link {% if 'parametres' in request.path and 'boutique' in request.path %}active{% endif %} flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white transition-colors">
+
+            <a href="{% url 'shop:settings' %}"
+                class="nav-link {% if 'parametres' in request.path and 'boutique' in request.path %}active{% endif %} flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white transition-colors">
                 <i data-lucide="store" class="w-5 h-5 text-slate-400"></i>
                 <span>Mes Boutiques</span>
             </a>
-            
-            <a href="{% url 'shop:product_list' %}" class="nav-link {% if 'produits' in request.path %}active{% endif %} flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white transition-colors">
+
+            <a href="{% url 'shop:product_list' %}"
+                class="nav-link {% if 'produits' in request.path %}active{% endif %} flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white transition-colors">
                 <i data-lucide="package" class="w-5 h-5 text-slate-400"></i>
                 <span>Produits</span>
             </a>
-            
-            <a href="{% url 'shop:order_list' %}" class="nav-link {% if 'commandes' in request.path %}active{% endif %} flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white transition-colors">
+
+            <a href="{% url 'shop:order_list' %}"
+                class="nav-link {% if 'commandes' in request.path %}active{% endif %} flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white transition-colors">
                 <i data-lucide="shopping-cart" class="w-5 h-5 text-slate-400"></i>
                 <span>Commandes</span>
             </a>
 
-            <a href="{% url 'shop:customer_list' %}" class="nav-link {% if 'clients' in request.path %}active{% endif %} flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white transition-colors">
+            <a href="{% url 'shop:customer_list' %}"
+                class="nav-link {% if 'clients' in request.path %}active{% endif %} flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white transition-colors">
                 <i data-lucide="users" class="w-5 h-5 text-slate-400"></i>
                 <span>Clients</span>
             </a>
 
             <p class="px-3 text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-2 mt-6">Outils</p>
-            
-            <a href="{% url 'shop:qr_studio' %}" class="nav-link {% if 'qr-codes' in request.path %}active{% endif %} flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white transition-colors">
+
+            <a href="{% url 'shop:qr_studio' %}"
+                class="nav-link {% if 'qr-codes' in request.path %}active{% endif %} flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white transition-colors">
                 <i data-lucide="qr-code" class="w-5 h-5 text-slate-400"></i>
                 <span>QR Codes & Marketing</span>
             </a>
-            
-            <a href="{% url 'accounts:settings' %}" class="nav-link {% if 'mon-compte/parametres' in request.path %}active{% endif %} flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white transition-colors">
+
+            <a href="{% url 'accounts:settings' %}"
+                class="nav-link {% if 'mon-compte/parametres' in request.path %}active{% endif %} flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white transition-colors">
                 <i data-lucide="settings" class="w-5 h-5 text-slate-400"></i>
                 <span>Paramètres</span>
             </a>
@@ -155,27 +200,35 @@
 
         <!-- User Profile (Bottom Sidebar) -->
         <div class="p-4 border-t border-slate-100 dark:border-slate-800">
-            <div class="flex items-center gap-3 relative" x-data="{ userMenuOpen: false }" @click.outside="userMenuOpen = false">
-                <button @click="userMenuOpen = !userMenuOpen" class="flex items-center gap-3 w-full p-2 rounded-2xl hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors focus:outline-none">
-                    <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-brand-600 to-indigo-600 flex items-center justify-center text-white font-heading font-bold text-sm shadow-sm shrink-0">
+            <div class="flex items-center gap-3 relative" x-data="{ userMenuOpen: false }"
+                @click.outside="userMenuOpen = false">
+                <button @click="userMenuOpen = !userMenuOpen"
+                    class="flex items-center gap-3 w-full p-2 rounded-2xl hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors focus:outline-none">
+                    <div
+                        class="w-9 h-9 rounded-xl bg-gradient-to-tr from-brand-600 to-indigo-600 flex items-center justify-center text-white font-heading font-bold text-sm shadow-sm shrink-0">
                         {{ user.first_name|default:user.email|make_list|first|upper }}
                     </div>
                     <div class="text-left flex-1 overflow-hidden">
-                        <p class="text-xs font-bold text-slate-900 dark:text-white truncate">{{ user.first_name|default:user.email }}</p>
+                        <p class="text-xs font-bold text-slate-900 dark:text-white truncate">{{
+                            user.first_name|default:user.email }}</p>
                         <p class="text-[10px] text-slate-400 truncate">Vendeur Social</p>
                     </div>
                     <i data-lucide="chevron-up" class="w-4 h-4 text-slate-400"></i>
                 </button>
 
                 <!-- User Dropdown Menu -->
-                <div x-show="userMenuOpen" x-transition x-cloak class="absolute bottom-full left-0 mb-2 w-full bg-white dark:bg-slate-800 rounded-2xl shadow-xl border border-slate-100 dark:border-slate-700 overflow-hidden z-50 divide-y divide-slate-100 dark:divide-slate-700 text-xs">
-                    <a href="{% url 'core:home' %}" hx-boost="false" class="flex items-center gap-2.5 px-4 py-3 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700 font-semibold">
+                <div x-show="userMenuOpen" x-transition x-cloak
+                    class="absolute bottom-full left-0 mb-2 w-full bg-white dark:bg-slate-800 rounded-2xl shadow-xl border border-slate-100 dark:border-slate-700 overflow-hidden z-50 divide-y divide-slate-100 dark:divide-slate-700 text-xs">
+                    <a href="{% url 'core:home' %}" hx-boost="false"
+                        class="flex items-center gap-2.5 px-4 py-3 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700 font-semibold">
                         <i data-lucide="globe" class="w-4 h-4 text-brand-500"></i> Voir le site public
                     </a>
-                    <a href="{% url 'accounts:settings' %}" class="flex items-center gap-2.5 px-4 py-3 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700 font-semibold">
+                    <a href="{% url 'accounts:settings' %}"
+                        class="flex items-center gap-2.5 px-4 py-3 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700 font-semibold">
                         <i data-lucide="settings" class="w-4 h-4 text-slate-400"></i> Paramètres du compte
                     </a>
-                    <a href="{% url 'accounts:logout' %}" hx-boost="false" class="flex items-center gap-2.5 px-4 py-3 text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-slate-700 font-semibold">
+                    <a href="{% url 'accounts:logout' %}" hx-boost="false"
+                        class="flex items-center gap-2.5 px-4 py-3 text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-slate-700 font-semibold">
                         <i data-lucide="log-out" class="w-4 h-4"></i> Déconnexion
                     </a>
                 </div>
@@ -185,17 +238,19 @@
 
     <!-- MAIN CONTENT AREA -->
     <div class="flex-1 flex flex-col min-w-0 bg-[#FAFAFE] dark:bg-slate-950">
-        
+
         <!-- Top Header (Desktop & Mobile) -->
-        <header class="h-16 bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between px-4 sm:px-6 lg:px-8 shrink-0">
+        <header
+            class="h-16 bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between px-4 sm:px-6 lg:px-8 shrink-0">
             <!-- Mobile Brand Logo on Header -->
             <div class="lg:hidden flex items-center gap-2.5">
-                <div class="w-7 h-7 rounded-lg bg-brand-600 text-white flex items-center justify-center text-xs font-black shadow-sm">
+                <div
+                    class="w-7 h-7 rounded-lg bg-brand-600 text-white flex items-center justify-center text-xs font-black shadow-sm">
                     <i data-lucide="shopping-bag" class="w-3.5 h-3.5"></i>
                 </div>
                 <span class="font-heading font-extrabold text-base text-slate-900 dark:text-white">Azoria</span>
             </div>
-            
+
             <!-- Page Title (Desktop) -->
             <h1 class="hidden lg:block font-heading font-extrabold text-lg text-slate-900 dark:text-white">
                 {% block header_title %}Tableau de bord{% endblock %}
@@ -204,21 +259,23 @@
             <!-- Right Actions -->
             <div class="flex items-center gap-2.5 ml-auto">
                 <!-- Dark Mode Toggle -->
-                <button onclick="document.documentElement.classList.toggle('dark'); localStorage.theme = document.documentElement.classList.contains('dark') ? 'dark' : 'light'" 
-                        class="p-2.5 text-slate-500 dark:text-slate-300 hover:text-brand-600 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-colors focus:outline-none"
-                        title="Changer de thème">
+                <button
+                    onclick="document.documentElement.classList.toggle('dark'); localStorage.theme = document.documentElement.classList.contains('dark') ? 'dark' : 'light'"
+                    class="p-2.5 text-slate-500 dark:text-slate-300 hover:text-brand-600 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-colors focus:outline-none"
+                    title="Changer de thème">
                     <i data-lucide="moon" class="w-4 h-4 block dark:hidden"></i>
                     <i data-lucide="sun" class="w-4 h-4 hidden dark:block"></i>
                 </button>
 
-                <a href="{% url 'accounts:settings' %}" 
-                   class="p-2.5 text-slate-500 dark:text-slate-300 hover:text-brand-600 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-colors"
-                   title="Mon compte">
+                <a href="{% url 'accounts:settings' %}"
+                    class="p-2.5 text-slate-500 dark:text-slate-300 hover:text-brand-600 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-colors"
+                    title="Mon compte">
                     <i data-lucide="user" class="w-4 h-4"></i>
                 </a>
 
                 {% if not request.user.shops.exists %}
-                <button @click="$dispatch('open-create-shop-modal')" class="hidden sm:inline-flex bg-brand-600 hover:bg-brand-700 text-white text-xs font-bold px-4 py-2 rounded-xl items-center gap-1.5 transition-colors shadow-sm">
+                <button @click="$dispatch('open-create-shop-modal')"
+                    class="hidden sm:inline-flex bg-brand-600 hover:bg-brand-700 text-white text-xs font-bold px-4 py-2 rounded-xl items-center gap-1.5 transition-colors shadow-sm">
                     <i data-lucide="plus" class="w-3.5 h-3.5"></i>
                     <span>Créer boutique</span>
                 </button>
@@ -229,43 +286,45 @@
         <!-- Main Scrolling Content (Expanded width for desktop & safe bottom padding for mobile) -->
         <main class="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8 pb-28 lg:pb-8">
             <!-- Notifications (Flash Messages) -->
-            <div x-data="toastNotifier()" 
-                 @notify.window="add($event.detail)"
-                 class="fixed top-4 right-4 z-[9999] flex flex-col gap-3 max-w-sm w-full pointer-events-none">
+            <div x-data="toastNotifier()" @notify.window="add($event.detail)"
+                class="fixed top-4 right-4 z-[9999] flex flex-col gap-3 max-w-sm w-full pointer-events-none">
                 <template x-for="toast in toasts" :key="toast.id">
-                    <div x-show="toast.show"
-                         x-transition:enter="transform ease-out duration-300 transition-all"
-                         x-transition:enter-start="translate-y-2 opacity-0 sm:translate-y-0 sm:translate-x-4"
-                         x-transition:enter-end="translate-y-0 opacity-100 sm:translate-x-0"
-                         x-transition:leave="transition ease-in duration-200"
-                         x-transition:leave-start="opacity-100"
-                         x-transition:leave-end="opacity-0 translate-x-4"
-                         class="pointer-events-auto w-full max-w-sm bg-white dark:bg-slate-800 shadow-xl rounded-2xl p-4 flex items-start gap-3 border border-slate-100 dark:border-slate-700/60 ring-1 ring-black/5"
-                         :class="{ 'border-l-4 border-l-brand-500': toast.type === 'success', 'border-l-4 border-l-rose-500': toast.type === 'error', 'border-l-4 border-l-blue-500': toast.type === 'info' }">
-                        
+                    <div x-show="toast.show" x-transition:enter="transform ease-out duration-300 transition-all"
+                        x-transition:enter-start="translate-y-2 opacity-0 sm:translate-y-0 sm:translate-x-4"
+                        x-transition:enter-end="translate-y-0 opacity-100 sm:translate-x-0"
+                        x-transition:leave="transition ease-in duration-200" x-transition:leave-start="opacity-100"
+                        x-transition:leave-end="opacity-0 translate-x-4"
+                        class="pointer-events-auto w-full max-w-sm bg-white dark:bg-slate-800 shadow-xl rounded-2xl p-4 flex items-start gap-3 border border-slate-100 dark:border-slate-700/60 ring-1 ring-black/5"
+                        :class="{ 'border-l-4 border-l-brand-500': toast.type === 'success', 'border-l-4 border-l-rose-500': toast.type === 'error', 'border-l-4 border-l-blue-500': toast.type === 'info' }">
+
                         <div class="shrink-0 mt-0.5">
                             <template x-if="toast.type === 'success'">
-                                <div class="w-8 h-8 rounded-full bg-brand-50 text-brand-500 flex items-center justify-center">
+                                <div
+                                    class="w-8 h-8 rounded-full bg-brand-50 text-brand-500 flex items-center justify-center">
                                     <i data-lucide="check-circle-2" class="w-4 h-4"></i>
                                 </div>
                             </template>
                             <template x-if="toast.type === 'error'">
-                                <div class="w-8 h-8 rounded-full bg-rose-50 text-rose-500 flex items-center justify-center">
+                                <div
+                                    class="w-8 h-8 rounded-full bg-rose-50 text-rose-500 flex items-center justify-center">
                                     <i data-lucide="alert-circle" class="w-4 h-4"></i>
                                 </div>
                             </template>
                             <template x-if="toast.type === 'info' || toast.type === 'warning'">
-                                <div class="w-8 h-8 rounded-full bg-blue-50 text-blue-500 flex items-center justify-center">
+                                <div
+                                    class="w-8 h-8 rounded-full bg-blue-50 text-blue-500 flex items-center justify-center">
                                     <i data-lucide="info" class="w-4 h-4"></i>
                                 </div>
                             </template>
                         </div>
 
                         <div class="flex-1 pt-1.5">
-                            <p class="text-sm font-bold text-slate-800 dark:text-white leading-5" x-text="toast.message"></p>
+                            <p class="text-sm font-bold text-slate-800 dark:text-white leading-5"
+                                x-text="toast.message"></p>
                         </div>
-                        
-                        <button @click="remove(toast.id)" class="shrink-0 text-slate-400 hover:text-slate-600 transition-colors p-1">
+
+                        <button @click="remove(toast.id)"
+                            class="shrink-0 text-slate-400 hover:text-slate-600 transition-colors p-1">
                             <i data-lucide="x" class="w-4 h-4"></i>
                         </button>
                     </div>
@@ -297,65 +356,71 @@
                 // Auto-trigger Django messages
                 document.addEventListener('DOMContentLoaded', () => {
                     {% if messages %}
-                        {% for message in messages %}
-                            window.dispatchEvent(new CustomEvent('notify', {
-                                detail: {
-                                    type: '{{ message.tags|default:"info" }}'.includes('error') ? 'error' : ('{{ message.tags|default:"info" }}'.includes('success') ? 'success' : 'info'),
-                                    message: '{{ message|escapejs }}'
-                                }
-                            }));
-                        {% endfor %}
+                    {% for message in messages %}
+                    window.dispatchEvent(new CustomEvent('notify', {
+                        detail: {
+                            type: '{{ message.tags|default:"info" }}'.includes('error') ? 'error' : ('{{ message.tags|default:"info" }}'.includes('success') ? 'success' : 'info'),
+                            message: '{{ message|escapejs }}'
+                        }
+                    }));
+                    {% endfor %}
                     {% endif %}
                 });
             </script>
-            
+
             <div class="w-full max-w-7xl mx-auto">
                 {% block content %}{% endblock %}
             </div>
         </main>
 
         <!-- FIXED BOTTOM NAVIGATION BAR FOR MOBILE (Native App Experience) -->
-        <nav class="lg:hidden fixed bottom-0 left-0 right-0 z-50 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border-t border-slate-200/80 dark:border-slate-800 flex justify-around items-center py-2 px-1 shadow-2xl pb-safe">
+        <nav
+            class="lg:hidden fixed bottom-0 left-0 right-0 z-50 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border-t border-slate-200/80 dark:border-slate-800 flex justify-around items-center py-2 px-1 shadow-2xl pb-safe">
             <!-- 1. Accueil -->
-            <a href="{% url 'core:dashboard' %}" 
-               class="flex flex-col items-center gap-1 py-1 px-3 rounded-2xl transition-all {% if request.resolver_match.url_name == 'dashboard' %}text-brand-700 dark:text-brand-400 font-extrabold{% else %}text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 font-medium{% endif %}">
-                <div class="p-1.5 rounded-xl transition-all {% if request.resolver_match.url_name == 'dashboard' %}bg-brand-100 dark:bg-brand-900/40 shadow-sm{% else %}bg-transparent{% endif %}">
+            <a href="{% url 'core:dashboard' %}"
+                class="flex flex-col items-center gap-1 py-1 px-3 rounded-2xl transition-all {% if request.resolver_match.url_name == 'dashboard' %}text-brand-700 dark:text-brand-400 font-extrabold{% else %}text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 font-medium{% endif %}">
+                <div
+                    class="p-1.5 rounded-xl transition-all {% if request.resolver_match.url_name == 'dashboard' %}bg-brand-100 dark:bg-brand-900/40 shadow-sm{% else %}bg-transparent{% endif %}">
                     <i data-lucide="layout-dashboard" class="w-5 h-5"></i>
                 </div>
                 <span class="text-[10px]">Accueil</span>
             </a>
 
             <!-- 2. Produits -->
-            <a href="{% url 'shop:product_list' %}" 
-               class="flex flex-col items-center gap-1 py-1 px-3 rounded-2xl transition-all {% if 'produits' in request.path %}text-brand-700 dark:text-brand-400 font-extrabold{% else %}text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 font-medium{% endif %}">
-                <div class="p-1.5 rounded-xl transition-all {% if 'produits' in request.path %}bg-brand-100 dark:bg-brand-900/40 shadow-sm{% else %}bg-transparent{% endif %}">
+            <a href="{% url 'shop:product_list' %}"
+                class="flex flex-col items-center gap-1 py-1 px-3 rounded-2xl transition-all {% if 'produits' in request.path %}text-brand-700 dark:text-brand-400 font-extrabold{% else %}text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 font-medium{% endif %}">
+                <div
+                    class="p-1.5 rounded-xl transition-all {% if 'produits' in request.path %}bg-brand-100 dark:bg-brand-900/40 shadow-sm{% else %}bg-transparent{% endif %}">
                     <i data-lucide="package" class="w-5 h-5"></i>
                 </div>
                 <span class="text-[10px]">Produits</span>
             </a>
 
             <!-- 3. Commandes -->
-            <a href="{% url 'shop:order_list' %}" 
-               class="flex flex-col items-center gap-1 py-1 px-3 rounded-2xl transition-all {% if 'commandes' in request.path %}text-brand-700 dark:text-brand-400 font-extrabold{% else %}text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 font-medium{% endif %}">
-                <div class="p-1.5 rounded-xl transition-all {% if 'commandes' in request.path %}bg-brand-100 dark:bg-brand-900/40 shadow-sm{% else %}bg-transparent{% endif %}">
+            <a href="{% url 'shop:order_list' %}"
+                class="flex flex-col items-center gap-1 py-1 px-3 rounded-2xl transition-all {% if 'commandes' in request.path %}text-brand-700 dark:text-brand-400 font-extrabold{% else %}text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 font-medium{% endif %}">
+                <div
+                    class="p-1.5 rounded-xl transition-all {% if 'commandes' in request.path %}bg-brand-100 dark:bg-brand-900/40 shadow-sm{% else %}bg-transparent{% endif %}">
                     <i data-lucide="shopping-cart" class="w-5 h-5"></i>
                 </div>
                 <span class="text-[10px]">Commandes</span>
             </a>
 
             <!-- 4. QR Studio -->
-            <a href="{% url 'shop:qr_studio' %}" 
-               class="flex flex-col items-center gap-1 py-1 px-3 rounded-2xl transition-all {% if 'qr-codes' in request.path %}text-brand-700 dark:text-brand-400 font-extrabold{% else %}text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 font-medium{% endif %}">
-                <div class="p-1.5 rounded-xl transition-all {% if 'qr-codes' in request.path %}bg-brand-100 dark:bg-brand-900/40 shadow-sm{% else %}bg-transparent{% endif %}">
+            <a href="{% url 'shop:qr_studio' %}"
+                class="flex flex-col items-center gap-1 py-1 px-3 rounded-2xl transition-all {% if 'qr-codes' in request.path %}text-brand-700 dark:text-brand-400 font-extrabold{% else %}text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 font-medium{% endif %}">
+                <div
+                    class="p-1.5 rounded-xl transition-all {% if 'qr-codes' in request.path %}bg-brand-100 dark:bg-brand-900/40 shadow-sm{% else %}bg-transparent{% endif %}">
                     <i data-lucide="qr-code" class="w-5 h-5"></i>
                 </div>
                 <span class="text-[10px]">QR Code</span>
             </a>
 
             <!-- 5. Paramètres -->
-            <a href="{% url 'accounts:settings' %}" 
-               class="flex flex-col items-center gap-1 py-1 px-3 rounded-2xl transition-all {% if 'mon-compte/parametres' in request.path or 'boutique/parametres' in request.path %}text-brand-700 dark:text-brand-400 font-extrabold{% else %}text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 font-medium{% endif %}">
-                <div class="p-1.5 rounded-xl transition-all {% if 'mon-compte/parametres' in request.path or 'boutique/parametres' in request.path %}bg-brand-100 dark:bg-brand-900/40 shadow-sm{% else %}bg-transparent{% endif %}">
+            <a href="{% url 'accounts:settings' %}"
+                class="flex flex-col items-center gap-1 py-1 px-3 rounded-2xl transition-all {% if 'mon-compte/parametres' in request.path or 'boutique/parametres' in request.path %}text-brand-700 dark:text-brand-400 font-extrabold{% else %}text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 font-medium{% endif %}">
+                <div
+                    class="p-1.5 rounded-xl transition-all {% if 'mon-compte/parametres' in request.path or 'boutique/parametres' in request.path %}bg-brand-100 dark:bg-brand-900/40 shadow-sm{% else %}bg-transparent{% endif %}">
                     <i data-lucide="settings" class="w-5 h-5"></i>
                 </div>
                 <span class="text-[10px]">Paramètres</span>
@@ -364,9 +429,15 @@
 
     </div>
 
-    <!-- Initialize Lucide Icons -->
+    <!-- Initialize Lucide Icons & Service Worker Cache -->
     <script>
-        document.addEventListener("DOMContentLoaded", function() { if (typeof lucide !== 'undefined') lucide.createIcons(); });
+        document.addEventListener("DOMContentLoaded", function () { 
+            if (typeof lucide !== 'undefined') lucide.createIcons(); 
+            if ('serviceWorker' in navigator) {
+                navigator.serviceWorker.register('/static/js/sw.js').catch(function() {});
+            }
+        });
     </script>
 </body>
+
 </html>

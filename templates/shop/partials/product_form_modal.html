@@ -48,7 +48,11 @@
                     </div>
                 </div>
                 
-                <form hx-post="{% if is_update %}{% url 'shop:product_update' product.uuid %}{% else %}{% url 'shop:product_create' %}{% endif %}" hx-encoding="multipart/form-data" hx-target="body" hx-push-url="true" class="space-y-4">
+                <form hx-post="{% if is_update %}{% url 'shop:product_update' product.uuid %}{% else %}{% url 'shop:product_create' %}{% endif %}" 
+                      hx-encoding="multipart/form-data" 
+                      hx-target="body" 
+                      hx-push-url="false"
+                      class="space-y-4">
                     {% csrf_token %}
                     
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">

@@ -1,18 +1,22 @@
 {% load static %}
 <!DOCTYPE html>
 <html lang="fr" class="scroll-smooth">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}Azoria - Transformez vos abonnés en clients payants (sans site web complexe){% endblock %}</title>
-    <meta name="description" content="{% block meta_description %}Plateforme #1 pour les vendeurs sur WhatsApp, TikTok et Instagram. Créez votre boutique mobile en 2 minutes, recevez vos commandes automatiquement et gagnez du temps.{% endblock %}">
+    <title>{% block title %}Azoria - Transformez vos abonnés en clients payants (sans site web complexe){% endblock %}
+    </title>
+    <meta name="description"
+        content="{% block meta_description %}Plateforme #1 pour les vendeurs sur WhatsApp, TikTok et Instagram. Créez votre boutique mobile en 2 minutes, recevez vos commandes automatiquement et gagnez du temps.{% endblock %}">
 
     <!-- Open Graph / Social Meta -->
-    <meta property="og:type"        content="website">
-    <meta property="og:title"       content="Azoria - Transformez vos abonnés en clients payants">
-    <meta property="og:description" content="Plateforme #1 pour les vendeurs sur WhatsApp, TikTok et Instagram. Créez votre boutique mobile en 2 minutes.">
-    <meta property="og:image"       content="{% static 'images/og-azoria.png' %}">
-    <meta name="twitter:card"       content="summary_large_image">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Azoria - Transformez vos abonnés en clients payants">
+    <meta property="og:description"
+        content="Plateforme #1 pour les vendeurs sur WhatsApp, TikTok et Instagram. Créez votre boutique mobile en 2 minutes.">
+    <meta property="og:image" content="{% static 'images/og-azoria.png' %}">
+    <meta name="twitter:card" content="summary_large_image">
 
     <!-- Dark Mode Init -->
     <script>
@@ -24,12 +28,15 @@
     </script>
 
     <!-- Favicon -->
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><text y='26' font-size='26'>🛍️</text></svg>">
+    <link rel="icon"
+        href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><text y='26' font-size='26'>🛍️</text></svg>">
 
     <!-- Google Fonts — preconnect for performance -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&family=Inter:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
 
     <!-- Tailwind CSS CDN with shared design-token config -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -40,7 +47,7 @@
                 extend: {
                     colors: {
                         brand: {
-                            50:  '#F5F3FF',
+                            50: '#F5F3FF',
                             100: '#EDE9FE',
                             200: '#DDD6FE',
                             300: '#C4B5FD',
@@ -59,11 +66,11 @@
                         }
                     },
                     fontFamily: {
-                        sans:    ['"Plus Jakarta Sans"', 'Inter', 'sans-serif'],
+                        sans: ['"Plus Jakarta Sans"', 'Inter', 'sans-serif'],
                         heading: ['Outfit', '"Plus Jakarta Sans"', 'sans-serif'],
                     },
                     boxShadow: {
-                        'glow':    '0 0 40px -10px rgba(124, 58, 237, 0.35)',
+                        'glow': '0 0 40px -10px rgba(124, 58, 237, 0.35)',
                         'glow-sm': '0 0 20px -5px  rgba(124, 58, 237, 0.25)',
                         'glow-lg': '0 0 60px -15px rgba(124, 58, 237, 0.45)',
                     },
@@ -86,30 +93,31 @@
 
     <!-- Alpine.js -->
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.8/dist/cdn.min.js"></script>
-    
+
     <!-- HTMX for SPA Navigation -->
     <script src="https://unpkg.com/htmx.org@1.9.10"></script>
     <meta name="htmx-config" content='{"historyCacheSize": 0}'>
 
     {% block extra_head %}{% endblock %}
 </head>
+
 <body
     class="min-h-screen flex flex-col bg-[#FAFAFE] dark:bg-slate-900 text-slate-900 dark:text-slate-100 antialiased selection:bg-brand-500 selection:text-white transition-colors duration-300"
-    x-data="{ mobileMenuOpen: false }"
-    hx-boost="true"
->
+    x-data="{ mobileMenuOpen: false }">
 
     <!-- Page Loader (Azoria Branding) -->
-    <div id="page-loader" class="fixed inset-0 z-[100] bg-[#FAFAFE] flex flex-col items-center justify-center transition-opacity duration-500">
+    <div id="page-loader"
+        class="fixed inset-0 z-[100] bg-[#FAFAFE] flex flex-col items-center justify-center transition-opacity duration-500">
         <div class="relative w-16 h-16">
             <div class="absolute inset-0 border-4 border-brand-100 rounded-full"></div>
-            <div class="absolute inset-0 border-4 border-brand-600 rounded-full border-t-transparent animate-spin"></div>
+            <div class="absolute inset-0 border-4 border-brand-600 rounded-full border-t-transparent animate-spin">
+            </div>
         </div>
         <div class="mt-4 font-heading font-extrabold text-brand-700 tracking-wider text-sm animate-pulse uppercase">
             Chargement...
         </div>
     </div>
-    
+
     <script>
         // Hide loader when page is fully loaded
         window.addEventListener('load', function () {
@@ -169,20 +177,17 @@
     <script src="{% static 'js/main.js' %}"></script>
 
     <!-- Notifications (Flash Messages) -->
-    <div x-data="toastNotifier()" 
-         @notify.window="add($event.detail)"
-         class="fixed top-4 right-4 z-[9999] flex flex-col gap-3 max-w-sm w-full pointer-events-none">
+    <div x-data="toastNotifier()" @notify.window="add($event.detail)"
+        class="fixed top-4 right-4 z-[9999] flex flex-col gap-3 max-w-sm w-full pointer-events-none">
         <template x-for="toast in toasts" :key="toast.id">
-            <div x-show="toast.show"
-                 x-transition:enter="transform ease-out duration-300 transition-all"
-                 x-transition:enter-start="translate-y-2 opacity-0 sm:translate-y-0 sm:translate-x-4"
-                 x-transition:enter-end="translate-y-0 opacity-100 sm:translate-x-0"
-                 x-transition:leave="transition ease-in duration-200"
-                 x-transition:leave-start="opacity-100"
-                 x-transition:leave-end="opacity-0 translate-x-4"
-                 class="pointer-events-auto w-full max-w-sm bg-white shadow-xl rounded-2xl p-4 flex items-start gap-3 border border-slate-100 ring-1 ring-black/5"
-                 :class="{ 'border-l-4 border-l-brand-500': toast.type === 'success', 'border-l-4 border-l-rose-500': toast.type === 'error', 'border-l-4 border-l-blue-500': toast.type === 'info' }">
-                
+            <div x-show="toast.show" x-transition:enter="transform ease-out duration-300 transition-all"
+                x-transition:enter-start="translate-y-2 opacity-0 sm:translate-y-0 sm:translate-x-4"
+                x-transition:enter-end="translate-y-0 opacity-100 sm:translate-x-0"
+                x-transition:leave="transition ease-in duration-200" x-transition:leave-start="opacity-100"
+                x-transition:leave-end="opacity-0 translate-x-4"
+                class="pointer-events-auto w-full max-w-sm bg-white shadow-xl rounded-2xl p-4 flex items-start gap-3 border border-slate-100 ring-1 ring-black/5"
+                :class="{ 'border-l-4 border-l-brand-500': toast.type === 'success', 'border-l-4 border-l-rose-500': toast.type === 'error', 'border-l-4 border-l-blue-500': toast.type === 'info' }">
+
                 <div class="shrink-0 mt-0.5">
                     <template x-if="toast.type === 'success'">
                         <div class="w-8 h-8 rounded-full bg-brand-50 text-brand-500 flex items-center justify-center">
@@ -204,8 +209,9 @@
                 <div class="flex-1 pt-1.5">
                     <p class="text-sm font-bold text-slate-800 leading-5" x-text="toast.message"></p>
                 </div>
-                
-                <button @click="remove(toast.id)" class="shrink-0 text-slate-400 hover:text-slate-600 transition-colors p-1">
+
+                <button @click="remove(toast.id)"
+                    class="shrink-0 text-slate-400 hover:text-slate-600 transition-colors p-1">
                     <i data-lucide="x" class="w-4 h-4"></i>
                 </button>
             </div>
@@ -237,18 +243,26 @@
         // Auto-trigger Django messages
         document.addEventListener('DOMContentLoaded', () => {
             {% if messages %}
-                {% for message in messages %}
-                    window.dispatchEvent(new CustomEvent('notify', {
-                        detail: {
-                            type: '{{ message.tags|default:"info" }}'.includes('error') ? 'error' : ('{{ message.tags|default:"info" }}'.includes('success') ? 'success' : 'info'),
-                            message: '{{ message|escapejs }}'
-                        }
-                    }));
-                {% endfor %}
+            {% for message in messages %}
+            window.dispatchEvent(new CustomEvent('notify', {
+                detail: {
+                    type: '{{ message.tags|default:"info" }}'.includes('error') ? 'error' : ('{{ message.tags|default:"info" }}'.includes('success') ? 'success' : 'info'),
+                    message: '{{ message|escapejs }}'
+                }
+            }));
+            {% endfor %}
             {% endif %}
         });
     </script>
 
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            if ('serviceWorker' in navigator) {
+                navigator.serviceWorker.register('/static/js/sw.js').catch(function() {});
+            }
+        });
+    </script>
     {% block extra_js %}{% endblock %}
 </body>
+
 </html>

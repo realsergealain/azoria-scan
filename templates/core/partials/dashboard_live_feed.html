@@ -1,0 +1,123 @@
+<div id="dashboard-live-container" 
+     hx-get="{% url 'core:dashboard_live_stats' %}" 
+     hx-trigger="every 10s" 
+     hx-swap="outerHTML"
+     class="space-y-6">
+
+    <!-- Live Core Metrics (Real-time auto-updating) -->
+    <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        <!-- 1. Ventes / Chiffre d'Affaires -->
+        <div class="bg-white dark:bg-slate-900 p-5 sm:p-6 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-sm hover:shadow-md transition-shadow">
+            <div class="flex items-center justify-between text-slate-500 mb-3">
+                <span class="text-[11px] font-extrabold uppercase tracking-wider text-slate-400">Ventes Totales</span>
+                <div class="w-9 h-9 rounded-2xl bg-emerald-50 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400 flex items-center justify-center">
+                    <i data-lucide="trending-up" class="w-4 h-4"></i>
+                </div>
+            </div>
+            <div class="font-heading font-black text-xl sm:text-2xl lg:text-3xl text-emerald-600 dark:text-emerald-400 truncate">{{ analytics.total_revenue }}</div>
+            <span class="text-[10px] font-semibold text-slate-400 mt-1 block">Commandes encaissées</span>
+        </div>
+
+        <!-- 2. Commandes Actives -->
+        <div class="bg-white dark:bg-slate-900 p-5 sm:p-6 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-sm hover:shadow-md transition-shadow">
+            <div class="flex items-center justify-between text-slate-500 mb-3">
+                <span class="text-[11px] font-extrabold uppercase tracking-wider text-slate-400">Commandes</span>
+                <div class="w-9 h-9 rounded-2xl bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 flex items-center justify-center">
+                    <i data-lucide="shopping-cart" class="w-4 h-4"></i>
+                </div>
+            </div>
+            <div class="font-heading font-black text-2xl sm:text-3xl text-slate-900 dark:text-white">{{ analytics.total_orders }}</div>
+            <span class="text-[10px] font-bold text-brand-600 dark:text-brand-400 mt-1 block">{{ analytics.active_orders }} en cours de traitement</span>
+        </div>
+
+        <!-- 3. Produits en Ligne -->
+        <div class="bg-white dark:bg-slate-900 p-5 sm:p-6 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-sm hover:shadow-md transition-shadow">
+            <div class="flex items-center justify-between text-slate-500 mb-3">
+                <span class="text-[11px] font-extrabold uppercase tracking-wider text-slate-400">Produits Actifs</span>
+                <div class="w-9 h-9 rounded-2xl bg-purple-50 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400 flex items-center justify-center">
+                    <i data-lucide="package" class="w-4 h-4"></i>
+                </div>
+            </div>
+            <div class="font-heading font-black text-2xl sm:text-3xl text-slate-900 dark:text-white">{{ analytics.total_products }}</div>
+            <a href="{% url 'shop:product_list' %}" class="text-[10px] font-bold text-brand-600 dark:text-brand-400 hover:underline mt-1 block">Gérer le catalogue →</a>
+        </div>
+
+        <!-- 4. Vues & Trafic (QR + Liens) -->
+        <div class="bg-white dark:bg-slate-900 p-5 sm:p-6 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-sm hover:shadow-md transition-shadow">
+            <div class="flex items-center justify-between text-slate-500 mb-3">
+                <span class="text-[11px] font-extrabold uppercase tracking-wider text-slate-400">Visites Totales</span>
+                <div class="w-9 h-9 rounded-2xl bg-amber-50 dark:bg-amber-900/30 text-amber-600 dark:text-amber-400 flex items-center justify-center">
+                    <i data-lucide="eye" class="w-4 h-4"></i>
+                </div>
+            </div>
+            <div class="font-heading font-black text-2xl sm:text-3xl text-slate-900 dark:text-white">{{ analytics.total_visits }}</div>
+            <div class="flex items-center gap-2 text-[10px] text-slate-400 mt-1 font-semibold">
+                <span class="text-purple-600 font-bold">{{ analytics.qr_visits }} QR</span>
+                <span>•</span>
+                <span class="text-blue-600 font-bold">{{ analytics.direct_visits }} Liens</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Orders Real-time Container -->
+    <div class="bg-white dark:bg-slate-900 rounded-3xl p-6 border border-slate-200 dark:border-slate-800 shadow-sm space-y-4">
+        <div class="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800">
+            <div class="flex items-center gap-2.5">
+                <div class="w-8 h-8 rounded-xl bg-brand-50 text-brand-600 flex items-center justify-center font-bold">
+                    <i data-lucide="shopping-bag" class="w-4 h-4"></i>
+                </div>
+                <div>
+                    <div class="flex items-center gap-2">
+                        <h3 class="font-heading font-extrabold text-base text-slate-900 dark:text-white">Dernières Commandes Clients</h3>
+                        <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-600 border border-emerald-200 animate-pulse">
+                            En direct ⚡️
+                        </span>
+                    </div>
+                    <p class="text-[11px] text-slate-400">Cliquez sur WhatsApp pour contacter le client en 1 clic</p>
+                </div>
+            </div>
+            <a href="{% url 'shop:order_list' %}" class="text-xs font-bold text-brand-600 dark:text-brand-400 hover:underline">Tout voir →</a>
+        </div>
+
+        {% if analytics.recent_orders %}
+        <div class="space-y-3">
+            {% for order in analytics.recent_orders %}
+            <div class="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-100 dark:border-slate-700/60 flex flex-col sm:flex-row sm:items-center justify-between gap-3 hover:bg-slate-100/80 dark:hover:bg-slate-800 transition-colors">
+                <div class="min-w-0 flex-1">
+                    <div class="flex items-center gap-2">
+                        <span class="font-heading font-extrabold text-xs sm:text-sm text-slate-900 dark:text-white">{{ order.order_number }}</span>
+                        <span class="text-[10px] text-slate-400">• {{ order.created_at|date:"d M H:i" }}</span>
+                        <span class="px-2 py-0.5 rounded-full text-[10px] font-extrabold 
+                            {% if order.status == 'pending' %}bg-amber-50 text-amber-700 border border-amber-200
+                            {% elif order.status == 'confirmed' %}bg-blue-50 text-blue-700 border border-blue-200
+                            {% elif order.status == 'shipped' %}bg-purple-50 text-purple-700 border border-purple-200
+                            {% elif order.status == 'delivered' %}bg-emerald-50 text-emerald-700 border border-emerald-200
+                            {% else %}bg-rose-50 text-rose-700 border border-rose-200{% endif %}">
+                            {{ order.get_status_display }}
+                        </span>
+                    </div>
+                    <p class="text-xs font-bold text-slate-800 dark:text-slate-200 mt-1">{{ order.customer_name }} • <span class="font-normal text-slate-500">{{ order.customer_city }} - {{ order.customer_address }}</span></p>
+                </div>
+
+                <div class="flex items-center justify-between sm:justify-end gap-3 pt-2 sm:pt-0 border-t sm:border-t-0 border-slate-200 dark:border-slate-700">
+                    <span class="font-heading font-black text-sm text-brand-600 dark:text-brand-400">{{ order.total_amount|floatformat:0 }} FCFA</span>
+                    
+                    <a href="https://wa.me/{{ order.customer_phone|cut:' '|cut:'+' }}?text=Bonjour%20{{ order.customer_name|urlencode }},%20merci%20d'avoir%20commandé%20sur%20notre%20boutique%20{{ primary_shop.name|urlencode }}%20(Commande%20{{ order.order_number }})."
+                       target="_blank"
+                       class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-white font-bold text-xs shadow-sm transition-all active:scale-95">
+                        <i data-lucide="message-circle" class="w-3.5 h-3.5"></i>
+                        <span>WhatsApp</span>
+                    </a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="text-center py-12 text-slate-400">
+            <i data-lucide="inbox" class="w-10 h-10 mx-auto mb-2 opacity-30"></i>
+            <p class="text-xs font-semibold">Aucune commande enregistrée pour le moment.</p>
+            <p class="text-[11px] text-slate-400 mt-1">Partagez votre lien ou votre QR code pour recevoir vos premières commandes !</p>
+        </div>
+        {% endif %}
+    </div>
+</div>

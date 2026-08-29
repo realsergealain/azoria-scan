@@ -165,6 +165,26 @@ MEDIA_ROOT  = BASE_DIR / 'media'
 
 
 # ─────────────────────────────────────────────────────────────
+# CACHE CONFIGURATION & PERFORMANCE
+# ─────────────────────────────────────────────────────────────
+
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+        'LOCATION': 'azoria-cache',
+        'TIMEOUT': 300,  # 5 minutes par défaut
+        'OPTIONS': {
+            'MAX_ENTRIES': 2000
+        }
+    }
+}
+
+# Cache-Control pour les assets statiques (1 an)
+WHITENOISE_MAX_AGE = 31536000
+
+
+
+# ─────────────────────────────────────────────────────────────
 # MESSAGES FRAMEWORK
 # ─────────────────────────────────────────────────────────────
 
