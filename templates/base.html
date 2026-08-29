@@ -88,8 +88,9 @@
     <!-- Custom CSS (Design System) -->
     <link rel="stylesheet" href="{% static 'css/styles.css' %}">
 
-    <!-- Lucide Icons -->
+    <!-- Lucide Icons & Canvas Confetti -->
     <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
 
     <!-- Alpine.js -->
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.8/dist/cdn.min.js"></script>
@@ -97,6 +98,7 @@
     <!-- HTMX for SPA Navigation -->
     <script src="https://unpkg.com/htmx.org@1.9.10"></script>
     <meta name="htmx-config" content='{"historyCacheSize": 0}'>
+    <script src="{% static 'js/main.js' %}"></script>
 
     {% block extra_head %}{% endblock %}
 </head>

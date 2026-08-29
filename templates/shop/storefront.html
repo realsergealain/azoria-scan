@@ -52,8 +52,10 @@
         }
     </script>
 
-    <!-- Lucide Icons -->
+    <!-- Lucide Icons & Canvas Confetti -->
     <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
+    <script src="{% static 'js/main.js' %}"></script>
 
     <!-- Alpine.js -->
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.8/dist/cdn.min.js"></script>
@@ -724,7 +726,10 @@
                 });
             }
             this.saveCart();
-            if (navigator.vibrate) navigator.vibrate(50);
+            if (window.AzoriaUI) {
+                AzoriaUI.playChime('cart');
+                AzoriaUI.vibrate([15]);
+            }
         },
 
         updateCartQty(index, delta) {
@@ -733,17 +738,20 @@
                 this.cart.splice(index, 1);
             }
             this.saveCart();
+            if (window.AzoriaUI) AzoriaUI.vibrate([10]);
         },
 
         removeFromCart(index) {
             this.cart.splice(index, 1);
             this.saveCart();
+            if (window.AzoriaUI) AzoriaUI.vibrate([20]);
         },
 
         openProductModal(product) {
             this.activeProduct = product;
             this.modalQty = 1;
             this.productModalOpen = true;
+            if (window.AzoriaUI) AzoriaUI.vibrate([12]);
             this.$nextTick(() => { if (typeof lucide !== 'undefined') lucide.createIcons(); });
         },
 
@@ -769,7 +777,7 @@
             return price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ");
         },
 
-                async submitOrder() {
+        async submitOrder() {
             if (!this.customerName || !this.customerPhone || !this.customerAddress) {
                 alert("Veuillez renseigner vos coordonnées de livraison.");
                 return;
@@ -807,6 +815,11 @@
                 const modalContainer = document.getElementById('checkout-modal-content');
                 modalContainer.innerHTML = htmlResult;
                 this.orderModalOpen = true;
+
+                // 🎉 Trigger Celebrate Confetti + Haptic + Chime
+                if (window.AzoriaUI) {
+                    AzoriaUI.celebrate();
+                }
 
                 if (typeof lucide !== 'undefined') lucide.createIcons();
 
