@@ -38,7 +38,7 @@
 }" @open-create-shop-modal.window="showCreateModal = true">
 
     <!-- Welcome & Quick Share Bar -->
-    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white dark:bg-slate-900 p-5 sm:p-6 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-sm">
+    <div id="tour-welcome" class="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white dark:bg-slate-900 p-5 sm:p-6 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-sm">
         <div>
             <div class="flex items-center gap-2">
                 <h2 class="font-heading font-extrabold text-2xl sm:text-3xl text-slate-900 dark:text-white tracking-tight">
@@ -79,7 +79,7 @@
     {% include 'core/partials/dashboard_live_feed.html' %}
 
     <!-- Chart Section: Sales & Visits by Day (ApexCharts) -->
-    <div class="bg-white dark:bg-slate-900 rounded-3xl p-6 border border-slate-200 dark:border-slate-800 shadow-sm">
+    <div id="tour-chart" class="bg-white dark:bg-slate-900 rounded-3xl p-6 border border-slate-200 dark:border-slate-800 shadow-sm">
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-4">
             <div>
                 <h3 class="font-heading font-extrabold text-base sm:text-lg text-slate-900 dark:text-white">Évolution des Ventes & Visiteurs</h3>
@@ -95,7 +95,7 @@
     <!-- Quick Tools & Social Selling Tips -->
     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
         <!-- Share Store Card -->
-        <div class="bg-gradient-to-br from-brand-600 to-indigo-700 rounded-3xl p-6 text-white shadow-xl space-y-4">
+        <div id="tour-qr" class="bg-gradient-to-br from-brand-600 to-indigo-700 rounded-3xl p-6 text-white shadow-xl space-y-4">
             <div class="flex items-center gap-2 text-white/90 font-extrabold text-xs uppercase tracking-wider">
                 <i data-lucide="sparkles" class="w-4 h-4 text-amber-300"></i>
                 <span>Boostez vos ventes</span>
@@ -112,7 +112,7 @@
         </div>
 
         <!-- Quick Store Settings Access -->
-        <div class="bg-white dark:bg-slate-900 rounded-3xl p-6 border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col justify-between space-y-4">
+        <div id="tour-settings" class="bg-white dark:bg-slate-900 rounded-3xl p-6 border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col justify-between space-y-4">
             <div class="flex items-center gap-3">
                 <div class="w-12 h-12 rounded-2xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-600 dark:text-slate-300">
                     <i data-lucide="store" class="w-6 h-6 text-brand-500"></i>
@@ -249,5 +249,89 @@
 
     document.addEventListener("DOMContentLoaded", initDashboardChart);
     document.body.addEventListener('htmx:afterSettle', initDashboardChart);
+</script>
+
+<!-- Driver.js Onboarding Tour Script -->
+<script>
+    function startOnboardingTour() {
+        if (!window.driver) return;
+        const driver = window.driver.js.driver;
+        const driverObj = driver({
+            showProgress: true,
+            animate: true,
+            nextBtnText: 'Suivant →',
+            prevBtnText: '← Retour',
+            doneBtnText: 'Terminer 🎉',
+            progressText: '{{current}} sur {{total}}',
+            steps: [
+                {
+                    element: '#tour-welcome',
+                    popover: {
+                        title: 'Bienvenue sur Azoria ! 👋',
+                        description: 'Ceci est votre tableau de bord. À partir de cette barre, vous pouvez voir un résumé rapide et copier votre lien de boutique en 1 clic.',
+                        side: 'bottom', align: 'start'
+                    }
+                },
+                {
+                    element: '#tour-stats',
+                    popover: {
+                        title: 'Vos statistiques en direct ⚡',
+                        description: 'Ces compteurs se mettent à jour automatiquement toutes les 10 secondes. Plus besoin de rafraîchir la page !',
+                        side: 'bottom', align: 'center'
+                    }
+                },
+                {
+                    element: '#tour-chart',
+                    popover: {
+                        title: 'Votre croissance 📈',
+                        description: 'Suivez l\'évolution de vos ventes et de vos visites au jour le jour pour mesurer l\'impact de vos partages.',
+                        side: 'top', align: 'center'
+                    }
+                },
+                {
+                    element: '#tour-qr',
+                    popover: {
+                        title: 'Partagez votre boutique 🚀',
+                        description: 'Utilisez le QR Code et copiez votre lien pour le mettre dans votre bio TikTok ou Instagram. C\'est la clé pour booster vos ventes.',
+                        side: 'top', align: 'start'
+                    }
+                },
+                {
+                    element: '#tour-settings',
+                    popover: {
+                        title: 'Personnalisez votre vitrine 🎨',
+                        description: 'Ajoutez votre logo, choisissez vos couleurs et configurez vos moyens de paiement pour donner confiance à vos clients.',
+                        side: 'top', align: 'start'
+                    }
+                }
+            ],
+            onDestroyStarted: () => {
+                if (!driverObj.hasNextStep() || confirm("Voulez-vous vraiment quitter le tutoriel ?")) {
+                    driverObj.destroy();
+                }
+            }
+        });
+        driverObj.drive();
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        // Lance automatiquement si c'est la première fois
+        const tourCompleted = localStorage.getItem('azoria_dashboard_tour_completed');
+        if (!tourCompleted) {
+            setTimeout(() => {
+                startOnboardingTour();
+                localStorage.setItem('azoria_dashboard_tour_completed', 'true');
+            }, 1000); // Laisse le temps aux graphiques de charger
+        }
+
+        // Écouter le clic sur un bouton d'aide (s'il est présent)
+        const helpBtn = document.getElementById('btn-help-tour');
+        if (helpBtn) {
+            helpBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                startOnboardingTour();
+            });
+        }
+    });
 </script>
 {% endblock %}
