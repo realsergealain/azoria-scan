@@ -3,504 +3,395 @@
 <html lang="fr" class="h-full">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover">
     <title>Créer ma boutique — Azoria</title>
-    <meta name="description" content="Créez votre boutique en ligne en quelques secondes sur Azoria.">
+    <meta name="description" content="Créez votre boutique en ligne en 3 étapes simples sur Azoria.">
 
-    <!-- Google Fonts -->
+    <!-- Fonts & Icons -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;700;800;900&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
-
-    <!-- Favicon -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><text y='26' font-size='26'>🛍️</text></svg>">
 
-    <!-- Lucide Icons -->
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brand: { 50: '#F5F3FF', 100: '#EDE9FE', 200: '#DDD6FE', 300: '#C4B5FD', 400: '#A78BFA', 500: '#8B5CF6', 600: '#7C3AED', 700: '#6D28D9', 800: '#5B21B6', 900: '#4C1D95' }
+                    },
+                    fontFamily: {
+                        sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+                        heading: ['Outfit', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Libs: Lucide, Confetti, HTMX, Alpine.js -->
     <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
+    <script src="https://unpkg.com/htmx.org@1.9.10"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.8/dist/cdn.min.js"></script>
+    <script src="{% static 'js/main.js' %}?v=2.1"></script>
 
     <style>
-        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-        :root {
-            --brand: #7C3AED;
-            --brand-light: #8B5CF6;
-            --brand-dark: #6D28D9;
-            --brand-glow: rgba(124, 58, 237, 0.25);
-            --bg: #F5F3FF;
-            --white: #ffffff;
-            --slate-50: #F8FAFC;
-            --slate-100: #F1F5F9;
-            --slate-200: #E2E8F0;
-            --slate-400: #94A3B8;
-            --slate-600: #475569;
-            --slate-700: #334155;
-            --slate-900: #0F172A;
-            --red: #EF4444;
-            --red-bg: #FEF2F2;
-            --radius: 18px;
-            --font: 'Inter', sans-serif;
-            --font-heading: 'Outfit', sans-serif;
-        }
-
-        html, body { height: 100%; }
-
-        body {
-            font-family: var(--font);
-            background: var(--bg);
-            color: var(--slate-900);
-            min-height: 100svh;
-            display: flex;
-            flex-direction: column;
-        }
-
-        /* ── TOP BAR ── */
-        .topbar {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 14px 20px;
-            background: var(--white);
-            border-bottom: 1px solid var(--slate-200);
-            position: sticky;
-            top: 0;
-            z-index: 50;
-        }
-        .topbar-logo {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            text-decoration: none;
-        }
-        .logo-icon {
-            width: 36px; height: 36px;
-            border-radius: 10px;
-            background: linear-gradient(135deg, var(--brand-dark), var(--brand-light));
-            display: flex; align-items: center; justify-content: center;
-        }
-        .logo-icon svg { width: 18px; height: 18px; color: #fff; }
-        .logo-text {
-            font-family: var(--font-heading);
-            font-weight: 800;
-            font-size: 18px;
-            color: var(--slate-900);
-        }
-        .logo-text span { color: var(--brand); }
-        .topbar-back {
-            display: flex; align-items: center; gap: 6px;
-            font-size: 13px; font-weight: 500;
-            color: var(--slate-600);
-            text-decoration: none;
-            padding: 6px 10px;
-            border-radius: 8px;
-            transition: background .15s;
-        }
-        .topbar-back:hover { background: var(--slate-100); color: var(--slate-900); }
-        .topbar-back svg { width: 15px; height: 15px; }
-
-        /* ── MAIN ── */
-        main {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: flex-start;
-            padding: 28px 16px 40px;
-        }
-
-        /* ── HERO ── */
-        .hero {
-            text-align: center;
-            max-width: 380px;
-            margin-bottom: 28px;
-        }
-        .hero-emoji {
-            font-size: 44px;
-            line-height: 1;
-            margin-bottom: 12px;
-            display: block;
-            animation: pop .5s cubic-bezier(0.34, 1.56, 0.64, 1);
-        }
-        @keyframes pop {
-            from { transform: scale(0.5); opacity: 0; }
-            to   { transform: scale(1);   opacity: 1; }
-        }
-        .hero h1 {
-            font-family: var(--font-heading);
-            font-weight: 800;
-            font-size: clamp(22px, 5vw, 28px);
-            color: var(--slate-900);
-            line-height: 1.2;
-            margin-bottom: 8px;
-        }
-        .hero p {
-            font-size: 14px;
-            color: var(--slate-600);
-            line-height: 1.6;
-        }
-
-        /* ── CARD ── */
-        .card {
-            width: 100%;
-            max-width: 420px;
-            background: var(--white);
-            border-radius: var(--radius);
-            border: 1px solid var(--slate-200);
-            box-shadow: 0 4px 24px rgba(15, 23, 42, .07);
-            padding: 28px 24px;
-            animation: slideUp .4s ease-out both;
-        }
-        @keyframes slideUp {
-            from { transform: translateY(24px); opacity: 0; }
-            to   { transform: translateY(0);    opacity: 1; }
-        }
-
-        /* ── FORM ── */
-        .form-group { margin-bottom: 20px; }
-        label {
-            display: block;
-            font-size: 12px;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: .06em;
-            color: var(--slate-700);
-            margin-bottom: 8px;
-        }
-        label .required { color: var(--red); margin-left: 2px; }
-
-        input[type="text"],
-        textarea,
-        select {
-            width: 100%;
-            padding: 13px 15px;
-            border: 1.5px solid var(--slate-200);
-            border-radius: 12px;
-            font-family: var(--font);
-            font-size: 15px;
-            color: var(--slate-900);
-            background: var(--white);
-            outline: none;
-            transition: border-color .2s, box-shadow .2s;
-            -webkit-appearance: none;
-        }
-        input[type="text"]:focus,
-        textarea:focus,
-        select:focus {
-            border-color: var(--brand);
-            box-shadow: 0 0 0 4px var(--brand-glow);
-        }
-        textarea { resize: none; }
-
-        /* Gateway select with icons */
-        .gateway-grid {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 10px;
-        }
-        .gateway-option { position: relative; }
-        .gateway-option input[type="radio"] {
-            position: absolute;
-            opacity: 0;
-            pointer-events: none;
-        }
-        .gateway-label {
-            display: flex;
-            align-items: center;
-            gap: 14px;
-            padding: 14px 16px;
-            border: 1.5px solid var(--slate-200);
-            border-radius: 12px;
-            cursor: pointer;
-            transition: border-color .2s, background .2s;
-            user-select: none;
-        }
-        .gateway-option input:checked + .gateway-label {
-            border-color: var(--brand);
-            background: #F5F3FF;
-        }
-        .gateway-icon {
-            font-size: 22px;
-            width: 36px;
-            text-align: center;
-            flex-shrink: 0;
-        }
-        .gateway-info { flex: 1; }
-        .gateway-title {
-            font-size: 14px;
-            font-weight: 600;
-            color: var(--slate-900);
-        }
-        .gateway-sub {
-            font-size: 12px;
-            color: var(--slate-400);
-            margin-top: 1px;
-        }
-        .gateway-check {
-            width: 20px; height: 20px;
-            border: 2px solid var(--slate-200);
-            border-radius: 50%;
-            display: flex; align-items: center; justify-content: center;
-            transition: all .2s;
-            flex-shrink: 0;
-        }
-        .gateway-option input:checked ~ * .gateway-check,
-        .gateway-option input:checked + .gateway-label .gateway-check {
-            border-color: var(--brand);
-            background: var(--brand);
-        }
-        .gateway-check svg {
-            width: 11px; height: 11px;
-            color: white;
-            display: none;
-        }
-        .gateway-option input:checked + .gateway-label .gateway-check svg {
-            display: block;
-        }
-
-        /* Errors */
-        .error-msg {
-            margin-top: 6px;
-            font-size: 12px;
-            font-weight: 500;
-            color: var(--red);
-            display: flex;
-            align-items: center;
-            gap: 4px;
-        }
-        .error-msg svg { width: 13px; height: 13px; flex-shrink: 0; }
-        .field-error input, .field-error textarea {
-            border-color: var(--red) !important;
-        }
-
-        /* Non-field errors / alerts */
-        .alert {
-            display: flex;
-            align-items: flex-start;
-            gap: 10px;
-            padding: 12px 14px;
-            border-radius: 12px;
-            margin-bottom: 20px;
-            font-size: 13px;
-            font-weight: 500;
-        }
-        .alert-error { background: var(--red-bg); color: #991B1B; border: 1px solid #FECACA; }
-        .alert svg { width: 16px; height: 16px; flex-shrink: 0; margin-top: 1px; }
-
-        /* Submit button */
-        .btn-create {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            width: 100%;
-            padding: 15px;
-            background: linear-gradient(135deg, var(--brand-dark), var(--brand-light));
-            color: #fff;
-            border: none;
-            border-radius: 14px;
-            font-family: var(--font-heading);
-            font-size: 16px;
-            font-weight: 700;
-            cursor: pointer;
-            box-shadow: 0 6px 20px var(--brand-glow);
-            transition: opacity .2s, transform .15s;
-            -webkit-appearance: none;
-        }
-        .btn-create:hover { opacity: .92; }
-        .btn-create:active { transform: scale(.98); }
-        .btn-create svg { width: 18px; height: 18px; }
-
-        /* hint */
-        .hint {
-            text-align: center;
-            font-size: 12px;
-            color: var(--slate-400);
-            margin-top: 16px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 5px;
-        }
-        .hint svg { width: 13px; height: 13px; color: #10B981; }
-
-        /* Divider */
-        .divider {
-            border: none;
-            border-top: 1px solid var(--slate-100);
-            margin: 24px 0;
-        }
+        [x-cloak] { display: none !important; }
+        body { -webkit-tap-highlight-color: transparent; overscroll-behavior-y: none; }
+        .fade-step { transition: all 0.25s ease-in-out; }
+        .htmx-indicator { display: none; }
+        .htmx-request .htmx-indicator { display: inline-block; }
     </style>
 </head>
-<body>
 
-    <!-- TOP BAR -->
-    <header class="topbar">
-        <a href="{% url 'core:home' %}" class="topbar-logo">
-            <div class="logo-icon">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="m2 7 4.41-4.41A2 2 0 0 1 7.83 2h8.34a2 2 0 0 1 1.42.59L22 7"/>
-                    <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/>
-                    <path d="M15 22v-4a2 2 0 0 0-2-2h-2a2 2 0 0 0-2 2v4"/>
-                    <path d="M2 7h20"/>
-                </svg>
+<body class="bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-white min-h-screen flex flex-col antialiased selection:bg-brand-500 selection:text-white">
+
+    <!-- TOP BAR NAV -->
+    <header class="h-16 bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between px-4 sm:px-8 sticky top-0 z-40 shadow-sm">
+        <a href="{% url 'core:home' %}" class="flex items-center gap-2.5 group">
+            <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-brand-600 to-indigo-600 flex items-center justify-center text-white font-heading font-black text-sm shadow-md">
+                <i data-lucide="shopping-bag" class="w-4 h-4"></i>
             </div>
-            <span class="logo-text">Azoria<span>.</span></span>
+            <span class="font-heading font-extrabold text-lg sm:text-xl text-slate-900 dark:text-white">Azoria<span class="text-brand-600">.</span></span>
         </a>
-        <a href="{% url 'core:home' %}" class="topbar-back">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
-            Retour
+
+        <a href="{% url 'core:dashboard' %}" class="inline-flex items-center gap-1.5 text-xs font-bold text-slate-500 hover:text-slate-900 dark:hover:text-white transition-colors">
+            <i data-lucide="arrow-left" class="w-4 h-4"></i>
+            <span>Retour au tableau de bord</span>
         </a>
     </header>
 
-    <main>
+    <!-- MULTI-STEP WIZARD CONTAINER (Full screen mobile, Max-w-4xl / 5xl Desktop) -->
+    <main class="flex-1 flex items-center justify-center p-0 sm:p-6 lg:p-8"
+          x-data="shopWizardApp()">
 
-        <!-- Hero -->
-        <div class="hero">
-            <span class="hero-emoji">🛍️</span>
-            <h1>Créez votre boutique<br>en 30 secondes</h1>
-            <p>Donnez un nom à votre boutique et choisissez comment vos clients vous règlent. C'est tout.</p>
-        </div>
+        <div id="wizard-container" 
+             class="w-full h-full min-h-screen sm:min-h-0 sm:max-w-4xl lg:max-w-5xl bg-white dark:bg-slate-900 sm:rounded-3xl sm:border sm:border-slate-200 sm:dark:border-slate-800 shadow-2xl flex flex-col justify-between overflow-hidden">
+            
+            <!-- WIZARD HEADER & PROGRESS BAR -->
+            <div class="p-5 sm:p-8 border-b border-slate-100 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-900/50">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
+                    <div>
+                        <span class="px-3 py-1 rounded-full bg-brand-100 dark:bg-brand-950/50 text-brand-700 dark:text-brand-300 text-[11px] font-extrabold uppercase tracking-wider">
+                            Étape <span x-text="step"></span> sur 3
+                        </span>
+                        <h1 class="font-heading font-extrabold text-xl sm:text-2xl text-slate-900 dark:text-white mt-1" x-text="stepTitles[step]"></h1>
+                    </div>
+                    
+                    <p class="text-xs text-slate-500" x-text="stepSubtitles[step]"></p>
+                </div>
 
-        <!-- Form Card -->
-        <div class="card">
-
-            {% if form.non_field_errors %}
-            <div class="alert alert-error">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-                <span>{{ form.non_field_errors.0 }}</span>
+                <!-- 3-Step Visual Progress Bar -->
+                <div class="grid grid-cols-3 gap-2">
+                    <div class="h-2 rounded-full transition-all duration-300" :class="step >= 1 ? 'bg-brand-600' : 'bg-slate-200 dark:bg-slate-800'"></div>
+                    <div class="h-2 rounded-full transition-all duration-300" :class="step >= 2 ? 'bg-brand-600' : 'bg-slate-200 dark:bg-slate-800'"></div>
+                    <div class="h-2 rounded-full transition-all duration-300" :class="step >= 3 ? 'bg-brand-600' : 'bg-slate-200 dark:bg-slate-800'"></div>
+                </div>
             </div>
-            {% endif %}
 
-            <form method="post" novalidate>
+            <!-- FORM WIZARD BODY (2 COLUMNS DESKTOP: Form left, Live Preview right) -->
+            <form method="post" enctype="multipart/form-data" @submit.prevent="submitFinalForm($event)" class="flex-1 flex flex-col lg:flex-row divide-y lg:divide-y-0 lg:divide-x divide-slate-100 dark:divide-slate-800 overflow-y-auto">
                 {% csrf_token %}
 
-                <!-- Nom de la boutique -->
-                <div class="form-group {% if form.name.errors %}field-error{% endif %}">
-                    <label for="{{ form.name.id_for_label }}">
-                        Nom de la boutique <span class="required">*</span>
-                    </label>
-                    <input
-                        type="text"
-                        id="{{ form.name.id_for_label }}"
-                        name="{{ form.name.html_name }}"
-                        value="{{ form.name.value|default:'' }}"
-                        placeholder="Ex : Boutique de Fatou ✨"
-                        autocomplete="off"
-                        autofocus
-                        maxlength="120"
-                    >
-                    {% if form.name.errors %}
-                        <p class="error-msg">
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-                            {{ form.name.errors.0 }}
-                        </p>
-                    {% endif %}
-                </div>
-
-                <!-- Description -->
-                <div class="form-group {% if form.description.errors %}field-error{% endif %}">
-                    <label for="{{ form.description.id_for_label }}">
-                        Description <span style="font-weight:400;color:var(--slate-400);font-style:italic;text-transform:none;letter-spacing:0">— facultative</span>
-                    </label>
-                    <textarea
-                        id="{{ form.description.id_for_label }}"
-                        name="{{ form.description.html_name }}"
-                        placeholder="Décrivez ce que vous vendez en quelques mots…"
-                        rows="3"
-                        maxlength="400"
-                    >{{ form.description.value|default:'' }}</textarea>
-                </div>
-
-                <hr class="divider">
-
-                <!-- Moyen de paiement -->
-                <div class="form-group">
-                    <label>Moyen de paiement accepté</label>
-                    <div class="gateway-grid" id="gateway-grid">
-
-                        <div class="gateway-option">
-                            <input type="radio" name="gateway" id="gw_mobile" value="mobile_money"
-                                {% if form.gateway.value == 'mobile_money' %}checked{% endif %}>
-                            <label class="gateway-label" for="gw_mobile">
-                                <span class="gateway-icon">📱</span>
-                                <span class="gateway-info">
-                                    <span class="gateway-title">Mobile Money</span>
-                                    <span class="gateway-sub">MTN, Orange Money, Wave…</span>
-                                </span>
-                                <span class="gateway-check">
-                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                <!-- Left Column: Step Fields -->
+                <div class="flex-1 p-5 sm:p-8 space-y-6">
+                    
+                    <!-- ── ÉTAPE 1 : Infos de Base & Contact ── -->
+                    <div x-show="step === 1" x-transition:enter="transition ease-out duration-300 transform" x-transition:enter-start="opacity-0 translate-x-4" x-transition:enter-end="opacity-100 translate-x-0" class="space-y-5">
+                        
+                        <!-- Nom de la boutique -->
+                        <div>
+                            <label class="block text-xs font-extrabold text-slate-900 dark:text-white uppercase tracking-wider mb-1.5 flex items-center gap-1.5">
+                                <span>Nom de la boutique</span>
+                                <span class="text-rose-500">*</span>
+                                <span class="group relative cursor-pointer text-slate-400 hover:text-brand-600">
+                                    <i data-lucide="help-circle" class="w-3.5 h-3.5"></i>
+                                    <span class="hidden group-hover:block absolute bottom-full left-1/2 -translate-x-1/2 mb-1 w-48 p-2 bg-slate-900 text-white text-[10px] font-normal rounded-xl shadow-lg z-50">
+                                        Ce nom sera affiché en haut de votre vitrine et sur vos factures.
+                                    </span>
                                 </span>
                             </label>
+                            <input type="text" x-model="formData.name" required placeholder="Ex : Boutique Aïcha Design ✨"
+                                   class="w-full px-4 py-3.5 rounded-2xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-sm font-bold focus:ring-2 focus:ring-brand-500 focus:bg-white outline-none transition-all">
                         </div>
 
-                        <div class="gateway-option">
-                            <input type="radio" name="gateway" id="gw_livraison" value="livraison"
-                                {% if form.gateway.value == 'livraison' or not form.gateway.value %}checked{% endif %}>
-                            <label class="gateway-label" for="gw_livraison">
-                                <span class="gateway-icon">🚚</span>
-                                <span class="gateway-info">
-                                    <span class="gateway-title">Paiement à la livraison</span>
-                                    <span class="gateway-sub">Le client paie à la réception</span>
-                                </span>
-                                <span class="gateway-check">
-                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-                                </span>
+                        <!-- Téléphone WhatsApp -->
+                        <div>
+                            <label class="block text-xs font-extrabold text-slate-900 dark:text-white uppercase tracking-wider mb-1.5 flex items-center gap-1.5">
+                                <span>Numéro WhatsApp Vendeur</span>
+                                <span class="text-rose-500">*</span>
                             </label>
+                            <input type="tel" x-model="formData.phone" required placeholder="Ex : 0711113420"
+                                   inputmode="numeric" pattern="[0-9]{10}" maxlength="10"
+                                   class="w-full px-4 py-3.5 rounded-2xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-sm font-bold focus:ring-2 focus:ring-brand-500 focus:bg-white outline-none transition-all">
+                            <p class="text-[11px] text-slate-400 mt-1">Vous recevrez les alertes de commandes directement sur ce numéro.</p>
                         </div>
 
-                        <div class="gateway-option">
-                            <input type="radio" name="gateway" id="gw_virement" value="virement"
-                                {% if form.gateway.value == 'virement' %}checked{% endif %}>
-                            <label class="gateway-label" for="gw_virement">
-                                <span class="gateway-icon">🏦</span>
-                                <span class="gateway-info">
-                                    <span class="gateway-title">Virement bancaire</span>
-                                    <span class="gateway-sub">Virement avant expédition</span>
-                                </span>
-                                <span class="gateway-check">
-                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-                                </span>
-                            </label>
+                        <!-- Ville / Commune -->
+                        <div>
+                            <label class="block text-xs font-extrabold text-slate-900 dark:text-white uppercase tracking-wider mb-1.5">Commune / Ville principale :</label>
+                            <select x-model="formData.city" class="w-full px-4 py-3.5 rounded-2xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-xs font-bold focus:ring-2 focus:ring-brand-500 outline-none">
+                                <option value="Cocody">Cocody (Abidjan)</option>
+                                <option value="Yopougon">Yopougon (Abidjan)</option>
+                                <option value="Marcory">Marcory (Abidjan)</option>
+                                <option value="Plateau">Plateau (Abidjan)</option>
+                                <option value="Koumassi">Koumassi (Abidjan)</option>
+                                <option value="Trechville">Treichville (Abidjan)</option>
+                                <option value="Abobo">Abobo (Abidjan)</option>
+                                <option value="Bingerville">Bingerville</option>
+                                <option value="Bouaké">Bouaké</option>
+                                <option value="Yamoussoukro">Yamoussoukro</option>
+                                <option value="San-Pédro">San-Pédro</option>
+                            </select>
                         </div>
 
+                        <!-- Description -->
+                        <div>
+                            <label class="block text-xs font-extrabold text-slate-900 dark:text-white uppercase tracking-wider mb-1.5">Description (Slogan ou spécialité) :</label>
+                            <textarea x-model="formData.description" rows="3" placeholder="Ex : Vêtements & Accessoires de qualité supérieure livrés chez vous à Abidjan."
+                                      class="w-full px-4 py-3 rounded-2xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-xs focus:ring-2 focus:ring-brand-500 outline-none resize-none"></textarea>
+                        </div>
                     </div>
+
+                    <!-- ── ÉTAPE 2 : Personnalisation & Branding ── -->
+                    <div x-show="step === 2" x-transition:enter="transition ease-out duration-300 transform" x-transition:enter-start="opacity-0 translate-x-4" x-transition:enter-end="opacity-100 translate-x-0" class="space-y-5">
+                        
+                        <!-- Couleur principale -->
+                        <div>
+                            <label class="block text-xs font-extrabold text-slate-900 dark:text-white uppercase tracking-wider mb-2">Couleur principale de votre marque :</label>
+                            <div class="flex items-center gap-3">
+                                <input type="color" x-model="formData.primary_color" class="w-12 h-12 rounded-2xl border-0 p-0 cursor-pointer bg-transparent">
+                                <div class="flex items-center gap-2">
+                                    <button type="button" @click="formData.primary_color = '#7C3AED'" class="w-8 h-8 rounded-full bg-[#7C3AED] border-2 border-white ring-2 ring-slate-200" title="Violet Azoria"></button>
+                                    <button type="button" @click="formData.primary_color = '#0F172A'" class="w-8 h-8 rounded-full bg-[#0F172A] border-2 border-white ring-2 ring-slate-200" title="Noir Carbone"></button>
+                                    <button type="button" @click="formData.primary_color = '#2563EB'" class="w-8 h-8 rounded-full bg-[#2563EB] border-2 border-white ring-2 ring-slate-200" title="Bleu Royal"></button>
+                                    <button type="button" @click="formData.primary_color = '#059669'" class="w-8 h-8 rounded-full bg-[#059669] border-2 border-white ring-2 ring-slate-200" title="Émeraude"></button>
+                                    <button type="button" @click="formData.primary_color = '#E11D48'" class="w-8 h-8 rounded-full bg-[#E11D48] border-2 border-white ring-2 ring-slate-200" title="Rose Framboise"></button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Upload Logo -->
+                        <div>
+                            <label class="block text-xs font-extrabold text-slate-900 dark:text-white uppercase tracking-wider mb-2">Logo de la boutique (Optionnel) :</label>
+                            <div class="p-6 border-2 border-dashed border-slate-200 dark:border-slate-700 rounded-3xl text-center bg-slate-50/50 dark:bg-slate-900/50 hover:bg-slate-100 transition-colors cursor-pointer relative">
+                                <input type="file" name="logo" accept="image/*" @change="handleLogoUpload($event)" class="absolute inset-0 opacity-0 cursor-pointer w-full h-full">
+                                <template x-if="logoPreview">
+                                    <img :src="logoPreview" class="w-20 h-20 rounded-2xl object-cover mx-auto shadow-md border-2 border-white">
+                                </template>
+                                <template x-if="!logoPreview">
+                                    <div>
+                                        <i data-lucide="upload-cloud" class="w-8 h-8 text-brand-600 mx-auto mb-2"></i>
+                                        <p class="text-xs font-bold text-slate-700 dark:text-slate-300">Cliquez pour ajouter votre logo</p>
+                                        <p class="text-[10px] text-slate-400 mt-0.5">Format PNG, JPG ou WebP</p>
+                                    </div>
+                                </template>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ── ÉTAPE 3 : Paiement & Livraison ── -->
+                    <div x-show="step === 3" x-transition:enter="transition ease-out duration-300 transform" x-transition:enter-start="opacity-0 translate-x-4" x-transition:enter-end="opacity-100 translate-x-0" class="space-y-5">
+                        
+                        <!-- Frais de livraison -->
+                        <div>
+                            <label class="block text-xs font-extrabold text-slate-900 dark:text-white uppercase tracking-wider mb-1.5">Frais de livraison par défaut (FCFA) :</label>
+                            <input type="number" x-model="formData.delivery_fee" required placeholder="1500"
+                                   class="w-full px-4 py-3.5 rounded-2xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-sm font-bold focus:ring-2 focus:ring-brand-500 outline-none">
+                        </div>
+
+                        <!-- Modes de paiement -->
+                        <div>
+                            <label class="block text-xs font-extrabold text-slate-900 dark:text-white uppercase tracking-wider mb-2">Moyens de paiement acceptés :</label>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                <label class="p-4 rounded-2xl border flex items-center justify-between cursor-pointer transition-all"
+                                       :class="formData.accepted_payments.includes('livraison') ? 'border-brand-500 bg-brand-50/50 dark:bg-brand-950/30 font-bold' : 'border-slate-200 dark:border-slate-700 bg-slate-50/50'">
+                                    <div class="flex items-center gap-3">
+                                        <span class="text-xl">🚚</span>
+                                        <div>
+                                            <span class="text-xs text-slate-900 dark:text-white block">Paiement à la livraison</span>
+                                            <span class="text-[10px] text-slate-400 block">Le client paie au livreur</span>
+                                        </div>
+                                    </div>
+                                    <input type="checkbox" value="livraison" x-model="formData.accepted_payments" class="w-4 h-4 accent-brand-600 rounded">
+                                </label>
+
+                                <label class="p-4 rounded-2xl border flex items-center justify-between cursor-pointer transition-all"
+                                       :class="formData.accepted_payments.includes('mobile_money') ? 'border-brand-500 bg-brand-50/50 dark:bg-brand-950/30 font-bold' : 'border-slate-200 dark:border-slate-700 bg-slate-50/50'">
+                                    <div class="flex items-center gap-3">
+                                        <span class="text-xl">📱</span>
+                                        <div>
+                                            <span class="text-xs text-slate-900 dark:text-white block">Mobile Money</span>
+                                            <span class="text-[10px] text-slate-400 block">Wave, Orange, MTN</span>
+                                        </div>
+                                    </div>
+                                    <input type="checkbox" value="mobile_money" x-model="formData.accepted_payments" class="w-4 h-4 accent-brand-600 rounded">
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
                 </div>
 
-                <!-- Submit -->
-                <button type="submit" class="btn-create" id="btn-create">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
-                    Créer ma boutique
-                </button>
+                <!-- Right Column: Real-Time Live Shop Preview (Desktop) -->
+                <div class="w-full lg:w-96 p-6 sm:p-8 bg-slate-900 text-white flex flex-col justify-between space-y-6">
+                    <div>
+                        <span class="px-3 py-1 rounded-full bg-white/10 text-brand-300 text-[10px] font-extrabold uppercase tracking-wider backdrop-blur-sm">
+                            Aperçu en temps réel
+                        </span>
+                        <h3 class="font-heading font-extrabold text-lg mt-3 text-white">Votre Vitrine Vendeur</h3>
+                        <p class="text-xs text-slate-400">Voici comment vos clients verront votre boutique sur smartphone.</p>
+                    </div>
 
-                <p class="hint">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-                    Vous pourrez tout modifier depuis votre tableau de bord.
-                </p>
+                    <!-- Live Shop Card Preview -->
+                    <div class="bg-white text-slate-900 p-5 rounded-3xl shadow-2xl border border-white/20 space-y-3">
+                        <div class="flex items-center gap-3">
+                            <div class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-brand-600 to-indigo-600 flex items-center justify-center text-white font-black text-lg overflow-hidden shrink-0"
+                                 :style="'background-color:' + formData.primary_color">
+                                <template x-if="logoPreview">
+                                    <img :src="logoPreview" class="w-full h-full object-cover">
+                                </template>
+                                <template x-if="!logoPreview">
+                                    <span x-text="formData.name ? formData.name.charAt(0).toUpperCase() : 'A'"></span>
+                                </template>
+                            </div>
+                            <div class="min-w-0 flex-1">
+                                <h4 class="font-heading font-extrabold text-sm text-slate-900 truncate" x-text="formData.name || 'Nom de votre boutique'"></h4>
+                                <span class="text-[10px] text-emerald-600 font-semibold flex items-center gap-1">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span> Ouvert 🟢 • <span x-text="formData.city"></span>
+                                </span>
+                            </div>
+                        </div>
+
+                        <p class="text-xs text-slate-500 line-clamp-2" x-text="formData.description || 'Description de votre boutique...'"></p>
+
+                        <div class="pt-2 border-t border-slate-100 flex items-center justify-between text-[10px] font-bold text-slate-600">
+                            <span>Livraison : <span x-text="formData.delivery_fee + ' FCFA'"></span></span>
+                            <span class="px-2 py-0.5 rounded-md bg-brand-50 text-brand-700">Paiement Sécurisé</span>
+                        </div>
+                    </div>
+
+                    <p class="text-[10px] text-slate-400 text-center">Un lien unique et un QR code HD seront générés automatiquement à la validation.</p>
+                </div>
             </form>
-        </div>
 
+            <!-- WIZARD FOOTER NAVIGATION BUTTONS -->
+            <div class="p-5 sm:p-6 border-t border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900 flex items-center justify-between">
+                <button type="button" @click="prevStep()" x-show="step > 1"
+                        class="py-3 px-5 rounded-2xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-bold text-xs hover:bg-slate-200 transition-all active:scale-95">
+                    ← Précédent
+                </button>
+                <div x-show="step === 1"></div>
+
+                <!-- Next or Final Submit Button with HTMX Spinner Indicator -->
+                <div>
+                    <button type="button" @click="nextStep()" x-show="step < 3"
+                            class="py-3.5 px-6 rounded-2xl bg-brand-600 hover:bg-brand-700 text-white font-heading font-extrabold text-xs shadow-lg shadow-brand-500/25 flex items-center gap-1.5 transition-all active:scale-95">
+                        <span>Étape suivante →</span>
+                    </button>
+
+                    <button type="submit" x-show="step === 3" :disabled="isSubmitting"
+                            class="py-3.5 px-7 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white font-heading font-extrabold text-xs shadow-xl shadow-emerald-500/25 flex items-center gap-2 transition-all active:scale-95">
+                        <span class="htmx-indicator w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
+                        <span>🎉 Créer ma boutique maintenant</span>
+                    </button>
+                </div>
+            </div>
+
+        </div>
     </main>
 
     <script>
-        // Lucide icons
-        document.addEventListener('DOMContentLoaded', () => {
-            if (window.lucide) lucide.createIcons();
+        function shopWizardApp() {
+            return {
+                step: 1,
+                isSubmitting: false,
+                logoPreview: null,
+                stepTitles: {
+                    1: "1. Identité & Contact Vendeur",
+                    2: "2. Personnalisation & Branding",
+                    3: "3. Paiement & Options de Livraison"
+                },
+                stepSubtitles: {
+                    1: "Donnez un nom et une adresse à votre boutique",
+                    2: "Ajoutez votre logo et votre couleur principale",
+                    3: "Configurez les frais de livraison et d'encaissement"
+                },
+                formData: {
+                    name: "",
+                    phone: "",
+                    city: "Cocody",
+                    description: "",
+                    primary_color: "#7C3AED",
+                    delivery_fee: 1500,
+                    accepted_payments: ["livraison", "mobile_money"]
+                },
 
-            // Button loading state
-            const form  = document.querySelector('form');
-            const btn   = document.getElementById('btn-create');
-            form.addEventListener('submit', () => {
-                btn.disabled = true;
-                btn.innerHTML = `
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="animation:spin 1s linear infinite"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg>
-                    Création en cours…
-                `;
-            });
-        });
+                handleLogoUpload(event) {
+                    const file = event.target.files[0];
+                    if (file) {
+                        const reader = new FileReader();
+                        reader.onload = (e) => { this.logoPreview = e.target.result; };
+                        reader.readAsDataURL(file);
+                    }
+                },
+
+                nextStep() {
+                    if (this.step === 1 && (!this.formData.name || !this.formData.phone)) {
+                        alert("Veuillez remplir le nom de la boutique et votre numéro WhatsApp.");
+                        return;
+                    }
+                    if (this.step < 3) this.step++;
+                },
+
+                prevStep() {
+                    if (this.step > 1) this.step--;
+                },
+
+                async submitFinalForm(e) {
+                    this.isSubmitting = true;
+                    const formEl = e.target;
+                    const fd = new FormData(formEl);
+                    fd.set("name", this.formData.name);
+                    fd.set("phone", this.formData.phone);
+                    fd.set("city", this.formData.city);
+                    fd.set("description", this.formData.description);
+                    fd.set("primary_color", this.formData.primary_color);
+                    fd.set("delivery_fee", this.formData.delivery_fee);
+                    
+                    try {
+                        const response = await fetch("{% url 'shop:create' %}", {
+                            method: "POST",
+                            headers: {
+                                "X-CSRFToken": "{{ csrf_token }}",
+                                "HX-Request": "true"
+                            },
+                            body: fd
+                        });
+
+                        if (response.ok || response.redirected) {
+                            // 🎉 Celebrate with confetti + chime audio
+                            if (window.AzoriaUI) {
+                                AzoriaUI.celebrate();
+                            }
+                            setTimeout(() => {
+                                window.location.href = "{% url 'core:dashboard' %}?created=true";
+                            }, 600);
+                        } else {
+                            alert("Une erreur est survenue lors de la création.");
+                        }
+                    } catch (err) {
+                        alert("Erreur réseau. Veuillez réessayer.");
+                    } finally {
+                        this.isSubmitting = false;
+                    }
+                }
+            }
+        }
     </script>
-
-    <style>
-        @keyframes spin { to { transform: rotate(360deg); } }
-    </style>
-
 </body>
 </html>

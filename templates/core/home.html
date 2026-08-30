@@ -57,8 +57,9 @@
 
         <!-- CTA Action Buttons -->
         <div class="mt-6 sm:mt-8 flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4">
-            <a href="#simulator" class="btn-primary-glow hover-glow tap-feedback w-full sm:w-auto text-white font-semibold text-base px-8 py-3.5 rounded-full inline-flex items-center justify-center gap-2.5 group active:scale-95">
-                <span>Créer ma boutique gratuite</span>
+            <a href="{% url 'shop:create' %}" class="btn-primary-glow hover-glow tap-feedback w-full sm:w-auto text-white font-semibold text-base px-8 py-4 rounded-full inline-flex items-center justify-center gap-2.5 group active:scale-95 shadow-xl shadow-brand-500/25">
+                <i data-lucide="sparkles" class="w-5 h-5 text-amber-300"></i>
+                <span>Créer ma boutique en 30 sec</span>
                 <i data-lucide="arrow-right" class="w-4 h-4 group-hover:translate-x-1 transition-transform"></i>
             </a>
             <a href="#demo-preview" class="tap-feedback w-full sm:w-auto px-7 py-3.5 rounded-full bg-white/90 hover:bg-white text-slate-700 font-semibold text-sm border border-slate-200 shadow-sm hover:shadow transition-all inline-flex items-center justify-center gap-2 active:scale-95">
