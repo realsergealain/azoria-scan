@@ -18,13 +18,21 @@ def hex_to_rgb(hex_color: str) -> tuple[int, int, int]:
     return (124, 58, 237)  # Violet Azoria par défaut
 
 
-from PIL import Image
+from PIL import Image, ImageDraw, ImageFont
 
 
-def generate_styled_qr_code(data: str, color_hex: str = '#7C3AED', logo_image=None, box_size: int = 15, transparent: bool = False) -> BytesIO:
+def generate_styled_qr_code(
+    data: str, 
+    color_hex: str = '#7C3AED', 
+    logo_image=None, 
+    box_size: int = 15, 
+    transparent: bool = False,
+    shop_name: str = None,
+    show_frame: bool = True
+) -> BytesIO:
     """
-    Génère un QR Code HD stylisé avec des coins arrondis, logo au centre optionnel
-    et fond transparent pour l'intégration vidéo.
+    Génère un QR Code HD stylisé avec bandeau 'SCAN ME !', Nom de la boutique,
+    logo au centre optionnel et fond transparent pour l'intégration vidéo/flyers.
     """
     qr = qrcode.QRCode(
         error_correction=qrcode.constants.ERROR_CORRECT_H,
@@ -69,6 +77,55 @@ def generate_styled_qr_code(data: str, color_hex: str = '#7C3AED', logo_image=No
             img.paste(logo, (pos_x, pos_y), logo)
         except Exception:
             pass
+
+    # If show_frame or shop_name provided, compose complete card image
+    if show_frame or shop_name:
+        qr_w, qr_h = img.size
+        padding = 40
+        header_height = 80 if show_frame else 0
+        name_height = 50 if shop_name else 0
+        card_w = qr_w + (padding * 2)
+        card_h = header_height + name_height + qr_h + (padding * 2)
+
+        bg_color = (0, 0, 0, 0) if transparent else (255, 255, 255, 255)
+        card = Image.new("RGBA", (card_w, card_h), bg_color)
+        draw = ImageDraw.Draw(card)
+
+        # 1. Draw "SCAN ME !" Banner
+        if show_frame:
+            banner_box = [padding, padding, card_w - padding, padding + header_height]
+            draw.rounded_rectangle(banner_box, radius=20, fill=rgb_color + (255,))
+
+            try:
+                font_banner = ImageFont.truetype("arial.ttf", 32)
+            except Exception:
+                font_banner = ImageFont.load_default()
+
+            banner_text = "SCAN ME !"
+            bbox = draw.textbbox((0, 0), banner_text, font=font_banner)
+            text_w = bbox[2] - bbox[0]
+            text_h = bbox[3] - bbox[1]
+            text_x = (card_w - text_w) // 2
+            text_y = padding + (header_height - text_h) // 2 - 4
+            draw.text((text_x, text_y), banner_text, fill=(255, 255, 255, 255), font=font_banner)
+
+        # 2. Draw Shop Name
+        if shop_name:
+            try:
+                font_name = ImageFont.truetype("arial.ttf", 26)
+            except Exception:
+                font_name = ImageFont.load_default()
+
+            bbox_n = draw.textbbox((0, 0), shop_name, font=font_name)
+            name_w = bbox_n[2] - bbox_n[0]
+            name_x = (card_w - name_w) // 2
+            name_y = padding + header_height + (15 if show_frame else 5)
+            draw.text((name_x, name_y), shop_name, fill=(15, 23, 42, 255) if not transparent else (255, 255, 255, 255), font=font_name)
+
+        # 3. Paste QR Code
+        qr_y = padding + header_height + name_height + 10
+        card.paste(img, (padding, qr_y), img)
+        img = card
 
     buffer = BytesIO()
     img.save(buffer, format="PNG")

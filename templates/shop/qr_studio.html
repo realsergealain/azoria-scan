@@ -323,6 +323,9 @@
                 if (this.isTransparent) {
                     params.push("transparent=true");
                 }
+                if (!this.showFrame) {
+                    params.push("frame=false");
+                }
                 params.push("download=true");
                 return baseUrl + "?" + params.join("&");
             },

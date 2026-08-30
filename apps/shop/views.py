@@ -334,17 +334,27 @@ def qr_studio(request):
 
 
 def shop_qr_code(request, shop_uuid):
-    """Génère et sert l'image PNG HD du QR code de la boutique."""
+    """Génère et sert l'image PNG HD du QR code de la boutique avec bandeau SCAN ME et Nom de la boutique."""
     shop = get_object_or_404(Shop, uuid=shop_uuid)
     url = request.build_absolute_uri(f"/boutique/{shop.uuid}/{shop.slug}/?ref=qr")
     color = shop.branding.primary_color if (hasattr(shop, 'branding') and shop.branding and shop.branding.primary_color) else '#7C3AED'
     logo_file = shop.branding.logo if (hasattr(shop, 'branding') and shop.branding and shop.branding.logo) else None
     
     transparent = request.GET.get('transparent') == 'true'
-    buffer = generate_styled_qr_code(url, color_hex=color, logo_image=logo_file, transparent=transparent)
+    show_frame = request.GET.get('frame') != 'false'
+    include_name = request.GET.get('name') != 'false'
+
+    buffer = generate_styled_qr_code(
+        url, 
+        color_hex=color, 
+        logo_image=logo_file, 
+        transparent=transparent,
+        shop_name=shop.name if include_name else None,
+        show_frame=show_frame
+    )
     
     response = HttpResponse(buffer.getvalue(), content_type="image/png")
-    filename = f"qr_{shop.slug}.png"
+    filename = f"qr_card_{shop.slug}.png"
     if request.GET.get('download') == 'true':
         response['Content-Disposition'] = f'attachment; filename="{filename}"'
     else:
@@ -360,7 +370,17 @@ def product_qr_code(request, product_uuid):
     logo_file = product.shop.branding.logo if (hasattr(product.shop, 'branding') and product.shop.branding and product.shop.branding.logo) else None
     
     transparent = request.GET.get('transparent') == 'true'
-    buffer = generate_styled_qr_code(url, color_hex=color, logo_image=logo_file, transparent=transparent)
+    show_frame = request.GET.get('frame') != 'false'
+    include_name = request.GET.get('name') != 'false'
+
+    buffer = generate_styled_qr_code(
+        url, 
+        color_hex=color, 
+        logo_image=logo_file, 
+        transparent=transparent,
+        shop_name=f"{product.name} — {product.shop.name}" if include_name else None,
+        show_frame=show_frame
+    )
     
     response = HttpResponse(buffer.getvalue(), content_type="image/png")
     filename = f"qr_produit_{product.slug}.png"
