@@ -109,15 +109,37 @@ def shop_settings(request):
 
 @login_required
 def ai_description_api(request):
-    """API Endpoint pour générer une description via OpenAI."""
-    name = request.GET.get('name', '')
-    category = request.GET.get('cat', '')
-    
-    if not name:
-        return JsonResponse({'description': ''})
-        
-    ai_data = generate_ai_product_description(name, category)
-    return JsonResponse({'description': ai_data.get('description', '')})
+    """
+    API & HTMX Endpoint pour générer une description via OpenAI (Vision & Fallback textuel).
+    Supporte l'upload d'image (Scénario A Vision) et le titre uniquement (Scénario B).
+    """
+    if request.method == 'POST':
+        name = request.POST.get('name', '').strip()
+        category = request.POST.get('category', '') or request.POST.get('cat', '')
+        image_file = request.FILES.get('image')
+    else:
+        name = request.GET.get('name', '').strip()
+        category = request.GET.get('cat', '')
+        image_file = None
+
+    if not name and not image_file:
+        description = "Veuillez saisir un nom d'article ou ajouter une image."
+    else:
+        ai_data = generate_styled_description_from_ai(name=name, category=category, image_file=image_file)
+        description = ai_data.get('description', '')
+
+    # Si la requête est émise par HTMX et cible le textarea de description
+    if request.htmx and (request.htmx.target == 'product_desc_input' or request.headers.get('HX-Target') == 'product_desc_input'):
+        html_fragment = f'''<textarea id="product_desc_input" name="description" rows="4" 
+            placeholder="Décrivez les caractéristiques de l'article ou cliquez sur le bouton Azoria AI pour rédiger..." 
+            class="w-full px-4 py-3 rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-white focus:ring-2 focus:ring-brand-500 focus:border-brand-500 outline-none text-xs sm:text-sm leading-relaxed transition-all shadow-sm resize-none">{description}</textarea>'''
+        return HttpResponse(html_fragment, content_type='text/html')
+
+    return JsonResponse({'description': description})
+
+
+def generate_styled_description_from_ai(name: str, category: str = "", image_file=None) -> dict:
+    return generate_ai_product_description(name=name, category=category, image_file=image_file)
 
 
 # ==========================================

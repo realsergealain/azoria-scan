@@ -197,16 +197,19 @@ def generate_whatsapp_order_link(order) -> str:
     return f"https://wa.me/?text={encoded_msg}"
 
 
-def generate_ai_product_description(name: str, category: str = "") -> dict:
+def generate_ai_product_description(name: str, category: str = "", image_file=None) -> dict:
     """
-    Génère un titre accrocheur, une description vendeuse et des arguments percutants pour Azoria AI via ChatGPT (OpenAI).
+    Génère une description e-commerce vendeuse et professionnelle via l'API OpenAI.
+    Logique conditionnelle (Fallback) :
+    - Scénario A (Image présente) : utilise le modèle Vision (gpt-4o-mini / gpt-4o) avec analyse de l'image.
+    - Scénario B (Pas d'image) : utilise le modèle textuel gpt-4o-mini basé sur le nom et la catégorie.
     """
     import os
+    import base64
     import openai
     from django.conf import settings
-    
+
     api_key = getattr(settings, 'OPENAI_API_KEY', None) or os.environ.get('OPENAI_API_KEY')
-        
     if not api_key:
         return {
             'title': f"{name} ✨ Tendance & Qualité",
@@ -214,46 +217,82 @@ def generate_ai_product_description(name: str, category: str = "") -> dict:
             'badge': '🔥 Meilleure Vente'
         }
 
-    prompt = (
-        f"Tu es un expert mondial en e-commerce et copywriting persuasif pour les réseaux sociaux (TikTok, WhatsApp, Instagram).\n"
-        f"Rédige une description produit ultra-vendeuse, irrésistible et professionnelle pour :\n"
-        f"Nom du produit : {name}\n"
-        f"Catégorie : {category or 'General'}\n\n"
-        f"Consignes de rédaction :\n"
-        f"- Rédige une description structurée de 4 à 6 lignes max.\n"
-        f"- Mets en avant les avantages clés, la qualité supérieure et le confort/style du produit.\n"
-        f"- Utilise des emojis adaptés pour rendre la lecture vivante.\n"
-        f"- Termine avec un appel à l'action clair incitant à commander maintenant (Paiement à la livraison dispo !).\n"
-        f"- N'ajoute pas de titre ni d'introduction, donne directement le texte de la description."
-    )
+    # Préparation de l'image si présente (Scénario A)
+    base64_image = None
+    if image_file:
+        try:
+            image_bytes = None
+            if hasattr(image_file, 'read'):
+                image_bytes = image_file.read()
+                if hasattr(image_file, 'seek'):
+                    image_file.seek(0)
+            elif hasattr(image_file, 'path') and os.path.exists(image_file.path):
+                with open(image_file.path, 'rb') as f:
+                    image_bytes = f.read()
+
+            if image_bytes:
+                base64_image = base64.b64encode(image_bytes).decode('utf-8')
+        except Exception as e:
+            print(f"[Azoria AI] Erreur encodage image vision: {e}")
+
+    model_name = "gpt-4o-mini"
+
+    # Construction des messages selon le scénario
+    if base64_image:
+        # SCÉNARIO A : Vision avec Image
+        prompt_text = (
+            f"Analyse attentivement cette image. Rédige une description e-commerce vendeuse, détaillée et professionnelle "
+            f"pour le produit '{name}' (Catégorie: '{category or 'Général'}'). "
+            f"Base-toi sur l'apparence visuelle, les couleurs, la forme et l'usage suggéré par l'objet. "
+            f"Rédige une description de 4 à 6 lignes avec des emojis attrayants et un appel à l'action clair (Paiement à la livraison)."
+        )
+        messages = [
+            {"role": "system", "content": "Tu es un expert copywriter e-commerce vision de classe mondiale."},
+            {
+                "role": "user",
+                "content": [
+                    {"type": "text", "text": prompt_text},
+                    {
+                        "type": "image_url",
+                        "image_url": {"url": f"data:image/jpeg;base64,{base64_image}"}
+                    }
+                ]
+            }
+        ]
+    else:
+        # SCÉNARIO B : Titre uniquement (Fallback Textuel)
+        prompt_text = (
+            f"En te basant uniquement sur le titre suivant : '{name}' (Catégorie: '{category or 'Général'}'), "
+            f"rédige une description e-commerce convaincante, mettant en avant les caractéristiques probables "
+            f"et les avantages de ce type de produit. "
+            f"Rédige 4 à 6 lignes captivantes avec des emojis et un appel à l'action incitant à commander (Paiement à la livraison)."
+        )
+        messages = [
+            {"role": "system", "content": "Tu es un expert copywriter e-commerce de classe mondiale."},
+            {"role": "user", "content": prompt_text}
+        ]
 
     try:
         if hasattr(openai, 'OpenAI'):
             client = openai.OpenAI(api_key=api_key)
             response = client.chat.completions.create(
-                model="gpt-3.5-turbo",
-                messages=[
-                    {"role": "system", "content": "Tu es un expert copywriter e-commerce de classe mondiale."},
-                    {"role": "user", "content": prompt}
-                ],
-                max_tokens=220,
+                model=model_name,
+                messages=messages,
+                max_tokens=300,
                 temperature=0.7
             )
             description = response.choices[0].message.content.strip()
         else:
             openai.api_key = api_key
             response = openai.ChatCompletion.create(
-                model="gpt-3.5-turbo",
-                messages=[
-                    {"role": "system", "content": "Tu es un expert copywriter e-commerce de classe mondiale."},
-                    {"role": "user", "content": prompt}
-                ],
-                max_tokens=220,
+                model=model_name,
+                messages=messages,
+                max_tokens=300,
                 temperature=0.7
             )
             description = response.choices[0].message.content.strip()
     except Exception as e:
-        print(f"[Azoria AI] OpenAI API Error: {e}")
+        print(f"[Azoria AI] Erreur OpenAI Vision: {e}")
         description = (
             f"✨ Découvrez notre magnifique {name} !\n"
             f"Un article d'exception sélectionné pour sa qualité premium et son design élégant.\n"

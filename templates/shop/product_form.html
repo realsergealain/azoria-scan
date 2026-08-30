@@ -71,29 +71,38 @@
                 </div>
             </div>
 
-            <!-- Description Détaillée + BOUTON ASSISTANT AI CHATGPT -->
+            <!-- Description Détaillée + BOUTON HTMX ASSISTANT IA (VISION & TEXTUAL FALLBACK) -->
             <div class="space-y-2">
-                <div class="flex items-center justify-between">
+                <div class="flex items-center justify-between flex-wrap gap-2">
                     <label for="{{ form.description.id_for_label }}" class="block text-xs font-bold uppercase tracking-wider text-slate-600 dark:text-slate-300">
                         {{ form.description.label }}
                     </label>
                     
-                    <!-- Bouton Génération IA ChatGPT -->
+                    <!-- Bouton HTMX Génération IA avec Vision -->
                     <button type="button" 
-                            @click="generateAiDescription()"
-                            :disabled="isGeneratingAi"
-                            class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-extrabold text-xs shadow-md shadow-purple-600/20 transition-all active:scale-95 disabled:opacity-50">
-                        <i data-lucide="sparkles" class="w-3.5 h-3.5 text-amber-300 animate-pulse" x-show="!isGeneratingAi"></i>
-                        <i data-lucide="loader-2" class="w-3.5 h-3.5 animate-spin" x-show="isGeneratingAi"></i>
-                        <span x-text="isGeneratingAi ? 'Génération ChatGPT...' : '✨ Rédiger avec ChatGPT'"></span>
+                            hx-post="{% url 'shop:ai_description_api' %}"
+                            hx-target="#product_desc_input"
+                            hx-swap="outerHTML"
+                            hx-encoding="multipart/form-data"
+                            hx-include="#product_name_input, #product_category_input, input[name='image']"
+                            hx-indicator="#ai-loading-spinner"
+                            class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-extrabold text-xs shadow-md shadow-purple-600/20 transition-all active:scale-95 cursor-pointer">
+                        <i data-lucide="sparkles" class="w-3.5 h-3.5 text-amber-300"></i>
+                        <span>✨ Générer une description avec l'IA</span>
                     </button>
+                </div>
+
+                <!-- Indicateur HTMX de Chargement Visuel -->
+                <div id="ai-loading-spinner" class="htmx-indicator hidden flex items-center gap-2.5 p-3.5 rounded-2xl bg-purple-50 dark:bg-purple-950/40 border border-purple-200 dark:border-purple-800 text-purple-700 dark:text-purple-300 text-xs font-bold">
+                    <i data-lucide="loader-2" class="w-4 h-4 animate-spin text-purple-600 shrink-0"></i>
+                    <span>L'IA Azoria (Vision & Text) analyse vos données et rédige une description vendeuse... ✨</span>
                 </div>
 
                 {{ form.description }}
                 {% if form.description.errors %}
                     <p class="text-rose-500 text-xs mt-1">{{ form.description.errors.0 }}</p>
                 {% endif %}
-                <p class="text-[11px] text-slate-400">Tapez le nom de l'article puis cliquez sur <b>✨ Rédiger avec ChatGPT</b> pour créer automatiquement un texte de vente accrocheur !</p>
+                <p class="text-[11px] text-slate-400">Si une photo est sélectionnée, l'IA utilise la **Vision** pour analyser le visuel. Sinon, elle se base sur le **titre**. Vous pourrez relire et ajuster le texte généré !</p>
             </div>
 
             <!-- Photo principale -->
