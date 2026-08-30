@@ -130,8 +130,8 @@ def confidentialite_view(request):
 
 @login_required
 def dashboard_view(request):
-    """Tableau de bord principal du vendeur connecté avec métriques réelles."""
-    from apps.shop.models import Shop, ShopProduct, Order, VisitTracker
+    """Tableau de bord principal du vendeur avec métriques avancées, KPIs et graphiques."""
+    from apps.shop.models import Shop
     from apps.shop.forms import ShopCreateForm
     from apps.shop.services import get_shop_dashboard_analytics
     
@@ -155,28 +155,50 @@ def dashboard_view(request):
             'recent_orders': [],
         }
 
+    recent_ids = "-".join([str(getattr(o, 'id', '')) for o in analytics.get('recent_orders', [])])
+    state_str = f"{analytics.get('total_orders')}-{analytics.get('total_revenue')}-{analytics.get('total_products')}-{analytics.get('total_visits')}-{analytics.get('active_orders')}-{recent_ids}"
+    state_hash = hashlib.md5(state_str.encode('utf-8')).hexdigest()
+
     return render(request, 'core/dashboard.html', {
         'shops': shops,
         'primary_shop': primary_shop,
         'shop_count': shops.count(),
         'analytics': analytics,
+        'state_hash': state_hash,
         'shop_form': ShopCreateForm(),
     })
 
 
 @login_required
 def dashboard_live_stats(request):
-    """Fragment HTMX pour l'actualisation en temps réel (Polling) des KPIs et commandes récentes."""
+    """Fragment HTMX pour l'actualisation en temps réel (Polling) des KPIs et commandes récentes.
+    Option 1 : Si les métriques sont identiques, renvoie HTTP 204 No Content pour éviter tout re-rendu/re-animation.
+    """
     from apps.shop.models import Shop
     from apps.shop.services import get_shop_dashboard_analytics
     
     shop = Shop.objects.filter(owner=request.user).select_related('branding', 'payment').first()
     if not shop:
-        return render(request, 'core/partials/dashboard_live_feed.html', {'analytics': {}, 'primary_shop': None})
+        return render(request, 'core/partials/dashboard_live_feed.html', {'analytics': {}, 'primary_shop': None, 'state_hash': ''})
     
     analytics = get_shop_dashboard_analytics(shop)
-    return render(request, 'core/partials/dashboard_live_feed.html', {
+    
+    recent_ids = "-".join([str(getattr(o, 'id', '')) for o in analytics.get('recent_orders', [])])
+    state_str = f"{analytics.get('total_orders')}-{analytics.get('total_revenue')}-{analytics.get('total_products')}-{analytics.get('total_visits')}-{analytics.get('active_orders')}-{recent_ids}"
+    state_hash = hashlib.md5(state_str.encode('utf-8')).hexdigest()
+    
+    client_hash = request.headers.get('X-Dashboard-Hash') or request.GET.get('hash')
+    
+    # 204 No Content : HTMX conserve le DOM actuel intact sans aucune animation intempestive
+    if client_hash == state_hash and request.headers.get('HX-Request'):
+        response = HttpResponse(status=204)
+        response['X-Dashboard-Hash'] = state_hash
+        return response
+    
+    response = render(request, 'core/partials/dashboard_live_feed.html', {
         'primary_shop': shop,
         'analytics': analytics,
+        'state_hash': state_hash,
     })
-
+    response['X-Dashboard-Hash'] = state_hash
+    return response

@@ -368,24 +368,44 @@ window.AzoriaUI = {
     }
   },
 
-  // Numerical counter animation
+  // Numerical counter animation (Smart CountUp: only animates if value changed)
+  counterValues: {},
   animateCounters() {
-    const counters = document.querySelectorAll('[data-counter]:not([data-counter-animated])');
+    const counters = document.querySelectorAll('[data-counter]');
     counters.forEach(el => {
-      el.setAttribute('data-counter-animated', 'true');
+      const counterId = el.getAttribute('data-counter-id') || el.getAttribute('data-counter');
       const targetStr = el.getAttribute('data-counter');
-      const target = parseInt(targetStr.replace(/\D/g, ''), 10);
-      if (isNaN(target) || target <= 0) return;
+      const previousTargetStr = AzoriaUI.counterValues[counterId];
 
-      const duration = 1000;
-      const start = 0;
+      // If value is identical to previously displayed value, keep static text & skip animation
+      if (previousTargetStr === targetStr) {
+        el.textContent = targetStr;
+        return;
+      }
+
+      const target = parseInt(targetStr.replace(/\D/g, ''), 10);
+      if (isNaN(target) || target <= 0) {
+        el.textContent = targetStr;
+        AzoriaUI.counterValues[counterId] = targetStr;
+        return;
+      }
+
+      // If we had a previous value, start counting from previous value instead of 0
+      const start = previousTargetStr ? (parseInt(previousTargetStr.replace(/\D/g, ''), 10) || 0) : 0;
+      AzoriaUI.counterValues[counterId] = targetStr;
+
+      if (start === target) {
+        el.textContent = targetStr;
+        return;
+      }
+
+      const duration = 800;
       const startTime = performance.now();
       const hasFCFA = targetStr.includes('FCFA');
 
       function update(currentTime) {
         const elapsed = currentTime - startTime;
         const progress = Math.min(elapsed / duration, 1);
-        // Ease-out cubic
         const easeProgress = 1 - Math.pow(1 - progress, 3);
         const current = Math.floor(start + (target - start) * easeProgress);
 
