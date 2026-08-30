@@ -230,13 +230,18 @@
                     <span>SCAN ME !</span>
                 </div>
 
-                <!-- Canvas Wrapper Container -->
-                <div class="p-6 w-full aspect-square flex items-center justify-center transition-all duration-300"
+                <!-- Canvas Wrapper Container with Fallback Image -->
+                <div class="p-6 w-full aspect-square flex items-center justify-center transition-all duration-300 relative overflow-hidden"
                      :class="[
                         showFrame ? 'rounded-b-2xl border-2 border-t-0' : 'rounded-3xl border-2',
                         isTransparent ? 'bg-slate-950/60 border-slate-800' : 'bg-white border-white shadow-2xl'
                      ]">
-                    <div id="qr-code-canvas" class="w-full h-full flex items-center justify-center"></div>
+                    <div id="qr-code-canvas" class="w-full h-full flex items-center justify-center">
+                        <img id="qr-fallback-img" 
+                             :src="getDirectUrl()" 
+                             alt="QR Code {{ shop.name }}" 
+                             class="w-full h-full object-contain">
+                    </div>
                 </div>
 
             </div>
@@ -257,12 +262,12 @@
                     <span>Télécharger Vectoriel (SVG)</span>
                 </button>
 
-                <!-- Server Endpoint Fallback Link -->
+                <!-- Server Endpoint Direct Link -->
                 <div class="pt-1">
                     <a :href="getDirectUrl()" 
                        download
                        class="text-[10px] text-slate-400 hover:text-white underline transition-colors">
-                        Lien direct de téléchargement serveur (Format standard)
+                        Lien direct de téléchargement serveur (PNG HD)
                     </a>
                 </div>
             </div>
@@ -294,6 +299,12 @@
                 }
             },
 
+            getLogoUrl() {
+                if (!this.includeLogo) return null;
+                const rawUrl = "{% if shop.branding and shop.branding.logo %}{{ shop.branding.logo.url }}{% endif %}".trim();
+                return rawUrl.length > 0 ? rawUrl : null;
+            },
+
             copyStoreLink() {
                 const url = this.currentTargetUrl;
                 if (window.AzoriaUI) {
@@ -308,12 +319,12 @@
                 let baseUrl = this.selectedType === 'shop' 
                     ? "{% url 'shop:shop_qr' shop.uuid %}" 
                     : "/boutique/produits/" + this.selectedProduct + "/qr/";
+                const params = [];
                 if (this.isTransparent) {
-                    baseUrl += "?transparent=true&download=true";
-                } else {
-                    baseUrl += "?download=true";
+                    params.push("transparent=true");
                 }
-                return baseUrl;
+                params.push("download=true");
+                return baseUrl + "?" + params.join("&");
             },
 
             init() {
@@ -322,19 +333,13 @@
                 });
             },
 
-            renderQr() {
-                const container = document.getElementById("qr-code-canvas");
-                if (!container) return;
-                container.innerHTML = "";
-
-                const logoUrl = (this.includeLogo && "{% if shop.branding.logo %}{{ shop.branding.logo.url }}{% endif %}") || "";
-
-                this.qrCodeObj = new QRCodeStyling({
-                    width: 240,
-                    height: 240,
-                    type: "canvas",
+            buildOptions(size, format) {
+                const logo = this.getLogoUrl();
+                const opts = {
+                    width: size,
+                    height: size,
+                    type: format || "canvas",
                     data: this.currentTargetUrl,
-                    image: logoUrl,
                     dotsOptions: {
                         color: this.qrColor,
                         type: this.dotsStyle
@@ -342,11 +347,6 @@
                     backgroundOptions: {
                         color: this.isTransparent ? "transparent" : "#ffffff",
                     },
-                    imageOptions: {
-                        crossOrigin: "anonymous",
-                        margin: 4,
-                        imageSize: 0.22
-                    },
                     cornersSquareOptions: {
                         color: this.qrColor,
                         type: "extra-rounded"
@@ -355,80 +355,78 @@
                         color: this.qrColor,
                         type: "dot"
                     }
-                });
+                };
 
-                this.qrCodeObj.append(container);
+                if (logo) {
+                    opts.image = logo;
+                    opts.imageOptions = {
+                        crossOrigin: "anonymous",
+                        margin: size > 500 ? 25 : 5,
+                        imageSize: 0.22
+                    };
+                }
+                return opts;
+            },
+
+            renderQr() {
+                const container = document.getElementById("qr-code-canvas");
+                if (!container) return;
+
+                if (typeof QRCodeStyling === 'undefined') {
+                    console.warn("QRCodeStyling not loaded, using image fallback");
+                    return;
+                }
+
+                try {
+                    container.innerHTML = "";
+                    const opts = this.buildOptions(240, "canvas");
+                    this.qrCodeObj = new QRCodeStyling(opts);
+                    this.qrCodeObj.append(container);
+                } catch (err) {
+                    console.warn("Canvas QR render fallback", err);
+                    container.innerHTML = `<img src="${this.getDirectUrl()}" class="w-full h-full object-contain rounded-2xl">`;
+                }
             },
 
             updateQr() {
-                if (!this.qrCodeObj) {
+                if (!this.qrCodeObj || typeof QRCodeStyling === 'undefined') {
                     this.renderQr();
                     return;
                 }
 
-                const logoUrl = (this.includeLogo && "{% if shop.branding.logo %}{{ shop.branding.logo.url }}{% endif %}") || "";
-
-                this.qrCodeObj.update({
-                    data: this.currentTargetUrl,
-                    image: logoUrl,
-                    dotsOptions: {
-                        color: this.qrColor,
-                        type: this.dotsStyle
-                    },
-                    backgroundOptions: {
-                        color: this.isTransparent ? "transparent" : "#ffffff"
-                    },
-                    cornersSquareOptions: {
-                        color: this.qrColor,
-                        type: "extra-rounded"
-                    },
-                    cornersDotOptions: {
-                        color: this.qrColor,
-                        type: "dot"
-                    }
-                });
+                try {
+                    const opts = this.buildOptions(240, "canvas");
+                    this.qrCodeObj.update(opts);
+                } catch (err) {
+                    this.renderQr();
+                }
             },
 
             downloadQr(format) {
-                if (!this.qrCodeObj) return;
+                try {
+                    if (typeof QRCodeStyling !== 'undefined') {
+                        const opts = this.buildOptions(2000, format === 'svg' ? 'svg' : 'canvas');
+                        const hdQr = new QRCodeStyling(opts);
+                        const filename = (this.selectedType === 'shop') 
+                            ? "qr_azoria_{{ shop.slug }}" 
+                            : "qr_azoria_produit";
 
-                // High Definition Resolution Config for Download (2000px)
-                const hdQr = new QRCodeStyling({
-                    width: 2000,
-                    height: 2000,
-                    type: format === 'svg' ? 'svg' : 'canvas',
-                    data: this.currentTargetUrl,
-                    image: (this.includeLogo && "{% if shop.branding.logo %}{{ shop.branding.logo.url }}{% endif %}") || "",
-                    dotsOptions: {
-                        color: this.qrColor,
-                        type: this.dotsStyle
-                    },
-                    backgroundOptions: {
-                        color: this.isTransparent ? "transparent" : "#ffffff"
-                    },
-                    imageOptions: {
-                        crossOrigin: "anonymous",
-                        margin: 30,
-                        imageSize: 0.22
-                    },
-                    cornersSquareOptions: {
-                        color: this.qrColor,
-                        type: "extra-rounded"
-                    },
-                    cornersDotOptions: {
-                        color: this.qrColor,
-                        type: "dot"
+                        hdQr.download({
+                            name: filename,
+                            extension: format
+                        });
+                    } else {
+                        throw new Error("JS library fallback");
                     }
-                });
-
-                const filename = (this.selectedType === 'shop') 
-                    ? "qr_azoria_{{ shop.slug }}" 
-                    : "qr_azoria_produit";
-
-                hdQr.download({
-                    name: filename,
-                    extension: format
-                });
+                } catch (err) {
+                    console.warn("Client QR download fallback to server URL", err);
+                    const link = document.createElement("a");
+                    link.href = this.getDirectUrl();
+                    link.download = (this.selectedType === 'shop') ? "qr_azoria_{{ shop.slug }}.png" : "qr_produit.png";
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                }
 
                 if (window.AzoriaUI) {
                     AzoriaUI.playSuccess();
