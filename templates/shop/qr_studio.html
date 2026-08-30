@@ -238,9 +238,9 @@
                      ]">
                     <div id="qr-code-canvas" class="w-full h-full flex items-center justify-center">
                         <img id="qr-fallback-img" 
-                             :src="getDirectUrl()" 
+                             :src="getPreviewUrl()" 
                              alt="QR Code {{ shop.name }}" 
-                             class="w-full h-full object-contain">
+                             class="w-full h-full object-contain rounded-xl">
                     </div>
                 </div>
 
@@ -264,7 +264,7 @@
 
                 <!-- Server Endpoint Direct Link -->
                 <div class="pt-1">
-                    <a :href="getDirectUrl()" 
+                    <a :href="getDownloadUrl()" 
                        download
                        class="text-[10px] text-slate-400 hover:text-white underline transition-colors">
                         Lien direct de téléchargement serveur (PNG HD)
@@ -315,18 +315,23 @@
                 }
             },
 
-            getDirectUrl() {
+            getPreviewUrl() {
                 let baseUrl = this.selectedType === 'shop' 
                     ? "{% url 'shop:shop_qr' shop.uuid %}" 
                     : "/boutique/produits/" + this.selectedProduct + "/qr/";
                 const params = [];
-                if (this.isTransparent) {
-                    params.push("transparent=true");
-                }
-                if (!this.showFrame) {
-                    params.push("frame=false");
-                }
-                params.push("download=true");
+                if (this.isTransparent) params.push("transparent=true");
+                if (!this.showFrame) params.push("frame=false");
+                return baseUrl + (params.length ? "?" + params.join("&") : "");
+            },
+
+            getDownloadUrl() {
+                let baseUrl = this.selectedType === 'shop' 
+                    ? "{% url 'shop:shop_qr' shop.uuid %}" 
+                    : "/boutique/produits/" + this.selectedProduct + "/qr/";
+                const params = ["download=true"];
+                if (this.isTransparent) params.push("transparent=true");
+                if (!this.showFrame) params.push("frame=false");
                 return baseUrl + "?" + params.join("&");
             },
 
@@ -377,6 +382,7 @@
 
                 if (typeof QRCodeStyling === 'undefined') {
                     console.warn("QRCodeStyling not loaded, using image fallback");
+                    container.innerHTML = `<img src="${this.getPreviewUrl()}" class="w-full h-full object-contain rounded-xl">`;
                     return;
                 }
 
@@ -387,11 +393,16 @@
                     this.qrCodeObj.append(container);
                 } catch (err) {
                     console.warn("Canvas QR render fallback", err);
-                    container.innerHTML = `<img src="${this.getDirectUrl()}" class="w-full h-full object-contain rounded-2xl">`;
+                    container.innerHTML = `<img src="${this.getPreviewUrl()}" class="w-full h-full object-contain rounded-xl">`;
                 }
             },
 
             updateQr() {
+                const imgFallback = document.getElementById("qr-fallback-img");
+                if (imgFallback) {
+                    imgFallback.src = this.getPreviewUrl();
+                }
+
                 if (!this.qrCodeObj || typeof QRCodeStyling === 'undefined') {
                     this.renderQr();
                     return;
@@ -424,7 +435,7 @@
                 } catch (err) {
                     console.warn("Client QR download fallback to server URL", err);
                     const link = document.createElement("a");
-                    link.href = this.getDirectUrl();
+                    link.href = this.getDownloadUrl();
                     link.download = (this.selectedType === 'shop') ? "qr_azoria_{{ shop.slug }}.png" : "qr_produit.png";
                     document.body.appendChild(link);
                     link.click();
