@@ -329,7 +329,7 @@
                 let baseUrl = this.selectedType === 'shop' 
                     ? "{% url 'shop:shop_qr' shop.uuid %}" 
                     : "/boutique/produits/" + this.selectedProduct + "/qr/";
-                const params = ["download=true"];
+                const params = ["download=true", "card=true"];
                 if (this.isTransparent) params.push("transparent=true");
                 if (!this.showFrame) params.push("frame=false");
                 return baseUrl + "?" + params.join("&");
