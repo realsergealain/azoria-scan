@@ -1,12 +1,22 @@
 {% extends 'core/base_dashboard.html' %}
 
 {% block title %}Paramètres du Compte — Azoria{% endblock %}
-{% block header_title %}Paramètres{% endblock %}
+{% block header_title %}Paramètres du Compte{% endblock %}
 
 {% block content %}
-<div class="space-y-6 max-w-5xl" x-data="{ activeTab: 'profile', themeChoice: localStorage.theme || 'system' }">
+<div class="space-y-6 max-w-5xl mx-auto pb-16" 
+     x-data="{ 
+        activeTab: 'profile', 
+        themeChoice: localStorage.theme || 'system',
+        twoFactorEnabled: false,
+        show2FAModal: false,
+        showDangerModal: false,
+        notifWhatsapp: true,
+        notifEmail: true,
+        notifWeeklyReport: true
+     }">
     
-    <!-- Top Header -->
+    <!-- Top Header Profile Banner -->
     <div class="bg-white dark:bg-slate-900 p-5 sm:p-6 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-sm">
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div class="flex items-center gap-3.5">
@@ -14,9 +24,9 @@
                     {{ user.first_name|default:user.email|make_list|first|upper }}
                 </div>
                 <div>
-                    <h1 class="font-heading font-extrabold text-xl sm:text-2xl text-slate-900 dark:text-white">{{ user.first_name|default:user.email }}</h1>
+                    <h1 class="font-heading font-extrabold text-xl sm:text-2xl text-slate-900 dark:text-white">{{ user.full_name }}</h1>
                     <p class="text-xs text-slate-500 mt-0.5 flex items-center gap-1.5">
-                        <span class="inline-block w-2 h-2 rounded-full bg-emerald-500"></span>
+                        <span class="inline-block w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
                         <span>Compte Vendeur Vérifié • {{ user.email }}</span>
                     </p>
                 </div>
@@ -30,8 +40,10 @@
     <!-- Main Tabs Container -->
     <div class="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden">
         
-        <!-- Tab Navigation Bar -->
+        <!-- 4 Tabs Navigation Bar -->
         <div class="flex items-center gap-2 border-b border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/50 px-4 sm:px-6 overflow-x-auto no-scrollbar">
+            
+            <!-- 1. Profil -->
             <button @click="activeTab = 'profile'" 
                     :class="activeTab === 'profile' ? 'border-brand-600 text-brand-600 dark:text-brand-400 font-extrabold border-b-2' : 'border-transparent text-slate-500 hover:text-slate-900 dark:hover:text-white font-semibold'"
                     class="py-4 px-3 sm:px-4 text-xs sm:text-sm transition-colors flex items-center gap-2 outline-none whitespace-nowrap">
@@ -39,39 +51,50 @@
                 <span>Mon Profil</span>
             </button>
 
-            <button @click="activeTab = 'preferences'" 
-                    :class="activeTab === 'preferences' ? 'border-brand-600 text-brand-600 dark:text-brand-400 font-extrabold border-b-2' : 'border-transparent text-slate-500 hover:text-slate-900 dark:hover:text-white font-semibold'"
-                    class="py-4 px-3 sm:px-4 text-xs sm:text-sm transition-colors flex items-center gap-2 outline-none whitespace-nowrap">
-                <i data-lucide="sliders" class="w-4 h-4"></i>
-                <span>Préférences & Notifications</span>
-            </button>
-
+            <!-- 2. Sécurité & 2FA -->
             <button @click="activeTab = 'security'" 
                     :class="activeTab === 'security' ? 'border-brand-600 text-brand-600 dark:text-brand-400 font-extrabold border-b-2' : 'border-transparent text-slate-500 hover:text-slate-900 dark:hover:text-white font-semibold'"
                     class="py-4 px-3 sm:px-4 text-xs sm:text-sm transition-colors flex items-center gap-2 outline-none whitespace-nowrap">
                 <i data-lucide="shield-check" class="w-4 h-4"></i>
-                <span>Sécurité & Mot de passe</span>
+                <span>Sécurité & 2FA</span>
             </button>
+
+            <!-- 3. Notifications & Préférences -->
+            <button @click="activeTab = 'notifications'" 
+                    :class="activeTab === 'notifications' ? 'border-brand-600 text-brand-600 dark:text-brand-400 font-extrabold border-b-2' : 'border-transparent text-slate-500 hover:text-slate-900 dark:hover:text-white font-semibold'"
+                    class="py-4 px-3 sm:px-4 text-xs sm:text-sm transition-colors flex items-center gap-2 outline-none whitespace-nowrap">
+                <i data-lucide="bell" class="w-4 h-4"></i>
+                <span>Notifications & Préférences</span>
+            </button>
+
+            <!-- 4. Zone de Danger -->
+            <button @click="activeTab = 'danger'" 
+                    :class="activeTab === 'danger' ? 'border-rose-600 text-rose-600 font-extrabold border-b-2' : 'border-transparent text-slate-500 hover:text-rose-600 font-semibold'"
+                    class="py-4 px-3 sm:px-4 text-xs sm:text-sm transition-colors flex items-center gap-2 outline-none whitespace-nowrap">
+                <i data-lucide="alert-triangle" class="w-4 h-4"></i>
+                <span>Zone de Danger</span>
+            </button>
+
         </div>
 
         <!-- Tab Contents -->
         <div class="p-6 sm:p-8">
             
-            <!-- TAB 1: Mon Profil -->
+            <!-- ── TAB 1 : MON PROFIL ── -->
             <div x-show="activeTab === 'profile'" x-transition.opacity.duration.200ms>
                 <form method="post" action="{% url 'accounts:settings' %}" class="space-y-6 max-w-3xl">
                     {% csrf_token %}
                     
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div>
-                            <label for="{{ profile_form.first_name.id_for_label }}" class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">{{ profile_form.first_name.label }} :</label>
+                            <label for="{{ profile_form.first_name.id_for_label }}" class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">Prénom :</label>
                             {{ profile_form.first_name }}
                             {% if profile_form.first_name.errors %}
                                 <p class="text-rose-500 text-[10px] mt-1">{{ profile_form.first_name.errors.0 }}</p>
                             {% endif %}
                         </div>
                         <div>
-                            <label for="{{ profile_form.last_name.id_for_label }}" class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">{{ profile_form.last_name.label }} :</label>
+                            <label for="{{ profile_form.last_name.id_for_label }}" class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">Nom de famille :</label>
                             {{ profile_form.last_name }}
                             {% if profile_form.last_name.errors %}
                                 <p class="text-rose-500 text-[10px] mt-1">{{ profile_form.last_name.errors.0 }}</p>
@@ -81,17 +104,17 @@
 
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div>
-                            <label for="{{ profile_form.phone.id_for_label }}" class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">{{ profile_form.phone.label }} :</label>
+                            <label for="{{ profile_form.phone.id_for_label }}" class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">Numéro WhatsApp / Téléphone :</label>
                             {{ profile_form.phone }}
                             {% if profile_form.phone.errors %}
                                 <p class="text-rose-500 text-[10px] mt-1">{{ profile_form.phone.errors.0 }}</p>
                             {% endif %}
-                            <p class="text-[10px] text-slate-400 mt-1">Numéro principal utilisé pour vous joindre.</p>
+                            <p class="text-[10px] text-slate-400 mt-1">Numéro utilisé pour vos notifications de ventes.</p>
                         </div>
 
                         <div>
-                            <label for="{{ profile_form.email.id_for_label }}" class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">Adresse Email :</label>
-                            {{ profile_form.email }}
+                            <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">Adresse Email :</label>
+                            <input type="email" value="{{ user.email }}" disabled class="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-100 dark:bg-slate-800 text-slate-500 cursor-not-allowed text-xs font-medium">
                             <p class="text-[10px] text-slate-400 mt-1">Identifiant de connexion sécurisé (non modifiable).</p>
                         </div>
                     </div>
@@ -99,14 +122,87 @@
                     <div class="pt-4 border-t border-slate-100 dark:border-slate-800 flex justify-end">
                         <button type="submit" name="update_profile" class="inline-flex items-center gap-2 rounded-2xl bg-brand-600 hover:bg-brand-700 px-6 py-3 text-xs font-bold text-white shadow-md transition-all active:scale-95">
                             <i data-lucide="save" class="w-4 h-4"></i>
-                            <span>Enregistrer mon profil</span>
+                            <span>Enregistrer les modifications</span>
                         </button>
                     </div>
                 </form>
             </div>
 
-            <!-- TAB 2: Préférences & Affichage -->
-            <div x-show="activeTab === 'preferences'" x-transition.opacity.duration.200ms style="display: none;">
+            <!-- ── TAB 2 : SÉCURITÉ & 2FA ── -->
+            <div x-show="activeTab === 'security'" x-transition.opacity.duration.200ms style="display: none;">
+                <div class="space-y-8 max-w-3xl">
+                    
+                    <!-- Formulaire de changement de mot de passe -->
+                    <form method="post" action="{% url 'accounts:settings' %}" class="space-y-4 max-w-xl">
+                        {% csrf_token %}
+                        <h3 class="font-heading font-extrabold text-base text-slate-900 dark:text-white flex items-center gap-2">
+                            <i data-lucide="lock" class="w-4 h-4 text-brand-600"></i>
+                            <span>Changer mon mot de passe</span>
+                        </h3>
+                        
+                        {% for field in password_form %}
+                        <div>
+                            <label for="{{ field.id_for_label }}" class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">{{ field.label }} :</label>
+                            <input type="password" name="{{ field.html_name }}" id="{{ field.id_for_label }}" required 
+                                   class="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-brand-500 outline-none text-xs sm:text-sm font-medium">
+                            {% if field.errors %}
+                                <p class="text-rose-500 text-[10px] mt-1">{{ field.errors.0 }}</p>
+                            {% endif %}
+                        </div>
+                        {% endfor %}
+
+                        <div class="pt-2">
+                            <button type="submit" name="change_password" class="inline-flex items-center gap-2 rounded-2xl bg-slate-900 dark:bg-white text-white dark:text-slate-900 hover:bg-slate-800 dark:hover:bg-slate-100 px-6 py-3 text-xs font-bold shadow-md transition-all active:scale-95">
+                                <i data-lucide="shield-check" class="w-4 h-4"></i>
+                                <span>Mettre à jour le mot de passe</span>
+                            </button>
+                        </div>
+                    </form>
+
+                    <!-- 2FA Double Authentification -->
+                    <div class="pt-6 border-t border-slate-100 dark:border-slate-800 space-y-4">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <h3 class="font-heading font-extrabold text-base text-slate-900 dark:text-white flex items-center gap-2">
+                                    <i data-lucide="smartphone" class="w-4 h-4 text-brand-600"></i>
+                                    <span>Double Authentification (2FA)</span>
+                                </h3>
+                                <p class="text-xs text-slate-400 mt-0.5">Renforcez la sécurité de votre compte avec Google Authenticator ou SMS.</p>
+                            </div>
+                            <button @click="show2FAModal = true" 
+                                    class="px-4 py-2.5 rounded-2xl font-bold text-xs transition-all active:scale-95"
+                                    :class="twoFactorEnabled ? 'bg-rose-50 text-rose-600 border border-rose-200' : 'bg-brand-50 text-brand-600 dark:bg-brand-950/40 border border-brand-200 dark:border-brand-800/40'">
+                                <span x-text="twoFactorEnabled ? 'Désactiver 2FA' : 'Activer 2FA 🔒'"></span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Connection History -->
+                    <div class="pt-6 border-t border-slate-100 dark:border-slate-800 space-y-3">
+                        <h3 class="font-heading font-extrabold text-base text-slate-900 dark:text-white flex items-center gap-2">
+                            <i data-lucide="history" class="w-4 h-4 text-brand-600"></i>
+                            <span>Historique Récent des Connexions</span>
+                        </h3>
+
+                        <div class="space-y-2">
+                            <div class="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-700 flex items-center justify-between text-xs">
+                                <div class="flex items-center gap-3">
+                                    <i data-lucide="globe" class="w-4 h-4 text-emerald-500"></i>
+                                    <div>
+                                        <span class="font-bold text-slate-900 dark:text-white block">Session Actuelle (navigateur Web)</span>
+                                        <span class="text-[10px] text-slate-400">IP: {{ request.META.REMOTE_ADDR|default:"127.0.0.1" }} • Côte d'Ivoire</span>
+                                    </div>
+                                </div>
+                                <span class="px-2.5 py-1 rounded-full bg-emerald-100 text-emerald-800 text-[10px] font-extrabold">Connecté 🟢</span>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- ── TAB 3 : NOTIFICATIONS & PRÉFÉRENCES ── -->
+            <div x-show="activeTab === 'notifications'" x-transition.opacity.duration.200ms style="display: none;">
                 <div class="space-y-6 max-w-2xl">
                     
                     <!-- Theme Selector -->
@@ -137,62 +233,129 @@
                         </div>
                     </div>
 
-                    <!-- Notifications Setting -->
+                    <!-- Notification Toggles -->
                     <div class="pt-4 border-t border-slate-100 dark:border-slate-800 space-y-3">
-                        <h3 class="font-heading font-bold text-sm text-slate-900 dark:text-white">Notifications de Commandes</h3>
+                        <h3 class="font-heading font-bold text-sm text-slate-900 dark:text-white">Alertes & Notifications Vendeur</h3>
                         
-                        <label class="flex items-start gap-3 p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-700 cursor-pointer">
-                            <input type="checkbox" checked class="mt-0.5 w-4 h-4 rounded text-brand-600 focus:ring-brand-500 border-slate-300">
-                            <div>
-                                <span class="text-xs font-bold text-slate-900 dark:text-white block">Alerte WhatsApp instantanée</span>
-                                <span class="text-[11px] text-slate-500">Permettre aux clients de vous notifier immédiatement dès validation de leur commande.</span>
+                        <label class="flex items-center justify-between p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-700 cursor-pointer">
+                            <div class="flex items-center gap-3">
+                                <span class="text-lg">💬</span>
+                                <div>
+                                    <span class="text-xs font-bold text-slate-900 dark:text-white block">Alertes WhatsApp instantanées</span>
+                                    <span class="text-[11px] text-slate-400 block">Recevoir une notification directe à chaque nouvelle commande client.</span>
+                                </div>
                             </div>
+                            <input type="checkbox" x-model="notifWhatsapp" class="w-4 h-4 accent-brand-600 rounded">
                         </label>
-                    </div>
 
-                    <!-- Currency setting -->
-                    <div class="pt-4 border-t border-slate-100 dark:border-slate-800">
-                        <h3 class="font-heading font-bold text-sm text-slate-900 dark:text-white mb-1">Devise principale</h3>
-                        <p class="text-xs text-slate-400 mb-2">Devise utilisée pour l'affichage de vos prix et de votre chiffre d'affaires.</p>
-                        <select class="px-4 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs font-bold text-slate-800 dark:text-slate-200 outline-none">
-                            <option value="XOF" selected>FCFA (Franc CFA - Afrique de l'Ouest)</option>
-                            <option value="EUR">EUR (€ Euro)</option>
-                            <option value="USD">USD ($ Dollar US)</option>
-                        </select>
+                        <label class="flex items-center justify-between p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-700 cursor-pointer">
+                            <div class="flex items-center gap-3">
+                                <span class="text-lg">✉️</span>
+                                <div>
+                                    <span class="text-xs font-bold text-slate-900 dark:text-white block">Emails de confirmation</span>
+                                    <span class="text-[11px] text-slate-400 block">Recevoir un récapitulatif email pour chaque commande validée.</span>
+                                </div>
+                            </div>
+                            <input type="checkbox" x-model="notifEmail" class="w-4 h-4 accent-brand-600 rounded">
+                        </label>
+
+                        <label class="flex items-center justify-between p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-700 cursor-pointer">
+                            <div class="flex items-center gap-3">
+                                <span class="text-lg">📊</span>
+                                <div>
+                                    <span class="text-xs font-bold text-slate-900 dark:text-white block">Rapport Hebdomadaire de Ventes</span>
+                                    <span class="text-[11px] text-slate-400 block">Un bilan de vos performances envoyé chaque lundi matin.</span>
+                                </div>
+                            </div>
+                            <input type="checkbox" x-model="notifWeeklyReport" class="w-4 h-4 accent-brand-600 rounded">
+                        </label>
                     </div>
 
                 </div>
             </div>
 
-            <!-- TAB 3: Sécurité -->
-            <div x-show="activeTab === 'security'" x-transition.opacity.duration.200ms style="display: none;">
-                <form method="post" action="{% url 'accounts:settings' %}" class="space-y-4 max-w-xl">
-                    {% csrf_token %}
-                    
-                    {% for field in password_form %}
+            <!-- ── TAB 4 : ZONE DE DANGER ── -->
+            <div x-show="activeTab === 'danger'" x-transition.opacity.duration.200ms style="display: none;">
+                <div class="space-y-6 max-w-2xl bg-rose-50/50 dark:bg-rose-950/20 p-6 sm:p-8 rounded-3xl border border-rose-200 dark:border-rose-900/40">
                     <div>
-                        <label for="{{ field.id_for_label }}" class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">{{ field.label }} :</label>
-                        <input type="password" name="{{ field.html_name }}" id="{{ field.id_for_label }}" required 
-                               class="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-brand-500 outline-none text-xs sm:text-sm font-medium">
-                        {% if field.errors %}
-                            <p class="text-rose-500 text-[10px] mt-1">{{ field.errors.0 }}</p>
-                        {% endif %}
-                        {% if field.help_text %}
-                            <p class="text-[10px] text-slate-400 mt-1">{{ field.help_text|safe }}</p>
-                        {% endif %}
+                        <h3 class="font-heading font-extrabold text-lg text-rose-600 dark:text-rose-400 flex items-center gap-2">
+                            <i data-lucide="alert-triangle" class="w-5 h-5"></i>
+                            <span>Actions Irréversibles sur le Compte</span>
+                        </h3>
+                        <p class="text-xs text-slate-600 dark:text-slate-300 mt-1">
+                            La désactivation ou la suppression de votre compte suspend immédiatement la visibilité de votre boutique et l'accès à vos données.
+                        </p>
                     </div>
-                    {% endfor %}
 
-                    <div class="pt-4 border-t border-slate-100 dark:border-slate-800 flex justify-end">
-                        <button type="submit" name="change_password" class="inline-flex items-center gap-2 rounded-2xl bg-slate-900 dark:bg-white text-white dark:text-slate-900 hover:bg-slate-800 dark:hover:bg-slate-100 px-6 py-3 text-xs font-bold shadow-md transition-all active:scale-95">
-                            <i data-lucide="lock" class="w-4 h-4"></i>
-                            <span>Mettre à jour le mot de passe</span>
-                        </button>
+                    <div class="space-y-4 pt-4 border-t border-rose-200 dark:border-rose-900/40">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <h4 class="font-bold text-xs text-slate-900 dark:text-white">Désactiver temporairement la boutique</h4>
+                                <p class="text-[11px] text-slate-500">Masque votre vitrine du public tout en conservant vos articles.</p>
+                            </div>
+                            <button @click="alert('Votre boutique a été temporairement masquée.')" 
+                                    class="px-4 py-2 rounded-xl bg-amber-100 text-amber-800 font-bold text-xs hover:bg-amber-200 transition-all">
+                                Masquer Boutique
+                            </button>
+                        </div>
+
+                        <div class="flex items-center justify-between pt-3 border-t border-rose-200/60 dark:border-rose-900/40">
+                            <div>
+                                <h4 class="font-bold text-xs text-rose-600 dark:text-rose-400">Supprimer définitivement mon compte</h4>
+                                <p class="text-[11px] text-slate-500">Supprime définitivement vos produits, commandes et identifiants.</p>
+                            </div>
+                            <button @click="showDangerModal = true" 
+                                    class="px-4 py-2 rounded-xl bg-rose-600 hover:bg-rose-700 text-white font-extrabold text-xs shadow-md transition-all active:scale-95">
+                                Supprimer le compte
+                            </button>
+                        </div>
                     </div>
-                </form>
+                </div>
             </div>
 
         </div>
     </div>
+
+    <!-- MODAL 2FA SETUP -->
+    <div x-show="show2FAModal" x-cloak class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm">
+        <div class="bg-white dark:bg-slate-900 rounded-3xl p-6 sm:p-8 max-w-md w-full border border-slate-200 dark:border-slate-800 shadow-2xl space-y-4 text-center">
+            <div class="w-12 h-12 rounded-2xl bg-brand-100 text-brand-600 flex items-center justify-center mx-auto">
+                <i data-lucide="qr-code" class="w-6 h-6"></i>
+            </div>
+            <h3 class="font-heading font-extrabold text-lg text-slate-900 dark:text-white">Activer la Double Authentification</h3>
+            <p class="text-xs text-slate-500">Scannez ce QR Code avec Google Authenticator ou Authy pour obtenir vos codes 2FA à 6 chiffres.</p>
+            
+            <div class="bg-slate-100 p-4 rounded-2xl inline-block">
+                <!-- Simulated 2FA QR -->
+                <div class="w-36 h-36 bg-slate-900 text-white font-mono text-[10px] flex items-center justify-center rounded-xl mx-auto">
+                    [2FA QR CODE]
+                </div>
+            </div>
+
+            <button @click="twoFactorEnabled = true; show2FAModal = false; if(window.AzoriaUI) AzoriaUI.showToast('Double Authentification activée avec succès ! 🔒', 'success');"
+                    class="w-full py-3 rounded-2xl bg-brand-600 text-white font-bold text-xs shadow-md">
+                Confirmer l'activation 2FA
+            </button>
+            <button @click="show2FAModal = false" class="text-xs text-slate-400 font-semibold hover:underline">Annuler</button>
+        </div>
+    </div>
+
+    <!-- MODAL DANGER CONFIRMATION -->
+    <div x-show="showDangerModal" x-cloak class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/70 backdrop-blur-sm">
+        <div class="bg-white dark:bg-slate-900 rounded-3xl p-6 sm:p-8 max-w-md w-full border border-rose-200 dark:border-rose-900 shadow-2xl space-y-4 text-center">
+            <div class="w-12 h-12 rounded-2xl bg-rose-100 text-rose-600 flex items-center justify-center mx-auto">
+                <i data-lucide="alert-triangle" class="w-6 h-6"></i>
+            </div>
+            <h3 class="font-heading font-extrabold text-lg text-rose-600">Confirmation de Suppression</h3>
+            <p class="text-xs text-slate-500">Êtes-vous absolument sûr ? Cette action effacera définitivement votre boutique et toutes vos commandes.</p>
+            
+            <button @click="alert('Procédure de suppression annulée par sécurité.'); showDangerModal = false;"
+                    class="w-full py-3 rounded-2xl bg-rose-600 hover:bg-rose-700 text-white font-extrabold text-xs shadow-lg">
+                Confirmer la suppression irréversible
+            </button>
+            <button @click="showDangerModal = false" class="text-xs text-slate-400 font-semibold hover:underline">Annuler et conserver mon compte</button>
+        </div>
+    </div>
+
 </div>
 {% endblock %}

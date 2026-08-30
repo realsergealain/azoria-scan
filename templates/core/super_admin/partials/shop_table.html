@@ -1,0 +1,71 @@
+<div class="overflow-x-auto">
+    <table class="w-full text-left border-collapse text-xs sm:text-sm">
+        <thead>
+            <tr class="border-b border-slate-200 dark:border-slate-800 text-slate-400 font-bold uppercase tracking-wider text-[10px]">
+                <th class="py-3 px-4">Boutique</th>
+                <th class="py-3 px-4">Propriétaire</th>
+                <th class="py-3 px-4">Ville</th>
+                <th class="py-3 px-4">Statut</th>
+                <th class="py-3 px-4 text-right">Actions Modération</th>
+            </tr>
+        </thead>
+        <tbody class="divide-y divide-slate-100 dark:divide-slate-800">
+            {% for s in shops %}
+            <tr class="hover:bg-slate-50/50 dark:hover:bg-slate-800/40 transition-colors">
+                <td class="py-3.5 px-4 font-bold text-slate-900 dark:text-white flex items-center gap-2.5">
+                    <div class="w-8 h-8 rounded-xl bg-gradient-to-tr from-brand-600 to-indigo-600 text-white font-black flex items-center justify-center text-xs">
+                        {{ s.name|make_list|first|upper }}
+                    </div>
+                    <div>
+                        <a href="{% url 'shop:detail' s.uuid s.slug %}" target="_blank" class="font-extrabold text-xs text-brand-600 dark:text-brand-400 hover:underline">
+                            {{ s.name }} ↗
+                        </a>
+                        <div class="text-[10px] text-slate-400 font-normal">slug: {{ s.slug }}</div>
+                    </div>
+                </td>
+                <td class="py-3.5 px-4 font-medium text-slate-600 dark:text-slate-300">
+                    {{ s.owner.full_name }} ({{ s.owner.email }})
+                </td>
+                <td class="py-3.5 px-4 text-slate-400 text-xs">
+                    {{ s.city|default:"Abidjan" }}
+                </td>
+                <td class="py-3.5 px-4">
+                    {% if s.is_active %}
+                    <span class="px-2.5 py-1 rounded-full bg-emerald-100 text-emerald-800 dark:bg-emerald-950/50 dark:text-emerald-300 text-[10px] font-extrabold">
+                        En Ligne 🟢
+                    </span>
+                    {% else %}
+                    <span class="px-2.5 py-1 rounded-full bg-rose-100 text-rose-800 dark:bg-rose-950/50 dark:text-rose-300 text-[10px] font-extrabold">
+                        Bloquée 🔴
+                    </span>
+                    {% endif %}
+                </td>
+                <td class="py-3.5 px-4 text-right">
+                    <form hx-post="{% url 'super_admin:toggle_shop' s.uuid %}" 
+                          hx-target="#shop-table-container" 
+                          hx-swap="innerHTML" 
+                          class="inline-block">
+                        {% csrf_token %}
+                        {% if s.is_active %}
+                        <button type="submit" 
+                                onclick="return confirm('Bloquer cette boutique pour fraude ou non-respect ?')"
+                                class="px-3 py-1.5 rounded-xl bg-rose-50 text-rose-600 hover:bg-rose-100 font-bold text-[10px] border border-rose-200 transition-all active:scale-95">
+                            Bloquer Boutique
+                        </button>
+                        {% else %}
+                        <button type="submit" 
+                                class="px-3 py-1.5 rounded-xl bg-emerald-50 text-emerald-600 hover:bg-emerald-100 font-bold text-[10px] border border-emerald-200 transition-all active:scale-95">
+                            Débloquer
+                        </button>
+                        {% endif %}
+                    </form>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="5" class="py-8 text-center text-slate-400 text-xs">Aucune boutique trouvée.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>

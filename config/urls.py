@@ -13,6 +13,7 @@ admin.site.index_title = "Tableau de Bord Principal"
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('super-admin/', include('apps.core.super_admin_urls', namespace='super_admin')),
     path('mon-compte/', include('apps.accounts.urls', namespace='accounts')),
     path('', include('apps.core.urls', namespace='core')),
     path('boutique/', include('apps.shop.urls', namespace='shop')),
