@@ -334,21 +334,41 @@ def qr_studio(request):
 
 
 def shop_qr_code(request, shop_uuid):
-    """Génère et sert l'image PNG du QR code de la boutique."""
+    """Génère et sert l'image PNG HD du QR code de la boutique."""
     shop = get_object_or_404(Shop, uuid=shop_uuid)
     url = request.build_absolute_uri(f"/boutique/{shop.uuid}/{shop.slug}/?ref=qr")
-    color = shop.branding.primary_color if hasattr(shop, 'branding') else '#7C3AED'
-    buffer = generate_styled_qr_code(url, color_hex=color)
-    return HttpResponse(buffer, content_type="image/png")
+    color = shop.branding.primary_color if (hasattr(shop, 'branding') and shop.branding and shop.branding.primary_color) else '#7C3AED'
+    logo_file = shop.branding.logo if (hasattr(shop, 'branding') and shop.branding and shop.branding.logo) else None
+    
+    transparent = request.GET.get('transparent') == 'true'
+    buffer = generate_styled_qr_code(url, color_hex=color, logo_image=logo_file, transparent=transparent)
+    
+    response = HttpResponse(buffer.getvalue(), content_type="image/png")
+    filename = f"qr_{shop.slug}.png"
+    if request.GET.get('download') == 'true':
+        response['Content-Disposition'] = f'attachment; filename="{filename}"'
+    else:
+        response['Content-Disposition'] = f'inline; filename="{filename}"'
+    return response
 
 
 def product_qr_code(request, product_uuid):
-    """Génère et sert l'image PNG du QR code d'un produit."""
+    """Génère et sert l'image PNG HD du QR code d'un produit."""
     product = get_object_or_404(ShopProduct, uuid=product_uuid)
     url = request.build_absolute_uri(f"/boutique/{product.shop.uuid}/{product.shop.slug}/?product={product.uuid}&ref=qr")
-    color = product.shop.branding.primary_color if hasattr(product.shop, 'branding') else '#7C3AED'
-    buffer = generate_styled_qr_code(url, color_hex=color)
-    return HttpResponse(buffer, content_type="image/png")
+    color = product.shop.branding.primary_color if (hasattr(product.shop, 'branding') and product.shop.branding and product.shop.branding.primary_color) else '#7C3AED'
+    logo_file = product.shop.branding.logo if (hasattr(product.shop, 'branding') and product.shop.branding and product.shop.branding.logo) else None
+    
+    transparent = request.GET.get('transparent') == 'true'
+    buffer = generate_styled_qr_code(url, color_hex=color, logo_image=logo_file, transparent=transparent)
+    
+    response = HttpResponse(buffer.getvalue(), content_type="image/png")
+    filename = f"qr_produit_{product.slug}.png"
+    if request.GET.get('download') == 'true':
+        response['Content-Disposition'] = f'attachment; filename="{filename}"'
+    else:
+        response['Content-Disposition'] = f'inline; filename="{filename}"'
+    return response
 
 
 # ==========================================

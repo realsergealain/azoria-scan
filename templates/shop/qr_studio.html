@@ -1,21 +1,31 @@
 {% extends 'core/base_dashboard.html' %}
+{% load static %}
 
 {% block title %}Studio QR Codes & Marketing — Azoria{% endblock %}
 {% block header_title %}QR Codes & Marketing{% endblock %}
 
+{% block extra_head %}
+<!-- QR Code Styling Library for HD Vectorial SVG & Transparent Canvas Export -->
+<script src="https://unpkg.com/qr-code-styling@1.5.0/lib/qr-code-styling.js"></script>
+{% endblock %}
+
 {% block content %}
-<div class="max-w-5xl mx-auto pb-12 space-y-6" x-data="{ selectedType: 'shop', selectedProduct: '{{ products.first.uuid|default:'' }}' }">
+<div class="max-w-6xl mx-auto pb-16 space-y-6" 
+     x-data="qrStudioApp()">
     
     <!-- Top Header -->
     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-            <h1 class="font-heading text-2xl font-extrabold text-slate-900 dark:text-white tracking-tight">Studio QR Codes & Marketing</h1>
-            <p class="text-sm text-slate-500 mt-1">Téléchargez vos QR Codes stylisés pour vos packagings, flyers, statuts WhatsApp et vidéos TikTok.</p>
+            <h1 class="font-heading text-2xl font-extrabold text-slate-900 dark:text-white tracking-tight flex items-center gap-2">
+                <span>Studio QR Codes & Marketing</span>
+                <span class="px-2.5 py-0.5 rounded-full bg-brand-100 dark:bg-brand-900/40 text-brand-700 dark:text-brand-300 text-xs font-extrabold">HD & Transparence</span>
+            </h1>
+            <p class="text-sm text-slate-500 mt-1">Générez et personnalisez des QR Codes ultra-stylés avec fond transparent pour vos vidéos TikTok, flyers et emballages.</p>
         </div>
 
         <!-- Quick Copy Store Link -->
-        <button onclick="if(window.AzoriaUI) AzoriaUI.copyToClipboard('{{ request.scheme }}://{{ request.get_host }}{% url 'shop:detail' shop.uuid shop.slug %}', 'Lien de votre boutique copié ! ✨'); else { navigator.clipboard.writeText('{{ request.scheme }}://{{ request.get_host }}{% url 'shop:detail' shop.uuid shop.slug %}'); alert('Lien copié !'); }"
-                class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-brand-50 dark:bg-slate-800 text-brand-600 dark:text-brand-400 font-bold text-xs border border-brand-200 dark:border-slate-700 shadow-sm hover:bg-brand-100 dark:hover:bg-slate-700 transition-all active:scale-95">
+        <button @click="copyStoreLink()"
+                class="inline-flex items-center gap-2 px-4 py-2.5 rounded-2xl bg-white dark:bg-slate-800 text-brand-600 dark:text-brand-400 font-bold text-xs border border-slate-200 dark:border-slate-700 shadow-sm hover:bg-brand-50 dark:hover:bg-slate-700 transition-all active:scale-95">
             <i data-lucide="copy" class="w-4 h-4"></i>
             <span>Copier le lien public</span>
         </button>
@@ -24,7 +34,7 @@
     <!-- Analytics Breakdown: Scans vs Direct Clicks -->
     <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <div class="bg-white dark:bg-slate-800 rounded-3xl p-5 border border-slate-200 dark:border-slate-700 shadow-sm flex items-center gap-4">
-            <div class="w-12 h-12 rounded-2xl bg-purple-50 text-purple-600 flex items-center justify-center shrink-0">
+            <div class="w-12 h-12 rounded-2xl bg-purple-50 dark:bg-purple-950/40 text-purple-600 dark:text-purple-400 flex items-center justify-center shrink-0">
                 <i data-lucide="eye" class="w-6 h-6"></i>
             </div>
             <div>
@@ -34,7 +44,7 @@
         </div>
 
         <div class="bg-white dark:bg-slate-800 rounded-3xl p-5 border border-slate-200 dark:border-slate-700 shadow-sm flex items-center gap-4">
-            <div class="w-12 h-12 rounded-2xl bg-brand-50 text-brand-600 flex items-center justify-center shrink-0">
+            <div class="w-12 h-12 rounded-2xl bg-brand-50 dark:bg-brand-950/40 text-brand-600 dark:text-brand-400 flex items-center justify-center shrink-0">
                 <i data-lucide="qr-code" class="w-6 h-6"></i>
             </div>
             <div>
@@ -44,11 +54,11 @@
         </div>
 
         <div class="bg-white dark:bg-slate-800 rounded-3xl p-5 border border-slate-200 dark:border-slate-700 shadow-sm flex items-center gap-4">
-            <div class="w-12 h-12 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center shrink-0">
+            <div class="w-12 h-12 rounded-2xl bg-blue-50 dark:bg-blue-950/40 text-blue-600 dark:text-blue-400 flex items-center justify-center shrink-0">
                 <i data-lucide="link" class="w-6 h-6"></i>
             </div>
             <div>
-                <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Clics sur Liens Bio</span>
+                <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Clics Liens Bio</span>
                 <div class="font-heading font-extrabold text-2xl text-blue-600">{{ analytics.direct_visits }}</div>
             </div>
         </div>
@@ -59,110 +69,373 @@
         
         <!-- Controls Panel (Left) -->
         <div class="lg:col-span-7 bg-white dark:bg-slate-800 rounded-3xl p-6 sm:p-8 border border-slate-200 dark:border-slate-700 shadow-sm space-y-6">
-            <div>
-                <h2 class="font-heading font-bold text-lg text-slate-900 dark:text-white">Choisir le type de QR Code</h2>
-                <p class="text-xs text-slate-400 mt-0.5">Générez un QR Code pour votre boutique complète ou directement pour un article précis.</p>
+            
+            <!-- 1. Destination -->
+            <div class="space-y-3">
+                <div class="flex items-center justify-between">
+                    <h2 class="font-heading font-bold text-base text-slate-900 dark:text-white">1. Destination du QR Code</h2>
+                    <span class="text-[11px] text-slate-400 font-semibold">Cible du scan</span>
+                </div>
+
+                <div class="grid grid-cols-2 gap-3">
+                    <button @click="selectedType = 'shop'; updateQr();"
+                            :class="selectedType === 'shop' ? 'border-brand-500 bg-brand-50/50 dark:bg-brand-950/30 text-brand-600 dark:text-brand-400 font-extrabold ring-2 ring-brand-500/20' : 'border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 font-medium'"
+                            class="p-4 rounded-2xl border text-left flex flex-col gap-1 transition-all active:scale-95">
+                        <i data-lucide="store" class="w-5 h-5"></i>
+                        <span class="text-xs">QR Code Boutique</span>
+                        <span class="text-[10px] text-slate-400 font-normal">Renvoie vers la vitrine globale</span>
+                    </button>
+
+                    <button @click="selectedType = 'product'; updateQr();"
+                            :class="selectedType === 'product' ? 'border-brand-500 bg-brand-50/50 dark:bg-brand-950/30 text-brand-600 dark:text-brand-400 font-extrabold ring-2 ring-brand-500/20' : 'border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 font-medium'"
+                            class="p-4 rounded-2xl border text-left flex flex-col gap-1 transition-all active:scale-95">
+                        <i data-lucide="package" class="w-5 h-5"></i>
+                        <span class="text-xs">QR Code Produit</span>
+                        <span class="text-[10px] text-slate-400 font-normal">Lien direct vers 1 article</span>
+                    </button>
+                </div>
+
+                <!-- Product Selector -->
+                <div x-show="selectedType === 'product'" x-transition class="pt-2">
+                    <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Sélectionner le produit :</label>
+                    <select x-model="selectedProduct" @change="updateQr()" class="w-full px-4 py-3 rounded-2xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-xs font-medium focus:ring-2 focus:ring-brand-500 outline-none">
+                        {% for product in products %}
+                        <option value="{{ product.uuid }}" data-url="{{ request.scheme }}://{{ request.get_host }}{% url 'shop:detail' shop.uuid shop.slug %}?product={{ product.uuid }}&ref=qr">
+                            {{ product.name }} ({{ product.price|floatformat:0 }} FCFA)
+                        </option>
+                        {% empty %}
+                        <option disabled>Aucun produit disponible</option>
+                        {% endfor %}
+                    </select>
+                </div>
             </div>
 
-            <!-- Type Selector Pills -->
-            <div class="grid grid-cols-2 gap-3">
-                <button @click="selectedType = 'shop'"
-                        :class="selectedType === 'shop' ? 'border-brand-500 bg-brand-50/50 dark:bg-slate-900 text-brand-600 dark:text-brand-400 font-extrabold ring-2 ring-brand-500/20' : 'border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 font-medium'"
-                        class="p-4 rounded-2xl border text-left flex flex-col gap-1 transition-all">
-                    <i data-lucide="store" class="w-5 h-5"></i>
-                    <span class="text-xs">QR Code Boutique</span>
-                    <span class="text-[10px] text-slate-400 font-normal">Renvoie vers la vitrine globale</span>
-                </button>
+            <!-- 2. Personnalisation Visuelle -->
+            <div class="space-y-4 pt-4 border-t border-slate-100 dark:border-slate-700/80">
+                <div class="flex items-center justify-between">
+                    <h2 class="font-heading font-bold text-base text-slate-900 dark:text-white">2. Style & Design Vidéo</h2>
+                    <span class="text-[11px] text-brand-600 dark:text-brand-400 font-bold">Rendu Professionnel ✨</span>
+                </div>
 
-                <button @click="selectedType = 'product'"
-                        :class="selectedType === 'product' ? 'border-brand-500 bg-brand-50/50 dark:bg-slate-900 text-brand-600 dark:text-brand-400 font-extrabold ring-2 ring-brand-500/20' : 'border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 font-medium'"
-                        class="p-4 rounded-2xl border text-left flex flex-col gap-1 transition-all">
-                    <i data-lucide="package" class="w-5 h-5"></i>
-                    <span class="text-xs">QR Code Produit</span>
-                    <span class="text-[10px] text-slate-400 font-normal">Lien direct vers 1 article</span>
-                </button>
-            </div>
+                <!-- Color Presets & Picker -->
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-2">Couleur des motifs :</label>
+                    <div class="flex items-center gap-3">
+                        <input type="color" x-model="qrColor" @change="updateQr()" class="w-10 h-10 rounded-xl cursor-pointer border-0 p-0 bg-transparent">
+                        <div class="flex items-center gap-2 flex-wrap">
+                            <button @click="qrColor = '#7C3AED'; updateQr();" class="w-7 h-7 rounded-full bg-[#7C3AED] border-2 border-white ring-2 ring-slate-200 dark:ring-slate-700" title="Violet Azoria"></button>
+                            <button @click="qrColor = '#0F172A'; updateQr();" class="w-7 h-7 rounded-full bg-[#0F172A] border-2 border-white ring-2 ring-slate-200 dark:ring-slate-700" title="Noir Carbone"></button>
+                            <button @click="qrColor = '#2563EB'; updateQr();" class="w-7 h-7 rounded-full bg-[#2563EB] border-2 border-white ring-2 ring-slate-200 dark:ring-slate-700" title="Bleu Royal"></button>
+                            <button @click="qrColor = '#059669'; updateQr();" class="w-7 h-7 rounded-full bg-[#059669] border-2 border-white ring-2 ring-slate-200 dark:ring-slate-700" title="Émeraude"></button>
+                            <button @click="qrColor = '#E11D48'; updateQr();" class="w-7 h-7 rounded-full bg-[#E11D48] border-2 border-white ring-2 ring-slate-200 dark:ring-slate-700" title="Rose Framboise"></button>
+                        </div>
+                    </div>
+                </div>
 
-            <!-- Product Dropdown (If Product Type) -->
-            <div x-show="selectedType === 'product'" x-transition class="space-y-2">
-                <label class="block text-xs font-bold text-slate-700 dark:text-slate-300">Sélectionner le produit :</label>
-                <select x-model="selectedProduct" class="w-full px-4 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-xs font-medium focus:ring-2 focus:ring-brand-500 outline-none">
-                    {% for product in products %}
-                    <option value="{{ product.uuid }}">{{ product.name }} ({{ product.price|floatformat:0 }} FCFA)</option>
-                    {% empty %}
-                    <option disabled>Aucun produit disponible</option>
-                    {% endfor %}
-                </select>
+                <!-- Options Toggles (Fond Transparent & Frame SCAN ME) -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
+                    <!-- Transparent Background Toggle -->
+                    <label class="p-3.5 rounded-2xl border flex items-center justify-between cursor-pointer transition-all"
+                           :class="isTransparent ? 'border-brand-500 bg-brand-50/50 dark:bg-brand-950/30' : 'border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-900'">
+                        <div class="flex items-center gap-2.5">
+                            <i data-lucide="layers" class="w-4 h-4 text-brand-600 dark:text-brand-400"></i>
+                            <div>
+                                <span class="text-xs font-bold text-slate-900 dark:text-white block">Fond Transparent</span>
+                                <span class="text-[10px] text-slate-400 block">Pour incrustation vidéo</span>
+                            </div>
+                        </div>
+                        <input type="checkbox" x-model="isTransparent" @change="updateQr()" class="w-4 h-4 accent-brand-600 rounded">
+                    </label>
+
+                    <!-- SCAN ME Header Badge Toggle -->
+                    <label class="p-3.5 rounded-2xl border flex items-center justify-between cursor-pointer transition-all"
+                           :class="showFrame ? 'border-brand-500 bg-brand-50/50 dark:bg-brand-950/30' : 'border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-900'">
+                        <div class="flex items-center gap-2.5">
+                            <i data-lucide="badge" class="w-4 h-4 text-brand-600 dark:text-brand-400"></i>
+                            <div>
+                                <span class="text-xs font-bold text-slate-900 dark:text-white block">Bandeau « SCAN ME ! »</span>
+                                <span class="text-[10px] text-slate-400 block">Cadre supérieur stylé</span>
+                            </div>
+                        </div>
+                        <input type="checkbox" x-model="showFrame" @change="updateQr()" class="w-4 h-4 accent-brand-600 rounded">
+                    </label>
+                </div>
+
+                <!-- Dots Shape Selector -->
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-2">Forme des éléments (Dots) :</label>
+                    <div class="grid grid-cols-4 gap-2">
+                        <button @click="dotsStyle = 'rounded'; updateQr();" 
+                                :class="dotsStyle === 'rounded' ? 'bg-brand-600 text-white font-bold' : 'bg-slate-100 dark:bg-slate-900 text-slate-700 dark:text-slate-300'"
+                                class="py-2.5 px-2 rounded-xl text-xs font-semibold text-center transition-all active:scale-95">Arrondi</button>
+                        <button @click="dotsStyle = 'dots'; updateQr();" 
+                                :class="dotsStyle === 'dots' ? 'bg-brand-600 text-white font-bold' : 'bg-slate-100 dark:bg-slate-900 text-slate-700 dark:text-slate-300'"
+                                class="py-2.5 px-2 rounded-xl text-xs font-semibold text-center transition-all active:scale-95">Bulles</button>
+                        <button @click="dotsStyle = 'classy-rounded'; updateQr();" 
+                                :class="dotsStyle === 'classy-rounded' ? 'bg-brand-600 text-white font-bold' : 'bg-slate-100 dark:bg-slate-900 text-slate-700 dark:text-slate-300'"
+                                class="py-2.5 px-2 rounded-xl text-xs font-semibold text-center transition-all active:scale-95">Élégant</button>
+                        <button @click="dotsStyle = 'square'; updateQr();" 
+                                :class="dotsStyle === 'square' ? 'bg-brand-600 text-white font-bold' : 'bg-slate-100 dark:bg-slate-900 text-slate-700 dark:text-slate-300'"
+                                class="py-2.5 px-2 rounded-xl text-xs font-semibold text-center transition-all active:scale-95">Carré</button>
+                    </div>
+                </div>
+
+                <!-- Center Logo Toggle -->
+                {% if shop.branding.logo %}
+                <label class="p-3.5 rounded-2xl border border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-900 flex items-center justify-between cursor-pointer transition-all">
+                    <div class="flex items-center gap-3">
+                        <img src="{{ shop.branding.logo.url }}" class="w-7 h-7 rounded-lg object-cover">
+                        <div>
+                            <span class="text-xs font-bold text-slate-900 dark:text-white block">Logo au centre du QR</span>
+                            <span class="text-[10px] text-slate-400 block">Intègre le logo de votre boutique</span>
+                        </div>
+                    </div>
+                    <input type="checkbox" x-model="includeLogo" @change="updateQr()" class="w-4 h-4 accent-brand-600 rounded">
+                </label>
+                {% endif %}
             </div>
 
             <!-- Best Practice Tips -->
             <div class="p-4 rounded-2xl bg-slate-50 dark:bg-slate-900/50 border border-slate-200/80 dark:border-slate-700 space-y-2 text-xs text-slate-600 dark:text-slate-300">
                 <div class="font-bold text-slate-900 dark:text-white flex items-center gap-1.5">
-                    <i data-lucide="sparkles" class="w-4 h-4 text-amber-500"></i>
-                    <span>Idées d'utilisation percutantes :</span>
+                    <i data-lucide="video" class="w-4 h-4 text-amber-500"></i>
+                    <span>Conseil pour le montage vidéo TikTok & CapCut :</span>
                 </div>
-                <ul class="list-disc list-inside space-y-1 text-[11px] text-slate-500">
-                    <li>Collez-le en sticker sur vos emballages et cartons de livraison.</li>
-                    <li>Affichez-le en grand pendant vos Lives TikTok & Instagram.</li>
-                    <li>Imprimez-le sur vos flyers et cartes de visite pour vos événements physiques.</li>
-                </ul>
+                <p class="text-[11px] text-slate-500 leading-relaxed">
+                    Activez l'option <b>Fond Transparent</b> et téléchargez le QR en <b>PNG HD</b> ou <b>SVG</b>. Vous pourrez le déposer directement sur vos vidéos dans CapCut sans fond blanc génant !
+                </p>
             </div>
+
         </div>
 
         <!-- Live Preview & Download Card (Right) -->
-        <div class="lg:col-span-5 bg-gradient-to-br from-brand-600 to-indigo-700 rounded-3xl p-6 sm:p-8 text-white shadow-xl text-center flex flex-col items-center justify-between space-y-6">
+        <div class="lg:col-span-5 bg-gradient-to-br from-slate-900 via-slate-900 to-brand-950 rounded-3xl p-6 sm:p-8 text-white shadow-2xl text-center flex flex-col items-center justify-between space-y-6 border border-slate-800">
             <div>
-                <span class="px-3 py-1 rounded-full bg-white/20 text-white text-[10px] font-extrabold uppercase tracking-wider backdrop-blur-sm">
-                    Aperçu Haute Définition
+                <span class="px-3.5 py-1 rounded-full bg-brand-500/20 text-brand-300 border border-brand-500/30 text-[10px] font-extrabold uppercase tracking-wider backdrop-blur-sm">
+                    Aperçu Haute Définition (HD)
                 </span>
-                <h3 class="font-heading font-extrabold text-xl mt-2">{{ shop.name }}</h3>
-                <p class="text-xs text-white/80">Coins arrondis • Qualité Vectorielle PNG</p>
+                <h3 class="font-heading font-extrabold text-xl mt-2 text-white">{{ shop.name }}</h3>
+                <p class="text-xs text-slate-400" x-text="isTransparent ? 'Fond Transparent • Rendu Vidéo CapCut' : 'Fond Blanc Standard • Prêt pour impression'"></p>
             </div>
 
-            <!-- QR Code Card Container -->
-            <div class="bg-white p-6 rounded-3xl shadow-2xl border-4 border-white/30 max-w-[240px] w-full aspect-square flex items-center justify-center group relative overflow-hidden">
-                <!-- Shop QR Image -->
-                <img x-show="selectedType === 'shop'" 
-                     src="{% url 'shop:shop_qr' shop.uuid %}" 
-                     alt="QR Code {{ shop.name }}" 
-                     class="w-full h-full object-contain">
+            <!-- Main QR Code Display Container (With Option Frame SCAN ME) -->
+            <div class="flex flex-col items-center justify-center w-full max-w-[280px]">
                 
-                <!-- Product QR Dynamic -->
-                {% for product in products %}
-                <img x-show="selectedType === 'product' && selectedProduct === '{{ product.uuid }}'" 
-                     src="{% url 'shop:product_qr' product.uuid %}" 
-                     alt="QR Code {{ product.name }}" 
-                     class="w-full h-full object-contain">
-                {% endfor %}
+                <!-- SCAN ME Header Badge (If showFrame is true) -->
+                <div x-show="showFrame" 
+                     x-transition
+                     class="w-full py-2 px-4 rounded-t-2xl font-heading font-black text-center text-xs tracking-wider uppercase text-white shadow-md transition-all flex items-center justify-center gap-1.5"
+                     :style="'background-color:' + qrColor">
+                    <i data-lucide="qr-code" class="w-4 h-4"></i>
+                    <span>SCAN ME !</span>
+                </div>
+
+                <!-- Canvas Wrapper Container -->
+                <div class="p-6 w-full aspect-square flex items-center justify-center transition-all duration-300"
+                     :class="[
+                        showFrame ? 'rounded-b-2xl border-2 border-t-0' : 'rounded-3xl border-2',
+                        isTransparent ? 'bg-slate-950/60 border-slate-800' : 'bg-white border-white shadow-2xl'
+                     ]">
+                    <div id="qr-code-canvas" class="w-full h-full flex items-center justify-center"></div>
+                </div>
+
             </div>
 
-            <!-- Download Button -->
-            <div class="w-full space-y-2">
-                <!-- If Shop QR -->
-                <a x-show="selectedType === 'shop'" 
-                   href="{% url 'shop:shop_qr' shop.uuid %}" 
-                   download="qr_azoria_{{ shop.slug }}.png"
-                   class="w-full py-3.5 px-6 rounded-2xl bg-white hover:bg-slate-100 text-brand-700 font-heading font-extrabold text-sm shadow-lg flex items-center justify-center gap-2 transition-all active:scale-95">
+            <!-- Download Action Buttons (100% Valid & Non-corrupted Exports) -->
+            <div class="w-full space-y-3 pt-2">
+                <!-- Primary HD PNG Download (2000px) -->
+                <button @click="downloadQr('png')"
+                        class="w-full py-3.5 px-6 rounded-2xl bg-brand-600 hover:bg-brand-500 text-white font-heading font-extrabold text-xs shadow-lg shadow-brand-600/30 flex items-center justify-center gap-2 transition-all active:scale-95">
                     <i data-lucide="download" class="w-4 h-4"></i>
-                    <span>Télécharger l'image PNG (HD)</span>
-                </a>
+                    <span>Télécharger l'image PNG (HD 2000px)</span>
+                </button>
 
-                <!-- If Product QR -->
-                {% for product in products %}
-                <a x-show="selectedType === 'product' && selectedProduct === '{{ product.uuid }}'" 
-                   href="{% url 'shop:product_qr' product.uuid %}" 
-                   download="qr_produit_{{ product.slug }}.png"
-                   class="w-full py-3.5 px-6 rounded-2xl bg-white hover:bg-slate-100 text-brand-700 font-heading font-extrabold text-sm shadow-lg flex items-center justify-center gap-2 transition-all active:scale-95">
-                    <i data-lucide="download" class="w-4 h-4"></i>
-                    <span>Télécharger l'image PNG (HD)</span>
-                </a>
-                {% endfor %}
+                <!-- Vectorial SVG Download (CapCut / Illustrator) -->
+                <button @click="downloadQr('svg')"
+                        class="w-full py-3 px-6 rounded-2xl bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold text-xs border border-slate-700 flex items-center justify-center gap-2 transition-all active:scale-95">
+                    <i data-lucide="file-code" class="w-4 h-4"></i>
+                    <span>Télécharger Vectoriel (SVG)</span>
+                </button>
 
-                <p class="text-[10px] text-white/70">Format prêt pour impression professionnelle ou partage en ligne.</p>
+                <!-- Server Endpoint Fallback Link -->
+                <div class="pt-1">
+                    <a :href="getDirectUrl()" 
+                       download
+                       class="text-[10px] text-slate-400 hover:text-white underline transition-colors">
+                        Lien direct de téléchargement serveur (Format standard)
+                    </a>
+                </div>
             </div>
         </div>
 
     </div>
 
 </div>
+
+<script>
+    function qrStudioApp() {
+        return {
+            selectedType: 'shop',
+            selectedProduct: '{{ products.first.uuid|default:'' }}',
+            qrColor: '{{ shop.branding.primary_color|default:"#7C3AED" }}',
+            isTransparent: false,
+            showFrame: true,
+            dotsStyle: 'rounded',
+            includeLogo: {% if shop.branding.logo %}true{% else %}false{% endif %},
+            qrCodeObj: null,
+
+            get currentTargetUrl() {
+                if (this.selectedType === 'shop') {
+                    return "{{ request.scheme }}://{{ request.get_host }}{% url 'shop:detail' shop.uuid shop.slug %}?ref=qr";
+                } else {
+                    const sel = document.querySelector('select[x-model="selectedProduct"] option:checked');
+                    if (sel && sel.dataset.url) return sel.dataset.url;
+                    return "{{ request.scheme }}://{{ request.get_host }}{% url 'shop:detail' shop.uuid shop.slug %}?product=" + this.selectedProduct + "&ref=qr";
+                }
+            },
+
+            copyStoreLink() {
+                const url = this.currentTargetUrl;
+                if (window.AzoriaUI) {
+                    AzoriaUI.copyToClipboard(url, "Lien copié dans le presse-papier ! ✨");
+                } else {
+                    navigator.clipboard.writeText(url);
+                    alert("Lien copié !");
+                }
+            },
+
+            getDirectUrl() {
+                let baseUrl = this.selectedType === 'shop' 
+                    ? "{% url 'shop:shop_qr' shop.uuid %}" 
+                    : "/boutique/produits/" + this.selectedProduct + "/qr/";
+                if (this.isTransparent) {
+                    baseUrl += "?transparent=true&download=true";
+                } else {
+                    baseUrl += "?download=true";
+                }
+                return baseUrl;
+            },
+
+            init() {
+                this.$nextTick(() => {
+                    this.renderQr();
+                });
+            },
+
+            renderQr() {
+                const container = document.getElementById("qr-code-canvas");
+                if (!container) return;
+                container.innerHTML = "";
+
+                const logoUrl = (this.includeLogo && "{% if shop.branding.logo %}{{ shop.branding.logo.url }}{% endif %}") || "";
+
+                this.qrCodeObj = new QRCodeStyling({
+                    width: 240,
+                    height: 240,
+                    type: "canvas",
+                    data: this.currentTargetUrl,
+                    image: logoUrl,
+                    dotsOptions: {
+                        color: this.qrColor,
+                        type: this.dotsStyle
+                    },
+                    backgroundOptions: {
+                        color: this.isTransparent ? "transparent" : "#ffffff",
+                    },
+                    imageOptions: {
+                        crossOrigin: "anonymous",
+                        margin: 4,
+                        imageSize: 0.22
+                    },
+                    cornersSquareOptions: {
+                        color: this.qrColor,
+                        type: "extra-rounded"
+                    },
+                    cornersDotOptions: {
+                        color: this.qrColor,
+                        type: "dot"
+                    }
+                });
+
+                this.qrCodeObj.append(container);
+            },
+
+            updateQr() {
+                if (!this.qrCodeObj) {
+                    this.renderQr();
+                    return;
+                }
+
+                const logoUrl = (this.includeLogo && "{% if shop.branding.logo %}{{ shop.branding.logo.url }}{% endif %}") || "";
+
+                this.qrCodeObj.update({
+                    data: this.currentTargetUrl,
+                    image: logoUrl,
+                    dotsOptions: {
+                        color: this.qrColor,
+                        type: this.dotsStyle
+                    },
+                    backgroundOptions: {
+                        color: this.isTransparent ? "transparent" : "#ffffff"
+                    },
+                    cornersSquareOptions: {
+                        color: this.qrColor,
+                        type: "extra-rounded"
+                    },
+                    cornersDotOptions: {
+                        color: this.qrColor,
+                        type: "dot"
+                    }
+                });
+            },
+
+            downloadQr(format) {
+                if (!this.qrCodeObj) return;
+
+                // High Definition Resolution Config for Download (2000px)
+                const hdQr = new QRCodeStyling({
+                    width: 2000,
+                    height: 2000,
+                    type: format === 'svg' ? 'svg' : 'canvas',
+                    data: this.currentTargetUrl,
+                    image: (this.includeLogo && "{% if shop.branding.logo %}{{ shop.branding.logo.url }}{% endif %}") || "",
+                    dotsOptions: {
+                        color: this.qrColor,
+                        type: this.dotsStyle
+                    },
+                    backgroundOptions: {
+                        color: this.isTransparent ? "transparent" : "#ffffff"
+                    },
+                    imageOptions: {
+                        crossOrigin: "anonymous",
+                        margin: 30,
+                        imageSize: 0.22
+                    },
+                    cornersSquareOptions: {
+                        color: this.qrColor,
+                        type: "extra-rounded"
+                    },
+                    cornersDotOptions: {
+                        color: this.qrColor,
+                        type: "dot"
+                    }
+                });
+
+                const filename = (this.selectedType === 'shop') 
+                    ? "qr_azoria_{{ shop.slug }}" 
+                    : "qr_azoria_produit";
+
+                hdQr.download({
+                    name: filename,
+                    extension: format
+                });
+
+                if (window.AzoriaUI) {
+                    AzoriaUI.playSuccess();
+                    AzoriaUI.showToast("Téléchargement du QR Code HD lancé ! ✨", "success");
+                }
+            }
+        }
+    }
+</script>
 {% endblock %}

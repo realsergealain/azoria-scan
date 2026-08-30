@@ -18,10 +18,13 @@ def hex_to_rgb(hex_color: str) -> tuple[int, int, int]:
     return (124, 58, 237)  # Violet Azoria par défaut
 
 
-def generate_styled_qr_code(data: str, color_hex: str = '#7C3AED', box_size: int = 10) -> BytesIO:
+from PIL import Image
+
+
+def generate_styled_qr_code(data: str, color_hex: str = '#7C3AED', logo_image=None, box_size: int = 15, transparent: bool = False) -> BytesIO:
     """
-    Génère un QR Code haute définition, stylisé avec des coins arrondis
-    et la couleur principale de la boutique.
+    Génère un QR Code HD stylisé avec des coins arrondis, logo au centre optionnel
+    et fond transparent pour l'intégration vidéo.
     """
     qr = qrcode.QRCode(
         error_correction=qrcode.constants.ERROR_CORRECT_H,
@@ -37,7 +40,35 @@ def generate_styled_qr_code(data: str, color_hex: str = '#7C3AED', box_size: int
         image_factory=StyledPilImage,
         module_drawer=RoundedModuleDrawer(),
         color_mask=SolidFillColorMask(back_color=(255, 255, 255), front_color=rgb_color)
-    )
+    ).convert("RGBA")
+
+    if transparent:
+        datas = img.getdata()
+        newData = []
+        for item in datas:
+            if item[0] > 240 and item[1] > 240 and item[2] > 240:
+                newData.append((255, 255, 255, 0))
+            else:
+                newData.append(item)
+        img.putdata(newData)
+
+    if logo_image:
+        try:
+            logo = Image.open(logo_image).convert("RGBA")
+            qr_w, qr_h = img.size
+            logo_max_size = int(qr_w * 0.22)
+            logo.thumbnail((logo_max_size, logo_max_size), Image.Resampling.LANCZOS)
+            
+            logo_w, logo_h = logo.size
+            pos_x = (qr_w - logo_w) // 2
+            pos_y = (qr_h - logo_h) // 2
+            
+            padding = 6
+            bg_box = Image.new("RGBA", (logo_w + padding*2, logo_h + padding*2), (255, 255, 255, 255))
+            img.paste(bg_box, (pos_x - padding, pos_y - padding), bg_box)
+            img.paste(logo, (pos_x, pos_y), logo)
+        except Exception:
+            pass
 
     buffer = BytesIO()
     img.save(buffer, format="PNG")
