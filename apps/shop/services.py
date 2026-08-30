@@ -199,19 +199,15 @@ def generate_whatsapp_order_link(order) -> str:
 
 def generate_ai_product_description(name: str, category: str = "") -> dict:
     """
-    Génère un titre accrocheur, une description vendeuse et des arguments percutants pour Azoria AI via OpenAI.
+    Génère un titre accrocheur, une description vendeuse et des arguments percutants pour Azoria AI via ChatGPT (OpenAI).
     """
+    import os
     import openai
     from django.conf import settings
     
-    # Récupérer la clé API depuis .env ou settings
-    openai.api_key = getattr(settings, 'OPENAI_API_KEY', None)
-    import os
-    if not openai.api_key:
-        openai.api_key = os.environ.get('OPENAI_API_KEY')
+    api_key = getattr(settings, 'OPENAI_API_KEY', None) or os.environ.get('OPENAI_API_KEY')
         
-    if not openai.api_key:
-        # Fallback de sécurité si pas de clé
+    if not api_key:
         return {
             'title': f"{name} ✨ Tendance & Qualité",
             'description': f"Découvrez notre {name} ! Qualité premium et design élégant. Commandez dès maintenant avec paiement à la livraison.",
@@ -219,28 +215,50 @@ def generate_ai_product_description(name: str, category: str = "") -> dict:
         }
 
     prompt = (
-        f"Tu es un expert en e-commerce, dropshipping et copywriting pour le marché africain (Côte d'Ivoire, Sénégal, etc). "
-        f"Ton but est de rédiger une description TRES VENDEUSE, accrocheuse, pour inciter les clients sur WhatsApp et TikTok à acheter.\n\n"
-        f"Produit : {name}\n"
-        f"Catégorie : {category}\n\n"
-        f"Rédige UNIQUEMENT la description du produit (pas de titre, pas de blabla). La description doit être courte (maximum 4 lignes) "
-        f"avec des emojis, et mettre en valeur la qualité, la fiabilité, et encourager à commander avec paiement à la livraison."
+        f"Tu es un expert mondial en e-commerce et copywriting persuasif pour les réseaux sociaux (TikTok, WhatsApp, Instagram).\n"
+        f"Rédige une description produit ultra-vendeuse, irrésistible et professionnelle pour :\n"
+        f"Nom du produit : {name}\n"
+        f"Catégorie : {category or 'General'}\n\n"
+        f"Consignes de rédaction :\n"
+        f"- Rédige une description structurée de 4 à 6 lignes max.\n"
+        f"- Mets en avant les avantages clés, la qualité supérieure et le confort/style du produit.\n"
+        f"- Utilise des emojis adaptés pour rendre la lecture vivante.\n"
+        f"- Termine avec un appel à l'action clair incitant à commander maintenant (Paiement à la livraison dispo !).\n"
+        f"- N'ajoute pas de titre ni d'introduction, donne directement le texte de la description."
     )
 
     try:
-        response = openai.ChatCompletion.create(
-            model="gpt-3.5-turbo",
-            messages=[
-                {"role": "system", "content": "Tu es un expert copywriter e-commerce."},
-                {"role": "user", "content": prompt}
-            ],
-            max_tokens=150,
-            temperature=0.7
-        )
-        description = response.choices[0].message.content.strip()
+        if hasattr(openai, 'OpenAI'):
+            client = openai.OpenAI(api_key=api_key)
+            response = client.chat.completions.create(
+                model="gpt-3.5-turbo",
+                messages=[
+                    {"role": "system", "content": "Tu es un expert copywriter e-commerce de classe mondiale."},
+                    {"role": "user", "content": prompt}
+                ],
+                max_tokens=220,
+                temperature=0.7
+            )
+            description = response.choices[0].message.content.strip()
+        else:
+            openai.api_key = api_key
+            response = openai.ChatCompletion.create(
+                model="gpt-3.5-turbo",
+                messages=[
+                    {"role": "system", "content": "Tu es un expert copywriter e-commerce de classe mondiale."},
+                    {"role": "user", "content": prompt}
+                ],
+                max_tokens=220,
+                temperature=0.7
+            )
+            description = response.choices[0].message.content.strip()
     except Exception as e:
-        print(f"Erreur OpenAI: {e}")
-        description = f"Découvrez notre magnifique {name} ! Un article de qualité supérieure qui saura vous satisfaire. Commandez dès aujourd'hui."
+        print(f"[Azoria AI] OpenAI API Error: {e}")
+        description = (
+            f"✨ Découvrez notre magnifique {name} !\n"
+            f"Un article d'exception sélectionné pour sa qualité premium et son design élégant.\n"
+            f"⚡ Quantités limitées. Profitez du paiement à la livraison et commandez dès aujourd'hui !"
+        )
 
     return {
         'title': f"{name} ✨ Tendance & Qualité",

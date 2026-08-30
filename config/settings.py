@@ -12,6 +12,18 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # Add apps folder to Python path for convenient imports
 sys.path.insert(0, str(BASE_DIR / 'apps'))
 
+# Load environment variables from .env if present
+env_file = BASE_DIR / '.env'
+if env_file.exists():
+    with open(env_file, 'r', encoding='utf-8') as f:
+        for line in f:
+            line = line.strip()
+            if line and not line.startswith('#') and '=' in line:
+                key, val = line.split('=', 1)
+                os.environ.setdefault(key.strip(), val.strip())
+
+OPENAI_API_KEY = os.environ.get('OPENAI_API_KEY', '')
+
 # ─────────────────────────────────────────────────────────────
 # SECURITY
 # ─────────────────────────────────────────────────────────────
