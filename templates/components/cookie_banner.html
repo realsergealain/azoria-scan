@@ -1,0 +1,159 @@
+<!-- Bandeau de Consentement des Cookies & Confidentialité (GDPR / Privacy Compliant) -->
+<div x-data="cookieConsentApp()"
+     x-show="showBanner"
+     x-transition:enter="transition ease-out duration-300 transform"
+     x-transition:enter-start="translate-y-12 opacity-0"
+     x-transition:enter-end="translate-y-0 opacity-100"
+     x-transition:leave="transition ease-in duration-200 transform"
+     x-transition:leave-start="translate-y-0 opacity-100"
+     x-transition:leave-end="translate-y-12 opacity-0"
+     x-cloak
+     class="fixed bottom-4 left-4 right-4 md:left-6 md:right-auto md:max-w-md z-[9999] bg-slate-900/95 dark:bg-slate-900/95 backdrop-blur-xl text-white rounded-3xl p-5 border border-slate-800 shadow-2xl space-y-4">
+    
+    <div class="flex items-start gap-3.5">
+        <div class="w-10 h-10 rounded-2xl bg-brand-500/20 text-brand-400 flex items-center justify-center shrink-0 border border-brand-500/30">
+            <i data-lucide="cookie" class="w-5 h-5"></i>
+        </div>
+        <div class="space-y-1">
+            <h4 class="font-heading font-extrabold text-sm tracking-tight text-white flex items-center gap-2">
+                <span>Respect de votre vie privée</span>
+                <span class="px-2 py-0.5 rounded-full bg-brand-500/20 text-brand-300 text-[10px] font-bold">Cookies</span>
+            </h4>
+            <p class="text-xs text-slate-300 leading-relaxed">
+                Nous utilisons des cookies essentiels pour assurer le bon fonctionnement de votre boutique et mesurer l'audience en toute sécurité.
+            </p>
+        </div>
+    </div>
+
+    <!-- Actions Buttons -->
+    <div class="flex flex-col sm:flex-row items-center gap-2 pt-1">
+        <button @click="acceptAll()"
+                class="w-full sm:flex-1 py-2.5 px-4 rounded-xl bg-brand-600 hover:bg-brand-500 text-white font-extrabold text-xs shadow-md shadow-brand-600/30 transition-all active:scale-95 text-center">
+            Tout Accepter ✨
+        </button>
+
+        <button @click="acceptEssentialOnly()"
+                class="w-full sm:flex-1 py-2.5 px-4 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold text-xs border border-slate-700 transition-all active:scale-95 text-center">
+            Essentiels uniquement
+        </button>
+
+        <button @click="showModal = true"
+                class="py-2.5 px-3 rounded-xl text-slate-400 hover:text-white font-semibold text-xs transition-colors">
+            Options
+        </button>
+    </div>
+
+    <!-- Modal Personnalisation des Cookies -->
+    <div x-show="showModal"
+         x-transition:enter="transition ease-out duration-200"
+         x-transition:enter-start="opacity-0 scale-95"
+         x-transition:enter-end="opacity-100 scale-100"
+         x-transition:leave="transition ease-in duration-150"
+         x-transition:leave-start="opacity-100 scale-100"
+         x-transition:leave-end="opacity-0 scale-95"
+         @click.outside="showModal = false"
+         class="fixed inset-0 z-[10000] flex items-center justify-center p-4 bg-slate-950/70 backdrop-blur-sm"
+         x-cloak>
+        <div class="w-full max-w-md bg-white dark:bg-slate-900 rounded-3xl p-6 border border-slate-200 dark:border-slate-800 shadow-2xl text-slate-900 dark:text-white space-y-5">
+            <div class="flex items-center justify-between">
+                <h3 class="font-heading font-extrabold text-base flex items-center gap-2">
+                    <i data-lucide="sliders" class="w-5 h-5 text-brand-600"></i>
+                    <span>Préférences de Cookies</span>
+                </h3>
+                <button @click="showModal = false" class="text-slate-400 hover:text-slate-600 dark:hover:text-white">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+
+            <div class="space-y-3.5 text-xs">
+                <!-- Essentiels -->
+                <div class="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 flex items-center justify-between">
+                    <div>
+                        <span class="font-bold block">Cookies Essentiels (Obligatoires)</span>
+                        <span class="text-[10px] text-slate-500 dark:text-slate-400 block">Nécessaires pour la connexion, la session et le panier.</span>
+                    </div>
+                    <span class="px-2.5 py-1 rounded-full bg-emerald-100 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-400 font-extrabold text-[10px]">Actifs</span>
+                </div>
+
+                <!-- Analytics -->
+                <label class="p-3.5 rounded-2xl border border-slate-200 dark:border-slate-700 flex items-center justify-between cursor-pointer">
+                    <div>
+                        <span class="font-bold block">Statistiques & Performance</span>
+                        <span class="text-[10px] text-slate-500 dark:text-slate-400 block">Mesure du nombre de vues et des visites boutiques.</span>
+                    </div>
+                    <input type="checkbox" x-model="preferences.analytics" class="w-4 h-4 accent-brand-600 rounded">
+                </label>
+
+                <!-- Marketing -->
+                <label class="p-3.5 rounded-2xl border border-slate-200 dark:border-slate-700 flex items-center justify-between cursor-pointer">
+                    <div>
+                        <span class="font-bold block">Personnalisation Marketing</span>
+                        <span class="text-[10px] text-slate-500 dark:text-slate-400 block">Pour adapter les promotions et les suggestions.</span>
+                    </div>
+                    <input type="checkbox" x-model="preferences.marketing" class="w-4 h-4 accent-brand-600 rounded">
+                </label>
+            </div>
+
+            <div class="pt-2 flex gap-2">
+                <button @click="savePreferences()"
+                        class="w-full py-3 px-4 rounded-2xl bg-brand-600 hover:bg-brand-500 text-white font-extrabold text-xs shadow-md transition-all active:scale-95">
+                    Enregistrer mes préférences
+                </button>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<script>
+    document.addEventListener('alpine:init', () => {
+        Alpine.data('cookieConsentApp', () => ({
+            showBanner: false,
+            showModal: false,
+            preferences: {
+                essential: true,
+                analytics: true,
+                marketing: false
+            },
+
+            init() {
+                const saved = localStorage.getItem('azoria_cookie_consent');
+                if (!saved) {
+                    setTimeout(() => {
+                        this.showBanner = true;
+                    }, 1000);
+                } else {
+                    try {
+                        this.preferences = JSON.parse(saved);
+                    } catch (e) {}
+                }
+            },
+
+            acceptAll() {
+                this.preferences = { essential: true, analytics: true, marketing: true };
+                this.save();
+            },
+
+            acceptEssentialOnly() {
+                this.preferences = { essential: true, analytics: false, marketing: false };
+                this.save();
+            },
+
+            savePreferences() {
+                this.showModal = false;
+                this.save();
+            },
+
+            save() {
+                localStorage.setItem('azoria_cookie_consent', JSON.stringify(this.preferences));
+                // Set cookie for backend recognition
+                document.cookie = "azoria_cookie_consent=" + encodeURIComponent(JSON.stringify(this.preferences)) + "; path=/; max-age=" + (60 * 60 * 24 * 365);
+                this.showBanner = false;
+
+                if (window.AzoriaUI) {
+                    AzoriaUI.showToast("Préférences de cookies enregistrées ! ✨", "success");
+                }
+            }
+        }));
+    });
+</script>
