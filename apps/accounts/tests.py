@@ -52,9 +52,8 @@ class AuthViewsTests(TestCase):
         response = self.client.get(reverse('accounts:login'))
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'accounts/login.html')
-        self.assertContains(response, 'Welcome back!')
-        self.assertContains(response, 'Sign in')
-        self.assertContains(response, 'Continue with Google')
+        self.assertContains(response, 'Connexion')
+        self.assertContains(response, 'Continuer avec Google')
 
     def test_login_successful(self):
         """Vérifie la connexion réussie avec des identifiants valides."""
@@ -80,16 +79,16 @@ class AuthViewsTests(TestCase):
         response = self.client.get(reverse('accounts:register'))
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'accounts/register.html')
-        self.assertContains(response, 'Get started!')
-        self.assertContains(response, 'Sign up')
+        self.assertContains(response, 'Créer un compte')
+        self.assertContains(response, 'Continuer avec Google')
 
     def test_register_successful(self):
-        """Vérifie l'inscription complète et la connexion automatique."""
+        """Vérifie l'inscription complète et la redirection."""
         new_email = 'koffi.nouveau@boutique.ci'
         response = self.client.post(reverse('accounts:register'), {
             'full_name': 'Koffi Serge Alain',
             'email': new_email,
-            'phone': '+2250505050505',
+            'phone': '0505050505',
             'password': 'NouveauMotDePasse123!',
             'password_confirm': 'NouveauMotDePasse123!',
         })

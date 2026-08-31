@@ -51,7 +51,7 @@ def register_view(request):
         form = RegisterForm(request.POST)
         if form.is_valid():
             user = form.save()
-            login(request, user)
+            login(request, user, backend='django.contrib.auth.backends.ModelBackend')
             messages.success(request, _(f"Félicitations {user.full_name} ! Votre compte Azoria a été créé avec succès."))
             return redirect('shop:create')
     else:

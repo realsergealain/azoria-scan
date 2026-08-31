@@ -7,6 +7,12 @@ name = "pypi"
 django = "*"
 pillow = "*"
 django-formtools = "*"
+django-allauth = "*"
+requests = "*"
+certifi = "*"
+charset-normalizer = "*"
+pyjwt = {extras = ["crypto"], version = "*"}
+cryptography = "*"
 
 [dev-packages]
 

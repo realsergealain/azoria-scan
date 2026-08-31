@@ -15,6 +15,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('super-admin/', include('apps.core.super_admin_urls', namespace='super_admin')),
     path('mon-compte/', include('apps.accounts.urls', namespace='accounts')),
+    path('accounts/', include('allauth.urls')),
     path('', include('apps.core.urls', namespace='core')),
     path('boutique/', include('apps.shop.urls', namespace='shop')),
 ]
