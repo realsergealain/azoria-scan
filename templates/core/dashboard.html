@@ -6,7 +6,23 @@
 {% block content %}
 <div class="space-y-6" x-data="{ 
     showCreateModal: false, 
+    submitting: false,
     copiedToast: false,
+    shopName: '',
+    shopCategory: 'Mode & Vêtements',
+    shopCity: 'Cocody',
+    shopPhone: '{{ request.user.phone|default:'' }}',
+    shopDescription: '',
+    primaryColor: '#7C3AED',
+    deliveryFee: 1500,
+    activeStep: 1,
+    get slugPreview() {
+        if (!this.shopName) return 'votre-boutique';
+        return this.shopName.toLowerCase()
+            .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+            .replace(/[^a-z0-9]+/g, '-')
+            .replace(/^-|-$/g, '') || 'votre-boutique';
+    },
     copyLink(text) {
         if (window.AzoriaUI) {
             AzoriaUI.copyToClipboard(text, 'Lien de votre boutique copié ! 🛍️');
@@ -21,6 +37,7 @@
 }" @open-create-shop-modal.window="showCreateModal = true">
 
     <!-- Welcome & Quick Share Bar -->
+    {% if primary_shop %}
     <div id="tour-welcome" class="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white dark:bg-slate-900 p-5 sm:p-6 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-sm">
         <div>
             <div class="flex items-center gap-2">
@@ -32,7 +49,6 @@
         </div>
 
         <!-- Quick Store Public Link Share Controls -->
-        {% if primary_shop %}
         <div class="flex flex-wrap items-center gap-2.5">
             <!-- 1-Click Copy Public Storefront Link -->
             <button @click="copyLink('{{ request.scheme }}://{{ request.get_host }}{% url 'shop:detail' primary_shop.uuid primary_shop.slug %}')" 
@@ -55,8 +71,38 @@
                 <span>Mon QR Code</span>
             </a>
         </div>
-        {% endif %}
     </div>
+    {% else %}
+    <!-- Empty State Hero Card (No Shop yet) -->
+    <div class="relative overflow-hidden bg-gradient-to-br from-brand-600 via-indigo-700 to-slate-900 rounded-3xl p-6 sm:p-8 text-white shadow-2xl">
+        <!-- Glow accents -->
+        <div class="absolute -top-24 -right-24 w-72 h-72 bg-brand-400/30 rounded-full blur-3xl pointer-events-none"></div>
+        <div class="absolute -bottom-24 -left-24 w-72 h-72 bg-indigo-500/20 rounded-full blur-3xl pointer-events-none"></div>
+
+        <div class="relative z-10 max-w-2xl space-y-4">
+            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 backdrop-blur-md text-amber-300 text-xs font-bold border border-white/10">
+                <i data-lucide="sparkles" class="w-3.5 h-3.5"></i>
+                <span>Prêt en 30 secondes chrono</span>
+            </div>
+
+            <h2 class="font-heading font-black text-2xl sm:text-4xl text-white leading-tight">
+                Lancez votre boutique en ligne et vendez sur les réseaux sociaux ! 🚀
+            </h2>
+
+            <p class="text-xs sm:text-sm text-slate-200 leading-relaxed max-w-xl">
+                Créez votre vitrine mobile sans coder. Obtenez un lien unique et un QR code HD à coller dans votre bio TikTok, Instagram et sur WhatsApp.
+            </p>
+
+            <div class="pt-2 flex flex-wrap items-center gap-3">
+                <button @click="showCreateModal = true" 
+                        class="px-6 py-3.5 rounded-2xl bg-white text-brand-900 hover:bg-slate-100 font-heading font-black text-sm shadow-xl shadow-slate-950/20 flex items-center gap-2.5 transition-all transform hover:scale-[1.02] active:scale-95">
+                    <i data-lucide="plus-circle" class="w-5 h-5 text-brand-600"></i>
+                    <span>Créer ma boutique maintenant</span>
+                </button>
+            </div>
+        </div>
+    </div>
+    {% endif %}
 
     <!-- Live Real-time Polling Container (KPIs & Recent Orders) -->
     {% include 'core/partials/dashboard_live_feed.html' %}
@@ -116,10 +162,20 @@
     </div>
 
     {% if not primary_shop %}
-    <!-- Create Shop Modal (Only if user doesn't have a shop yet) -->
-    <div x-show="showCreateModal" style="display: none;" class="fixed inset-0 z-[100] flex items-end sm:items-center justify-center p-0 sm:p-4" x-cloak>
-        <div x-show="showCreateModal" x-transition.opacity class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm" @click="showCreateModal = false"></div>
+    <!-- ═══════════════════════════════════════════════════════════════════ -->
+    <!-- ✨ ENHANCED ULTRA-PREMIUM SHOP CREATION MODAL                       -->
+    <!-- ═══════════════════════════════════════════════════════════════════ -->
+    <div x-show="showCreateModal" style="display: none;" 
+         class="fixed inset-0 z-[100] flex items-end sm:items-center justify-center p-0 sm:p-4" 
+         x-cloak>
         
+        <!-- Backdrop -->
+        <div x-show="showCreateModal" 
+             x-transition.opacity.duration.300ms 
+             class="fixed inset-0 bg-slate-950/70 backdrop-blur-md" 
+             @click="showCreateModal = false"></div>
+        
+        <!-- Modal Dialog -->
         <div x-show="showCreateModal" 
              x-transition:enter="transition ease-out duration-300 transform"
              x-transition:enter-start="translate-y-full sm:translate-y-0 sm:scale-95 opacity-0"
@@ -127,60 +183,234 @@
              x-transition:leave="transition ease-in duration-200 transform"
              x-transition:leave-start="translate-y-0 sm:scale-100 opacity-100"
              x-transition:leave-end="translate-y-full sm:translate-y-0 sm:scale-95 opacity-0"
-             class="relative w-full max-w-lg bg-white dark:bg-slate-900 rounded-t-[32px] sm:rounded-3xl shadow-2xl z-10 overflow-hidden flex flex-col max-h-[90vh]">
+             class="relative w-full max-w-2xl bg-white dark:bg-slate-900 rounded-t-[32px] sm:rounded-3xl shadow-2xl z-10 overflow-hidden flex flex-col max-h-[92vh] border border-slate-200/80 dark:border-slate-800">
             
-            <div class="p-4 sm:p-5 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between">
-                <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-brand-600 to-indigo-600 text-white flex items-center justify-center font-bold shadow-md shadow-brand-500/20">
-                        <i data-lucide="store" class="w-5 h-5"></i>
+            <!-- Modal Header -->
+            <div class="p-5 sm:p-6 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between bg-gradient-to-r from-slate-50 to-brand-50/30 dark:from-slate-900 dark:to-brand-950/20">
+                <div class="flex items-center gap-3.5">
+                    <div class="w-12 h-12 rounded-2xl flex items-center justify-center text-white font-black text-xl shadow-lg transition-all duration-300"
+                         :style="'background-color:' + primaryColor">
+                        <span x-text="shopName ? shopName.charAt(0).toUpperCase() : '🛍️'"></span>
                     </div>
                     <div>
-                        <h3 class="font-heading text-lg font-extrabold text-slate-900 dark:text-white leading-tight">Nouvelle Boutique</h3>
-                        <p class="text-[11px] text-slate-500">Configurez votre espace de vente</p>
+                        <h3 class="font-heading text-lg sm:text-xl font-extrabold text-slate-900 dark:text-white leading-tight">
+                            Créer ma boutique
+                        </h3>
+                        <p class="text-xs text-slate-500 flex items-center gap-1.5 mt-0.5">
+                            <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                            <span>Prête en 30 secondes • Sans carte bancaire</span>
+                        </p>
                     </div>
                 </div>
-                <button type="button" @click="showCreateModal = false" class="p-2 bg-slate-50 dark:bg-slate-800 rounded-full text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-colors">
+
+                <button type="button" @click="showCreateModal = false" 
+                        class="p-2.5 bg-slate-100 dark:bg-slate-800 rounded-full text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors">
                     <i data-lucide="x" class="w-5 h-5"></i>
                 </button>
             </div>
 
             <!-- Scrollable Body & Form -->
-            <form action="{% url 'shop:create' %}" method="post" class="flex-1 overflow-y-auto p-4 sm:p-6 space-y-5">
+            <form action="{% url 'shop:create' %}" method="post" @submit="submitting = true" class="flex-1 overflow-y-auto p-5 sm:p-6 space-y-6">
                 {% csrf_token %}
-                
-                <div>
-                    <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">Nom de la boutique <span class="text-rose-500">*</span></label>
-                    {{ shop_form.name }}
-                </div>
-                
-                <div>
-                    <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">Description courte <span class="text-slate-400 font-normal">(Optionnelle)</span></label>
-                    {{ shop_form.description }}
-                </div>
-                
-                <div>
-                    <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-2">Moyens de paiement acceptés</label>
-                    <div class="space-y-2.5">
-                        {% for checkbox in shop_form.accepted_payments %}
-                        <label class="flex items-center gap-3 p-3 border border-slate-200 dark:border-slate-700 rounded-2xl cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors relative group">
-                            <div class="accent-brand-600 w-5 h-5">
-                                {{ checkbox.tag }}
-                            </div>
-                            <span class="text-sm font-semibold text-slate-800 dark:text-slate-200">{{ checkbox.choice_label }}</span>
+
+                <!-- SECTION 1: Identité & URL -->
+                <div class="space-y-4">
+                    <div class="flex items-center gap-2 text-xs font-extrabold uppercase tracking-wider text-brand-600 dark:text-brand-400">
+                        <i data-lucide="store" class="w-4 h-4"></i>
+                        <span>1. Identité de votre boutique</span>
+                    </div>
+
+                    <!-- Store Name -->
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">
+                            Nom de la boutique <span class="text-rose-500">*</span>
                         </label>
-                        {% endfor %}
+                        <input type="text" name="name" x-model="shopName" required
+                               placeholder="Ex : Fatou Fashion Chic ✨"
+                               class="w-full px-4 py-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 text-sm font-bold text-slate-900 dark:text-white focus:ring-2 focus:ring-brand-500 focus:bg-white dark:focus:bg-slate-900 outline-none transition-all">
+                    </div>
+
+                    <!-- Live URL Card Preview -->
+                    <div class="p-3.5 rounded-2xl bg-brand-50/70 dark:bg-brand-950/40 border border-brand-200/80 dark:border-brand-900/50 flex items-center justify-between gap-3 text-xs">
+                        <div class="flex items-center gap-2 min-w-0">
+                            <i data-lucide="link-2" class="w-4 h-4 text-brand-600 dark:text-brand-400 shrink-0"></i>
+                            <span class="text-slate-500 dark:text-slate-400 shrink-0">Lien public :</span>
+                            <span class="font-mono font-bold text-brand-700 dark:text-brand-300 truncate">
+                                {{ request.get_host }}/boutique/<span x-text="slugPreview" class="underline decoration-brand-400"></span>
+                            </span>
+                        </div>
+                        <span class="px-2 py-0.5 rounded-lg bg-brand-200/60 dark:bg-brand-900/80 text-[10px] font-extrabold text-brand-800 dark:text-brand-200 shrink-0">
+                            Auto
+                        </span>
+                    </div>
+
+                    <!-- Category Chips Selector -->
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-2">
+                            Catégorie principale
+                        </label>
+                        <input type="hidden" name="category" :value="shopCategory">
+                        <div class="flex flex-wrap gap-2">
+                            <template x-for="cat in [
+                                { label: '👗 Mode & Vêtements', val: 'Mode & Vêtements' },
+                                { label: '👠 Chaussures & Sacs', val: 'Chaussures & Sacs' },
+                                { label: '💄 Beauté & Cosmétiques', val: 'Beauté & Cosmétiques' },
+                                { label: '📱 High-Tech & Gadgets', val: 'High-Tech & Gadgets' },
+                                { label: '💍 Bijoux & Montres', val: 'Bijoux & Montres' },
+                                { label: '🥗 Alimentation & Épicerie', val: 'Alimentation & Épicerie' },
+                                { label: '👶 Bébés & Enfants', val: 'Bébés & Enfants' },
+                                { label: '🛍️ Autre commerce', val: 'Autre commerce' }
+                            ]" :key="cat.val">
+                                <button type="button" 
+                                        @click="shopCategory = cat.val"
+                                        class="px-3.5 py-2 rounded-xl text-xs font-semibold border transition-all"
+                                        :class="shopCategory === cat.val 
+                                            ? 'bg-brand-600 text-white border-brand-600 shadow-sm shadow-brand-500/20 font-bold scale-[1.02]' 
+                                            : 'bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:border-brand-300'">
+                                    <span x-text="cat.label"></span>
+                                </button>
+                            </template>
+                        </div>
                     </div>
                 </div>
 
-                <div class="pt-2 flex gap-3 pb-4">
+                <div class="border-t border-slate-100 dark:border-slate-800 pt-4 space-y-4">
+                    <div class="flex items-center gap-2 text-xs font-extrabold uppercase tracking-wider text-brand-600 dark:text-brand-400">
+                        <i data-lucide="phone-call" class="w-4 h-4"></i>
+                        <span>2. Contact & Localisation</span>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <!-- WhatsApp Phone -->
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">
+                                WhatsApp Commandes
+                            </label>
+                            <div class="relative">
+                                <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-xs font-bold text-slate-400">
+                                    🇨🇮 +225
+                                </div>
+                                <input type="tel" name="phone" x-model="shopPhone"
+                                       placeholder="07 00 00 00 00"
+                                       class="w-full pl-20 pr-4 py-3 rounded-2xl bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 text-sm font-bold text-slate-900 dark:text-white focus:ring-2 focus:ring-brand-500 outline-none transition-all">
+                            </div>
+                            <p class="text-[11px] text-slate-400 mt-1">Vos clients pourront vous contacter d'un clic.</p>
+                        </div>
+
+                        <!-- City / Commune -->
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">
+                                Commune / Ville principale
+                            </label>
+                            <select name="city" x-model="shopCity"
+                                    class="w-full px-4 py-3 rounded-2xl bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 text-xs font-bold text-slate-900 dark:text-white focus:ring-2 focus:ring-brand-500 outline-none">
+                                <option value="Cocody">Cocody (Abidjan)</option>
+                                <option value="Yopougon">Yopougon (Abidjan)</option>
+                                <option value="Marcory">Marcory (Abidjan)</option>
+                                <option value="Plateau">Plateau (Abidjan)</option>
+                                <option value="Koumassi">Koumassi (Abidjan)</option>
+                                <option value="Treichville">Treichville (Abidjan)</option>
+                                <option value="Abobo">Abobo (Abidjan)</option>
+                                <option value="Port-Bouët">Port-Bouët (Abidjan)</option>
+                                <option value="Bingerville">Bingerville</option>
+                                <option value="Bouaké">Bouaké</option>
+                                <option value="Yamoussoukro">Yamoussoukro</option>
+                                <option value="San-Pédro">San-Pédro</option>
+                                <option value="Autre ville">Autre ville</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Description -->
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">
+                            Description ou Slogan <span class="text-slate-400 font-normal">(Optionnel)</span>
+                        </label>
+                        <textarea name="description" x-model="shopDescription" rows="2"
+                                  placeholder="Ex : Vêtements chics, livraison rapide partout à Abidjan."
+                                  class="w-full px-4 py-3 rounded-2xl bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 text-xs text-slate-900 dark:text-white focus:ring-2 focus:ring-brand-500 outline-none resize-none"></textarea>
+                    </div>
+                </div>
+
+                <!-- SECTION 3: Branding & Paiement -->
+                <div class="border-t border-slate-100 dark:border-slate-800 pt-4 space-y-4">
+                    <div class="flex items-center gap-2 text-xs font-extrabold uppercase tracking-wider text-brand-600 dark:text-brand-400">
+                        <i data-lucide="palette" class="w-4 h-4"></i>
+                        <span>3. Couleur & Paiement</span>
+                    </div>
+
+                    <!-- Primary Color Swatches -->
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-2">
+                            Couleur principale de marque
+                        </label>
+                        <input type="hidden" name="primary_color" :value="primaryColor">
+                        <div class="flex items-center gap-3">
+                            <template x-for="color in [
+                                { hex: '#7C3AED', name: 'Violet Azoria' },
+                                { hex: '#0F172A', name: 'Noir Onyx' },
+                                { hex: '#2563EB', name: 'Bleu Royal' },
+                                { hex: '#059669', name: 'Vert Émeraude' },
+                                { hex: '#E11D48', name: 'Rose Glamour' },
+                                { hex: '#D97706', name: 'Ambre Gold' }
+                            ]" :key="color.hex">
+                                <button type="button" 
+                                        @click="primaryColor = color.hex"
+                                        class="w-9 h-9 rounded-2xl border-2 transition-all transform hover:scale-110 flex items-center justify-center text-white"
+                                        :style="'background-color:' + color.hex"
+                                        :class="primaryColor === color.hex ? 'ring-4 ring-brand-500/30 border-white shadow-md' : 'border-transparent opacity-80'">
+                                    <i x-show="primaryColor === color.hex" data-lucide="check" class="w-4 h-4"></i>
+                                </button>
+                            </template>
+                        </div>
+                    </div>
+
+                    <!-- Payment Methods & Delivery Fee -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
+                        <label class="p-3.5 rounded-2xl border flex items-center justify-between cursor-pointer transition-all bg-slate-50 dark:bg-slate-800/60 border-slate-200 dark:border-slate-700 hover:border-brand-400">
+                            <div class="flex items-center gap-2.5">
+                                <span class="text-lg">🚚</span>
+                                <div>
+                                    <span class="text-xs font-bold text-slate-900 dark:text-white block">Paiement à la livraison</span>
+                                    <span class="text-[10px] text-slate-400 block">Recommandé en Afrique</span>
+                                </div>
+                            </div>
+                            <input type="checkbox" name="accepted_payments" value="livraison" checked class="w-4 h-4 accent-brand-600 rounded">
+                        </label>
+
+                        <label class="p-3.5 rounded-2xl border flex items-center justify-between cursor-pointer transition-all bg-slate-50 dark:bg-slate-800/60 border-slate-200 dark:border-slate-700 hover:border-brand-400">
+                            <div class="flex items-center gap-2.5">
+                                <span class="text-lg">📱</span>
+                                <div>
+                                    <span class="text-xs font-bold text-slate-900 dark:text-white block">Mobile Money</span>
+                                    <span class="text-[10px] text-slate-400 block">Wave, Orange, MTN</span>
+                                </div>
+                            </div>
+                            <input type="checkbox" name="accepted_payments" value="mobile_money" checked class="w-4 h-4 accent-brand-600 rounded">
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="pt-4 border-t border-slate-100 dark:border-slate-800 flex gap-3 pb-2">
                     <button type="button" @click="showCreateModal = false" 
                             class="flex-1 py-3.5 rounded-2xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 text-xs font-bold transition-colors">
                         Annuler
                     </button>
-                    <button type="submit" 
-                            class="flex-[2] py-3.5 rounded-2xl bg-brand-600 hover:bg-brand-700 text-white text-xs font-heading font-extrabold shadow-lg shadow-brand-500/30 flex items-center justify-center gap-2 transition-transform active:scale-95">
-                        <i data-lucide="rocket" class="w-4 h-4 text-amber-300"></i>
-                        Lancer ma boutique
+                    <button type="submit" :disabled="submitting"
+                            class="flex-[2] py-3.5 rounded-2xl text-white text-xs font-heading font-black shadow-xl shadow-brand-500/25 flex items-center justify-center gap-2 transition-all transform hover:scale-[1.01] active:scale-95"
+                            :style="'background-color:' + primaryColor">
+                        <span x-show="!submitting" class="inline-flex items-center gap-2">
+                            <i data-lucide="rocket" class="w-4 h-4 text-amber-300"></i>
+                            <span>Lancer ma boutique maintenant 🎉</span>
+                        </span>
+                        <span x-show="submitting" class="inline-flex items-center gap-2" style="display: none;">
+                            <svg class="animate-spin -ml-1 mr-2 h-4 w-4 text-white" fill="none" viewBox="0 0 24 24">
+                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                            </svg>
+                            <span>Création en cours...</span>
+                        </span>
                     </button>
                 </div>
             </form>

@@ -3,37 +3,65 @@ from .models import Shop, ShopPayment, ShopProduct
 
 
 class ShopCreateForm(forms.Form):
-    """Formulaire simplifié de création de boutique en une seule étape."""
+    """Formulaire enrichi de création de boutique."""
 
     name = forms.CharField(
         max_length=120,
         widget=forms.TextInput(attrs={
-            'placeholder': 'Ex : Boutique de Fatou ✨',
+            'placeholder': 'Ex : Fatou Fashion Chic ✨',
             'autocomplete': 'off',
-            'autofocus': True,
-            'class': 'w-full px-4 py-3 rounded-2xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-brand-500 focus:border-brand-500 text-sm transition-all outline-none',
+            'class': 'w-full px-4 py-3 rounded-2xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-brand-500 focus:border-brand-500 text-sm transition-all outline-none font-bold',
         }),
         label='Nom de votre boutique',
         error_messages={'required': 'Le nom de la boutique est obligatoire.'},
+    )
+
+    category = forms.CharField(
+        required=False,
+        initial='Mode & Habillement',
+        max_length=80,
+    )
+
+    phone = forms.CharField(
+        required=False,
+        max_length=25,
+    )
+
+    city = forms.CharField(
+        required=False,
+        initial='Cocody',
+        max_length=80,
     )
 
     description = forms.CharField(
         required=False,
         max_length=400,
         widget=forms.Textarea(attrs={
-            'placeholder': 'Décrivez brièvement ce que vous vendez… (optionnel)',
-            'rows': 3,
+            'placeholder': 'Décrivez brièvement vos articles et votre univers… (optionnel)',
+            'rows': 2,
             'class': 'w-full px-4 py-3 rounded-2xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-brand-500 focus:border-brand-500 text-sm transition-all outline-none resize-none',
         }),
         label='Description (facultative)',
     )
 
+    primary_color = forms.CharField(
+        required=False,
+        initial='#7C3AED',
+        max_length=7,
+    )
+
+    delivery_fee = forms.DecimalField(
+        required=False,
+        initial=1500,
+        max_digits=10,
+        decimal_places=2,
+    )
+
     accepted_payments = forms.MultipleChoiceField(
         choices=ShopPayment.GATEWAY_CHOICES,
-        initial=['livraison'],
+        initial=['livraison', 'mobile_money'],
         widget=forms.CheckboxSelectMultiple,
-        label='Moyens de paiement acceptés',
-        error_messages={'required': 'Veuillez sélectionner au moins un moyen de paiement.'},
+        required=False,
     )
 
 

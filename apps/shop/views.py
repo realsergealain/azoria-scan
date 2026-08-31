@@ -24,27 +24,70 @@ from .services import (
 
 @login_required
 def shop_create(request):
-    """Création simplifiée de boutique."""
+    """Création de boutique (modal ou page dédiée)."""
     if Shop.objects.filter(owner=request.user).exists():
         messages.error(request, "Vous possédez déjà une boutique. La création de boutiques multiples n'est pas autorisée.")
         return redirect('core:dashboard')
 
-    form = ShopCreateForm(request.POST or None)
+    if request.method == 'POST':
+        name = request.POST.get('name', '').strip()
+        if not name:
+            messages.error(request, "Le nom de la boutique est obligatoire.")
+            return redirect('core:dashboard')
 
-    if request.method == 'POST' and form.is_valid():
+        category = request.POST.get('category', 'Mode & Habillement')
+        description = request.POST.get('description', '')
+        
+        # Numéro WhatsApp
+        raw_phone = request.POST.get('phone', '')
+        if raw_phone:
+            clean_phone = ''.join(filter(str.isdigit, str(raw_phone)))
+            if len(clean_phone) == 10 and not clean_phone.startswith('225'):
+                clean_phone = '+225' + clean_phone
+            elif clean_phone.startswith('225') and len(clean_phone) == 13:
+                clean_phone = '+' + clean_phone
+            phone = clean_phone
+        else:
+            phone = getattr(request.user, 'phone', '') or ''
+
+        city = request.POST.get('city', 'Cocody')
+        primary_color = request.POST.get('primary_color', '#7C3AED')
+        
+        try:
+            raw_fee = request.POST.get('delivery_fee', '1500')
+            delivery_fee = Decimal(str(raw_fee).replace(' ', '').replace('FCFA', ''))
+        except Exception:
+            delivery_fee = Decimal('1500')
+
+        accepted_payments = request.POST.getlist('accepted_payments') or ['livraison', 'mobile_money']
+
         shop = Shop.objects.create(
             owner=request.user,
-            name=form.cleaned_data['name'],
-            description=form.cleaned_data.get('description', ''),
+            name=name,
+            category=category,
+            description=description,
+            phone=phone,
+            city=city,
         )
-        ShopBranding.objects.create(shop=shop, primary_color='#7C3AED')
+
+        branding = ShopBranding.objects.create(
+            shop=shop,
+            primary_color=primary_color,
+        )
+        if 'logo' in request.FILES:
+            branding.logo = request.FILES['logo']
+            branding.save()
+
         ShopPayment.objects.create(
             shop=shop,
-            accepted_payments=form.cleaned_data['accepted_payments'],
+            accepted_payments=accepted_payments,
+            delivery_fee=delivery_fee,
         )
-        messages.success(request, f'🎉 Boutique « {shop.name} » créée avec succès !')
+
+        messages.success(request, f'🎉 Félicitations ! Votre boutique « {shop.name} » est prête à vendre !')
         return redirect('core:dashboard')
 
+    form = ShopCreateForm()
     return render(request, 'shop/create.html', {'form': form})
 
 
