@@ -41,16 +41,24 @@ def shop_create(request):
         # Numéro WhatsApp
         raw_phone = request.POST.get('phone', '')
         if raw_phone:
-            clean_phone = ''.join(filter(str.isdigit, str(raw_phone)))
-            if len(clean_phone) == 10 and not clean_phone.startswith('225'):
-                clean_phone = '+225' + clean_phone
-            elif clean_phone.startswith('225') and len(clean_phone) == 13:
-                clean_phone = '+' + clean_phone
-            phone = clean_phone
+            clean_digits = ''.join(filter(str.isdigit, str(raw_phone)))
+            if str(raw_phone).strip().startswith('+'):
+                phone = '+' + clean_digits
+            elif len(clean_digits) == 10 and not clean_digits.startswith('225'):
+                phone = '+225' + clean_digits
+            elif clean_digits.startswith('225'):
+                phone = '+' + clean_digits
+            elif clean_digits.startswith('221') or clean_digits.startswith('223') or clean_digits.startswith('226') or clean_digits.startswith('229') or clean_digits.startswith('228') or clean_digits.startswith('224') or clean_digits.startswith('227'):
+                phone = '+' + clean_digits
+            else:
+                phone = clean_digits
         else:
             phone = getattr(request.user, 'phone', '') or ''
 
-        city = request.POST.get('city', 'Cocody')
+        raw_city = request.POST.get('city', 'Abidjan')
+        raw_zone = request.POST.get('zone', '')
+        city = f"{raw_zone}, {raw_city}" if (raw_zone and raw_zone not in raw_city) else raw_city
+
         primary_color = request.POST.get('primary_color', '#7C3AED')
         
         try:
@@ -112,18 +120,23 @@ def shop_settings(request):
 
         shop.category = request.POST.get('category', shop.category)
         shop.description = request.POST.get('description', shop.description)
+        
         # Phone cleaning
         raw_phone = request.POST.get('phone', '')
         if raw_phone:
-            clean_phone = ''.join(filter(str.isdigit, str(raw_phone)))
-            if len(clean_phone) == 10 and not clean_phone.startswith('225'):
-                clean_phone = '+225' + clean_phone
-            elif clean_phone.startswith('225') and len(clean_phone) == 13:
-                clean_phone = '+' + clean_phone
-            shop.phone = clean_phone
-        else:
-            shop.phone = shop.phone
-        shop.city = request.POST.get('city', shop.city)
+            clean_digits = ''.join(filter(str.isdigit, str(raw_phone)))
+            if str(raw_phone).strip().startswith('+'):
+                shop.phone = '+' + clean_digits
+            elif len(clean_digits) == 10 and not clean_digits.startswith('225'):
+                shop.phone = '+225' + clean_digits
+            elif clean_digits.startswith('225') or clean_digits.startswith('221') or clean_digits.startswith('223') or clean_digits.startswith('226') or clean_digits.startswith('229') or clean_digits.startswith('228') or clean_digits.startswith('224') or clean_digits.startswith('227'):
+                shop.phone = '+' + clean_digits
+            else:
+                shop.phone = clean_digits
+
+        raw_city = request.POST.get('city', shop.city)
+        raw_zone = request.POST.get('zone', '')
+        shop.city = f"{raw_zone}, {raw_city}" if (raw_zone and raw_zone not in raw_city) else raw_city
         shop.save()
 
         # Branding

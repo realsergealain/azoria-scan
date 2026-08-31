@@ -65,6 +65,7 @@
     <script src="https://unpkg.com/lucide@latest"></script>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
     <script src="{% static 'js/main.js' %}?v=2.1"></script>
+    <script src="{% static 'js/locations.js' %}?v=1.0"></script>
 
     <!-- Alpine.js -->
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.8/dist/cdn.min.js"></script>
@@ -463,33 +464,58 @@
                             class="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs focus:ring-2 focus:ring-brand-500 focus:bg-white outline-none">
                     </div>
 
-                    <!-- WhatsApp Phone -->
+                    <!-- WhatsApp Phone with Dynamic Dial Code -->
                     <div>
-                        <label class="block text-[11px] font-bold text-slate-700 mb-1">Numéro WhatsApp (pour le livreur)
-                            :</label>
-                        <input type="tel" x-model="customerPhone" required placeholder="Ex: 0711113420"
-                            inputmode="numeric" pattern="[0-9]{10}" maxlength="10" minlength="10"
-                            oninput="this.value = this.value.replace(/[^0-9]/g, '')"
-                            class="w-full px-4 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-sm focus:ring-2 focus:ring-brand-500 outline-none transition-all">
+                        <label class="block text-[11px] font-bold text-slate-700 mb-1">Numéro WhatsApp (pour le livreur) :</label>
+                        <div class="relative">
+                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-xs font-bold text-slate-500"
+                                 x-text="countryData ? countryData.flag + ' ' + countryData.dialCode : '🇨🇮 +225'">
+                            </div>
+                            <input type="tel" x-model="customerPhone" required
+                                   :placeholder="countryData ? countryData.phonePlaceholder : '07 00 00 00 00'"
+                                   class="w-full pl-24 pr-4 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-sm font-bold focus:ring-2 focus:ring-brand-500 outline-none transition-all">
+                        </div>
                     </div>
 
-                    <!-- Commune / City -->
-                    <div>
-                        <label class="block text-[11px] font-bold text-slate-700 mb-1">Commune / Ville :</label>
-                        <select x-model="customerCity" @change="calculateDelivery()"
-                            class="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs focus:ring-2 focus:ring-brand-500 focus:bg-white outline-none font-medium">
-                            <option value="Cocody">Cocody (Angré, Riviera, 2 Plateaux...)</option>
-                            <option value="Yopougon">Yopougon (Selmer, Maroc, Niangon...)</option>
-                            <option value="Marcory">Marcory (Zone 4, Biétry...)</option>
-                            <option value="Plateau">Plateau</option>
-                            <option value="Koumassi">Koumassi</option>
-                            <option value="Treichville">Treichville</option>
-                            <option value="Abobo">Abobo</option>
-                            <option value="Adjamé">Adjamé</option>
-                            <option value="Port-Bouët">Port-Bouët</option>
-                            <option value="Bingerville">Bingerville</option>
-                            <option value="Intérieur">Autre ville / Intérieur (Transporteur)</option>
-                        </select>
+                    <!-- 3 Cascading Dependent Dropdowns: Pays -> Ville -> Commune/Quartier -->
+                    <div class="space-y-2.5">
+                        <!-- 1. PAYS -->
+                        <div>
+                            <label class="block text-[11px] font-bold text-slate-700 mb-1">Pays (Afrique de l'Ouest) :</label>
+                            <select x-model="customerCountry" @change="onCountryChange()"
+                                    class="w-full px-3 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs font-bold text-slate-900 focus:ring-2 focus:ring-brand-500 outline-none">
+                                <option value="CI">🇨🇮 Côte d'Ivoire</option>
+                                <option value="SN">🇸🇳 Sénégal</option>
+                                <option value="ML">🇲🇱 Mali</option>
+                                <option value="BF">🇧🇫 Burkina Faso</option>
+                                <option value="BJ">🇧🇯 Bénin</option>
+                                <option value="TG">🇹🇬 Togo</option>
+                                <option value="GN">🇬🇳 Guinée</option>
+                                <option value="NE">🇳🇪 Niger</option>
+                            </select>
+                        </div>
+
+                        <!-- 2. RÉGION / VILLE -->
+                        <div>
+                            <label class="block text-[11px] font-bold text-slate-700 mb-1">Région / Ville :</label>
+                            <select x-model="customerCity" @change="onCityChange()"
+                                    class="w-full px-3 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs font-bold text-slate-900 focus:ring-2 focus:ring-brand-500 outline-none">
+                                <template x-for="c in citiesList" :key="c">
+                                    <option :value="c" x-text="c" :selected="c === customerCity"></option>
+                                </template>
+                            </select>
+                        </div>
+
+                        <!-- 3. COMMUNE / QUARTIER -->
+                        <div>
+                            <label class="block text-[11px] font-bold text-slate-700 mb-1">Commune / Quartier :</label>
+                            <select x-model="customerZone" @change="calculateDelivery()"
+                                    class="w-full px-3 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs font-bold text-slate-900 focus:ring-2 focus:ring-brand-500 outline-none">
+                                <template x-for="z in zonesList" :key="z">
+                                    <option :value="z" x-text="z" :selected="z === customerZone"></option>
+                                </template>
+                            </select>
+                        </div>
                     </div>
 
                     <!-- Delivery Landmark / Address -->
@@ -719,13 +745,36 @@
                 activeProduct: null,
                 modalQty: 1,
 
-                // Form fields
+                // Form fields & West Africa Location State
                 customerName: '',
                 customerPhone: '',
-                customerCity: 'Cocody',
+                customerCountry: 'CI',
+                customerCity: 'Abidjan',
+                customerZone: 'Cocody (Angré, Riviera, 2 Plateaux, Danga...)',
                 customerAddress: '',
                 paymentMethod: 'livraison',
                 deliveryFee: {{ shop.payment.delivery_fee|default:1500|floatformat:0 }},
+
+                get countryData() {
+                    return window.WEST_AFRICA_LOCATIONS ? window.WEST_AFRICA_LOCATIONS[this.customerCountry] : null;
+                },
+                get citiesList() {
+                    return this.countryData ? Object.keys(this.countryData.cities) : ['Abidjan'];
+                },
+                get zonesList() {
+                    return (this.countryData && this.countryData.cities[this.customerCity]) ? this.countryData.cities[this.customerCity] : [];
+                },
+                onCountryChange() {
+                    if (this.countryData) {
+                        this.customerCity = this.countryData.defaultCity || this.citiesList[0];
+                        this.customerZone = this.zonesList[0] || '';
+                        this.calculateDelivery();
+                    }
+                },
+                onCityChange() {
+                    this.customerZone = this.zonesList[0] || '';
+                    this.calculateDelivery();
+                },
 
                 // Products from Django
                 products: [
@@ -829,12 +878,14 @@
         },
 
         calculateDelivery() {
-            if (this.customerCity === 'Intérieur') {
+            if (this.customerCountry !== 'CI') {
                 this.deliveryFee = 3000;
-            } else if (this.customerCity === 'Bingerville' || this.customerCity === 'Port-Bouët') {
+            } else if (this.customerCity === 'Bouaké' || this.customerCity === 'Yamoussoukro' || this.customerCity === 'San-Pédro' || this.customerCity === 'Korhogo' || this.customerCity.includes('Autres')) {
+                this.deliveryFee = 2500;
+            } else if (this.customerZone && (this.customerZone.includes('Bingerville') || this.customerZone.includes('Songon') || this.customerZone.includes('Anyama') || this.customerZone.includes('Port-Bouët'))) {
                 this.deliveryFee = 2000;
             } else {
-                this.deliveryFee = 1500;
+                this.deliveryFee = {{ shop.payment.delivery_fee|default:1500|floatformat:0 }};
             }
         },
 
@@ -852,10 +903,13 @@
             this.isSubmitting = true;
 
             try {
+                const fullPhone = (this.countryData ? this.countryData.dialCode + ' ' : '') + this.customerPhone;
+                const fullLocation = `${this.customerZone}, ${this.customerCity} (${this.countryData ? this.countryData.name : 'Côte d\'Ivoire'})`;
+
                 const payload = {
                     customer_name: this.customerName,
-                    customer_phone: this.customerPhone,
-                    customer_city: this.customerCity,
+                    customer_phone: fullPhone,
+                    customer_city: fullLocation,
                     customer_address: this.customerAddress,
                     payment_method: this.paymentMethod,
                     items: this.cart
