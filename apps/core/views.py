@@ -4,6 +4,9 @@ from django.http import HttpResponse
 from django.contrib.auth.decorators import login_required
 from django.views.generic import TemplateView
 
+from apps.accounts.models import User
+from apps.shop.models import Shop, Order, ShopProduct
+
 
 class HomeView(TemplateView):
     """
@@ -16,11 +19,30 @@ class HomeView(TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         
+        # Données réelles extraites de la base de données
+        active_sellers = Shop.objects.filter(is_active=True).values('owner').distinct().count()
+        if active_sellers == 0:
+            active_sellers = User.objects.filter(is_active=True, is_staff=False).count()
+        
+        total_orders = Order.objects.count()
+        total_products = ShopProduct.objects.filter(is_available=True).count()
+        cities_count = Shop.objects.filter(is_active=True).values('city').distinct().count() or 1
+
+        def fmt_count(val: int) -> str:
+            if val >= 1000:
+                return f"{val:,}".replace(',', ' ') + "+"
+            return str(val)
+
+        context['active_sellers_count'] = active_sellers
+        context['total_orders_count'] = total_orders
+        context['total_products_count'] = total_products
+        context['cities_count'] = cities_count
+
         context['stats'] = [
-            {'label': 'Vendeurs actifs', 'value': '2 400+'},
-            {'label': 'Commandes traitées', 'value': '85 000+'},
-            {'label': 'Taux de satisfaction', 'value': '99.4%'},
-            {'label': 'Villes et communes couvertes', 'value': '120+'},
+            {'label': 'Vendeurs actifs', 'value': fmt_count(active_sellers)},
+            {'label': 'Commandes traitées', 'value': fmt_count(total_orders)},
+            {'label': 'Articles en catalogue', 'value': fmt_count(total_products)},
+            {'label': 'Villes et communes couvertes', 'value': fmt_count(cities_count)},
         ]
         
         context['channels'] = [

@@ -36,6 +36,7 @@ class Shop(models.Model):
     phone = models.CharField(max_length=25, blank=True, verbose_name=_("Numéro WhatsApp pour commandes"), help_text=_("Ex: +225 0700000000"))
     city = models.CharField(max_length=80, default="Abidjan", verbose_name=_("Ville / Commune"))
     is_active = models.BooleanField(default=True, verbose_name=_("Boutique active"))
+    name_last_changed_at = models.DateTimeField(null=True, blank=True, verbose_name=_("Dernière modification du nom"))
     created_at = models.DateTimeField(auto_now_add=True, verbose_name=_("Date de création"))
 
     class Meta:
@@ -45,24 +46,29 @@ class Shop(models.Model):
 
     @property
     def is_name_locked(self) -> bool:
-        """Indique si le nom de la boutique est verrouillé (plus de 7 jours après création)."""
+        """Indique si le nom est verrouillé (moins de 7 jours après la dernière modification du nom)."""
+        if not self.name_last_changed_at:
+            return False
         from django.utils import timezone
         from datetime import timedelta
-        if not self.created_at:
-            return False
-        return (timezone.now() - self.created_at) > timedelta(days=7)
+        return (timezone.now() - self.name_last_changed_at) < timedelta(days=7)
 
     @property
     def name_unlock_days_left(self) -> int:
-        """Nombre de jours restants avant le verrouillage définitif du nom."""
+        """Nombre de jours restants avant de pouvoir à nouveau modifier le nom."""
+        if not self.name_last_changed_at:
+            return 0
         from django.utils import timezone
         from datetime import timedelta
-        if not self.created_at:
-            return 7
-        diff = timedelta(days=7) - (timezone.now() - self.created_at)
+        diff = timedelta(days=7) - (timezone.now() - self.name_last_changed_at)
         return max(0, diff.days + 1 if diff.total_seconds() > 0 else 0)
 
     def save(self, *args, **kwargs):
+        if self.pk:
+            orig = Shop.objects.filter(pk=self.pk).values('name', 'name_last_changed_at').first()
+            if orig and orig['name'] != self.name:
+                from django.utils import timezone
+                self.name_last_changed_at = timezone.now()
         if not self.slug:
             base_slug = slugify(self.name) or "boutique"
             slug = base_slug

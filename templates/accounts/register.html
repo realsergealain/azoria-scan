@@ -4,7 +4,7 @@
 {% block meta_description %}Créez votre compte vendeur Azoria en 2 minutes pour lancer votre boutique mobile et vendre
 sur les réseaux sociaux.{% endblock %}
 
-{% block body_data %}x-data="{ showPassword: false, showConfirmPassword: false, submitting: false }"{% endblock %}
+{% block body_data %}x-data="{ showPassword: false, showConfirmPassword: false, submitting: false, fullName: '{{ form.full_name.value|default:''|escapejs }}', email: '{{ form.email.value|default:''|escapejs }}', password: '', passwordConfirm: '', get isValid() { return this.fullName.trim().length > 0 && this.email.trim().length > 0 && this.password.length >= 6 && this.password === this.passwordConfirm; } }"{% endblock %}
 
 {% block form_header %}
 <div class="text-center mb-6">
@@ -30,7 +30,7 @@ sur les réseaux sociaux.{% endblock %}
             <div class="md-leading-icon">
                 <i data-lucide="user" class="w-4 h-4"></i>
             </div>
-            <input type="text" name="full_name" id="id_full_name" value="{{ form.full_name.value|default:'' }}"
+            <input type="text" name="full_name" id="id_full_name" value="{{ form.full_name.value|default:'' }}" x-model="fullName"
                 placeholder="Ex: Aïcha Kouamé" autocomplete="name" required
                 class="md-input has-leading-icon {% if form.full_name.errors %}has-error{% endif %}">
         </div>
@@ -51,7 +51,7 @@ sur les réseaux sociaux.{% endblock %}
             <div class="md-leading-icon">
                 <i data-lucide="mail" class="w-4 h-4"></i>
             </div>
-            <input type="email" name="email" id="id_email" value="{{ form.email.value|default:'' }}"
+            <input type="email" name="email" id="id_email" value="{{ form.email.value|default:'' }}" x-model="email"
                 placeholder="aicha@boutique.com" autocomplete="email" required
                 class="md-input has-leading-icon {% if form.email.errors %}has-error{% endif %}">
         </div>
@@ -94,7 +94,7 @@ sur les réseaux sociaux.{% endblock %}
             <div class="md-leading-icon">
                 <i data-lucide="lock" class="w-4 h-4"></i>
             </div>
-            <input :type="showPassword ? 'text' : 'password'" name="password" id="id_password"
+            <input :type="showPassword ? 'text' : 'password'" name="password" id="id_password" x-model="password"
                 placeholder="Minimum 8 caractères" autocomplete="new-password" required
                 class="md-input has-leading-icon has-trailing-icon {% if form.password.errors %}has-error{% endif %}">
             <button type="button" @click="showPassword = !showPassword" class="md-trailing-action"
@@ -120,7 +120,7 @@ sur les réseaux sociaux.{% endblock %}
             <div class="md-leading-icon">
                 <i data-lucide="shield-check" class="w-4 h-4"></i>
             </div>
-            <input :type="showConfirmPassword ? 'text' : 'password'" name="password_confirm" id="id_password_confirm"
+            <input :type="showConfirmPassword ? 'text' : 'password'" name="password_confirm" id="id_password_confirm" x-model="passwordConfirm"
                 placeholder="Répétez votre mot de passe" autocomplete="new-password" required
                 class="md-input has-leading-icon has-trailing-icon {% if form.password_confirm.errors %}has-error{% endif %}">
             <button type="button" @click="showConfirmPassword = !showConfirmPassword" class="md-trailing-action"
@@ -139,7 +139,7 @@ sur les réseaux sociaux.{% endblock %}
 
     <!-- Submit Button -->
     <div class="pt-2">
-        <button type="submit" id="btn-register-submit" class="md-btn-filled" :disabled="submitting">
+        <button type="submit" id="btn-register-submit" class="md-btn-filled disabled:opacity-50 disabled:cursor-not-allowed disabled:pointer-events-none" :disabled="submitting || !isValid">
             <span x-show="!submitting" class="inline-flex items-center gap-2">
                 <i data-lucide="store" class="w-4 h-4"></i>
                 <span>Créer ma boutique</span>

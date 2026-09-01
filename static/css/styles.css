@@ -300,6 +300,16 @@ img, video {
   box-shadow: var(--md-elev-2);
 }
 
+.md-btn-filled:disabled,
+button:disabled,
+.btn-primary-glow:disabled {
+  opacity: 0.45 !important;
+  cursor: not-allowed !important;
+  pointer-events: none !important;
+  box-shadow: none !important;
+  transform: none !important;
+}
+
 .md-btn-filled:active {
   transform: scale(0.985);
   box-shadow: var(--md-elev-1);

@@ -31,8 +31,9 @@
 
     <!-- Main Settings Form Container -->
     <div
-        class="bg-white dark:bg-slate-800 rounded-3xl border border-slate-200 dark:border-slate-700 shadow-sm overflow-hidden">
-        <form method="post" enctype="multipart/form-data" class="p-6 sm:p-8 space-y-8">
+        class="bg-white dark:bg-slate-800 rounded-3xl border border-slate-200 dark:border-slate-700 shadow-sm overflow-hidden"
+        x-data="{ shopName: '{{ shop.name|escapejs }}', phone: '{{ shop.phone|escapejs }}', isSubmitting: false, get isValid() { return this.shopName.trim().length > 0 && this.phone.trim().length > 0; } }">
+        <form method="post" enctype="multipart/form-data" @submit="isSubmitting = true" class="p-6 sm:p-8 space-y-8">
             {% csrf_token %}
 
             <!-- Section 1: Informations Générales -->
@@ -53,25 +54,25 @@
                         <div class="flex items-center justify-between mb-1.5">
                             <label class="block text-xs font-bold text-slate-700 dark:text-slate-300">Nom de la boutique :</label>
                             {% if shop.is_name_locked %}
-                            <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-amber-50 dark:bg-amber-950/60 text-amber-600 dark:text-amber-400 border border-amber-200 dark:border-amber-800">
-                                🔒 Verrouillé (> 7 jours)
+                            <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-extrabold bg-amber-50 dark:bg-amber-950/60 text-amber-600 dark:text-amber-400 border border-amber-200 dark:border-amber-800">
+                                🔒 Modifiable dans {{ shop.name_unlock_days_left }} jour{{ shop.name_unlock_days_left|pluralize }}
                             </span>
                             {% else %}
-                            <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800">
-                                ⏳ Modifiable ({{ shop.name_unlock_days_left }}j restant{{ shop.name_unlock_days_left|pluralize }})
+                            <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800">
+                                ✨ Modifiable (verrouille pour 7 jours)
                             </span>
                             {% endif %}
                         </div>
                         {% if shop.is_name_locked %}
                         <input type="text" value="{{ shop.name }}" disabled
                             class="w-full px-4 py-3 rounded-2xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs sm:text-sm text-slate-500 dark:text-slate-400 font-medium cursor-not-allowed select-none shadow-inner"
-                            title="Le nom de la boutique ne peut plus être modifié 7 jours après sa création pour préserver l'identité de votre marque.">
-                        <input type="hidden" name="name" value="{{ shop.name }}">
-                        <p class="text-[10px] text-slate-400 mt-1">🔒 Verrouillé automatiquement pour protéger votre référencement et vos liens partagés.</p>
+                            title="Vous avez modifié le nom récemment. Prochaine modification possible dans {{ shop.name_unlock_days_left }} jour(s).">
+                        <input type="hidden" name="name" value="{{ shop.name }}" x-model="shopName">
+                        <p class="text-[10px] text-amber-600 dark:text-amber-400 mt-1">🔒 Nom verrouillé. Vous pourrez le modifier à nouveau dans {{ shop.name_unlock_days_left }} jour{{ shop.name_unlock_days_left|pluralize }}.</p>
                         {% else %}
-                        <input type="text" name="name" value="{{ shop.name }}" required
+                        <input type="text" name="name" value="{{ shop.name }}" required x-model="shopName"
                             class="w-full px-4 py-3 rounded-2xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-xs sm:text-sm focus:ring-2 focus:ring-brand-500 focus:border-brand-500 outline-none text-slate-900 dark:text-white font-medium transition-all shadow-sm">
-                        <p class="text-[10px] text-slate-400 mt-1">💡 Vous pouvez encore ajuster le nom pendant {{ shop.name_unlock_days_left }} jour{{ shop.name_unlock_days_left|pluralize }}.</p>
+                        <p class="text-[10px] text-slate-400 mt-1">💡 Vous pouvez modifier le nom maintenant. Chaque modification verrouille le nom pour 7 jours.</p>
                         {% endif %}
                     </div>
                     <div>
@@ -179,7 +180,7 @@
                             <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-xs font-bold text-slate-500"
                                  x-text="countryData ? countryData.flag + ' ' + countryData.dialCode : '🇨🇮 +225'">
                             </div>
-                            <input type="tel" name="phone" value="{{ shop.phone }}"
+                            <input type="tel" name="phone" value="{{ shop.phone }}" x-model="phone" required
                                 :placeholder="countryData ? countryData.phonePlaceholder : '07 00 00 00 00'"
                                 class="w-full pl-24 pr-4 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-xs sm:text-sm focus:ring-2 focus:ring-brand-500 outline-none text-slate-900 dark:text-white font-medium">
                         </div>
@@ -257,7 +258,8 @@
             <!-- Submit Action -->
             <div class="pt-6 border-t border-slate-100 dark:border-slate-700 flex justify-end">
                 <button type="submit"
-                    class="inline-flex items-center gap-2 px-6 py-3 rounded-2xl bg-brand-600 hover:bg-brand-700 text-white font-bold text-sm shadow-md hover:shadow-lg transition-all active:scale-95">
+                    :disabled="isSubmitting || !isValid"
+                    class="inline-flex items-center gap-2 px-6 py-3 rounded-2xl bg-brand-600 hover:bg-brand-700 text-white font-bold text-sm shadow-md hover:shadow-lg transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed disabled:pointer-events-none disabled:shadow-none">
                     <i data-lucide="save" class="w-4 h-4"></i>
                     <span>Enregistrer les modifications</span>
                 </button>

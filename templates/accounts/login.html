@@ -4,7 +4,7 @@
 {% block meta_description %}Connectez-vous à votre espace vendeur Azoria pour gérer vos commandes, vos produits et vos
 ventes.{% endblock %}
 
-{% block body_data %}x-data="{ showPassword: false, submitting: false }"{% endblock %}
+{% block body_data %}x-data="{ showPassword: false, submitting: false, email: '{{ form.email.value|default:''|escapejs }}', password: '' }"{% endblock %}
 
 {% block form_header %}
 <div class="text-center mb-6">
@@ -31,7 +31,7 @@ ventes.{% endblock %}
             <div class="md-leading-icon">
                 <i data-lucide="mail" class="w-4 h-4"></i>
             </div>
-            <input type="email" name="email" id="id_email" value="{{ form.email.value|default:'' }}"
+            <input type="email" name="email" id="id_email" value="{{ form.email.value|default:'' }}" x-model="email"
                 placeholder="votre.email@exemple.com" autocomplete="email" required
                 class="md-input has-leading-icon {% if form.email.errors %}has-error{% endif %}">
         </div>
@@ -57,7 +57,7 @@ ventes.{% endblock %}
             <div class="md-leading-icon">
                 <i data-lucide="lock" class="w-4 h-4"></i>
             </div>
-            <input :type="showPassword ? 'text' : 'password'" name="password" id="id_password"
+            <input :type="showPassword ? 'text' : 'password'" name="password" id="id_password" x-model="password"
                 placeholder="Votre mot de passe" autocomplete="current-password" required
                 class="md-input has-leading-icon has-trailing-icon {% if form.password.errors %}has-error{% endif %}">
             <button type="button" @click="showPassword = !showPassword" class="md-trailing-action"
@@ -84,7 +84,7 @@ ventes.{% endblock %}
 
     <!-- Submit Button -->
     <div class="pt-2">
-        <button type="submit" id="btn-login-submit" class="md-btn-filled" :disabled="submitting">
+        <button type="submit" id="btn-login-submit" class="md-btn-filled disabled:opacity-50 disabled:cursor-not-allowed disabled:pointer-events-none" :disabled="submitting || !email.trim() || !password.trim()">
             <span x-show="!submitting" class="inline-flex items-center gap-2">
                 <i data-lucide="log-in" class="w-4 h-4"></i>
                 <span>Se connecter</span>

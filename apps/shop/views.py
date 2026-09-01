@@ -111,12 +111,16 @@ def shop_settings(request):
     payment, _ = ShopPayment.objects.get_or_create(shop=shop)
 
     if request.method == 'POST':
-        # Règle métier : Verrouillage du nom 7 jours après création
+        # Règle métier : Modification du nom possible tous les 7 jours
         new_name = request.POST.get('name', '').strip()
-        if new_name and not shop.is_name_locked:
-            shop.name = new_name
-        elif new_name and shop.is_name_locked and new_name != shop.name:
-            messages.warning(request, "🔒 Le nom de la boutique ne peut plus être modifié car elle a été créée il y a plus de 7 jours.")
+        if new_name and new_name != shop.name:
+            if shop.is_name_locked:
+                messages.warning(request, f"🔒 Le nom de la boutique a été modifié récemment. Vous devez attendre encore {shop.name_unlock_days_left} jour(s) avant de pouvoir le modifier à nouveau.")
+            else:
+                from django.utils import timezone
+                shop.name = new_name
+                shop.name_last_changed_at = timezone.now()
+                messages.info(request, "✨ Nom de la boutique mis à jour avec succès. La prochaine modification sera possible dans 7 jours.")
 
         shop.category = request.POST.get('category', shop.category)
         shop.description = request.POST.get('description', shop.description)

@@ -321,12 +321,13 @@
                 <!-- Next or Final Submit Button with HTMX Spinner Indicator -->
                 <div>
                     <button type="button" @click="nextStep()" x-show="step < 3"
-                            class="py-3.5 px-6 rounded-2xl bg-brand-600 hover:bg-brand-700 text-white font-heading font-extrabold text-xs shadow-lg shadow-brand-500/25 flex items-center gap-1.5 transition-all active:scale-95">
+                            :disabled="!isStepValid"
+                            class="py-3.5 px-6 rounded-2xl bg-brand-600 hover:bg-brand-700 text-white font-heading font-extrabold text-xs shadow-lg shadow-brand-500/25 flex items-center gap-1.5 transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed disabled:pointer-events-none disabled:shadow-none">
                         <span>Étape suivante →</span>
                     </button>
 
-                    <button type="submit" x-show="step === 3" :disabled="isSubmitting"
-                            class="py-3.5 px-7 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white font-heading font-extrabold text-xs shadow-xl shadow-emerald-500/25 flex items-center gap-2 transition-all active:scale-95">
+                    <button type="submit" x-show="step === 3" :disabled="isSubmitting || !isStepValid"
+                            class="py-3.5 px-7 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white font-heading font-extrabold text-xs shadow-xl shadow-emerald-500/25 flex items-center gap-2 transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed disabled:pointer-events-none disabled:shadow-none">
                         <span class="htmx-indicator w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
                         <span>🎉 Créer ma boutique maintenant</span>
                     </button>
@@ -372,6 +373,18 @@
                 },
                 get zonesList() {
                     return (this.countryData && this.countryData.cities[this.formData.city]) ? this.countryData.cities[this.formData.city] : [];
+                },
+                get isStepValid() {
+                    if (this.step === 1) {
+                        return !!(this.formData.name && this.formData.name.trim().length > 0 && this.formData.phone && this.formData.phone.trim().length >= 8 && this.formData.city);
+                    }
+                    if (this.step === 2) {
+                        return !!(this.formData.primary_color);
+                    }
+                    if (this.step === 3) {
+                        return this.formData.delivery_fee !== '' && this.formData.delivery_fee !== null && this.formData.accepted_payments && this.formData.accepted_payments.length > 0;
+                    }
+                    return true;
                 },
                 onCountryChange() {
                     if (this.countryData) {

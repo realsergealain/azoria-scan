@@ -139,7 +139,7 @@
                 <a href="{% url 'shop:product_list' %}" class="inline-flex justify-center items-center rounded-2xl bg-white dark:bg-slate-800 px-5 py-3 text-xs font-bold text-slate-700 dark:text-slate-300 shadow-sm border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors">
                     Annuler
                 </a>
-                <button type="submit" class="inline-flex justify-center items-center gap-2 rounded-2xl bg-brand-600 hover:bg-brand-500 px-6 py-3 text-xs font-extrabold text-white shadow-lg shadow-brand-600/30 transition-all active:scale-95">
+                <button type="submit" :disabled="!isValid" class="inline-flex justify-center items-center gap-2 rounded-2xl bg-brand-600 hover:bg-brand-500 px-6 py-3 text-xs font-extrabold text-white shadow-lg shadow-brand-600/30 transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed disabled:pointer-events-none disabled:shadow-none">
                     <i data-lucide="save" class="h-4 w-4"></i>
                     {% if is_update %}Enregistrer les modifications{% else %}Créer le produit{% endif %}
                 </button>
@@ -152,6 +152,23 @@
     function productFormApp() {
         return {
             isGeneratingAi: false,
+            nameVal: '{{ form.name.value|default:''|escapejs }}',
+            priceVal: '{{ form.price.value|default:''|escapejs }}',
+            get isValid() {
+                return this.nameVal.trim().length > 0 && String(this.priceVal).trim().length > 0;
+            },
+            init() {
+                const nameEl = document.getElementById('{{ form.name.id_for_label }}') || document.getElementById('product_name_input');
+                const priceEl = document.getElementById('{{ form.price.id_for_label }}');
+                if (nameEl) {
+                    this.nameVal = nameEl.value;
+                    nameEl.addEventListener('input', (e) => { this.nameVal = e.target.value; });
+                }
+                if (priceEl) {
+                    this.priceVal = priceEl.value;
+                    priceEl.addEventListener('input', (e) => { this.priceVal = e.target.value; });
+                }
+            },
 
             async generateAiDescription() {
                 const nameInput = document.getElementById('product_name_input');

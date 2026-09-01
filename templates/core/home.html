@@ -842,7 +842,7 @@
 
         <div class="relative z-10 max-w-3xl mx-auto">
             <span class="inline-block px-3.5 py-1 rounded-full bg-white/20 backdrop-blur-md text-xs font-bold uppercase tracking-wider mb-4">
-                🚀 Rejoignez plus de 2 400 vendeurs
+                🚀 Rejoignez {% if active_sellers_count > 1 %}nos {{ active_sellers_count }} vendeurs actifs{% else %}la communauté des vendeurs{% endif %}
             </span>
             <h2 class="font-heading text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight leading-tight">
                 Investissez dans plus d'opportunités de ventes
