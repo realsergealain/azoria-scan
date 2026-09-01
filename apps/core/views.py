@@ -52,6 +52,33 @@ class HomeView(TemplateView):
             {'name': 'Facebook', 'icon': 'facebook', 'badge': 'Posts & Marketplace', 'color': 'from-blue-600 to-indigo-600'},
             {'name': 'QR Codes', 'icon': 'qr-code', 'badge': 'Affiches & Emballages', 'color': 'from-violet-600 to-purple-800'},
         ]
+
+        context['faqs'] = [
+            {
+                'q': 'Comment créer ma boutique en ligne sur Azoria ?',
+                'a': 'Il vous suffit de cliquer sur "Créer ma boutique", de renseigner le nom de votre marque, votre numéro WhatsApp et d\'ajouter vos premiers articles. Votre vitrine est prête et accessible en moins de 2 minutes.'
+            },
+            {
+                'q': 'Ai-je besoin d\'une carte bancaire pour démarrer ?',
+                'a': 'Non, aucune carte bancaire n\'est demandée. Le plan Starter est 100% gratuit et vous permet de lancer immédiatement vos ventes.'
+            },
+            {
+                'q': 'Comment mes clients accèdent-ils à mes produits ?',
+                'a': 'Vous disposez d\'un lien unique personnalisé et d\'un QR Code HD prêt à être collé dans votre bio TikTok, stories Instagram, statuts WhatsApp ou sur vos colis.'
+            },
+            {
+                'q': 'Comment fonctionne le paiement à la livraison ?',
+                'a': 'Lors de la commande, le client valide son panier sans payer d\'avance. Vous recevez l\'alerte complète dans votre tableau de bord, vous expédiez et vous encaissez à la remise en main propre.'
+            },
+            {
+                'q': 'Qu\'est-ce que l\'intelligence artificielle Azoria AI ?',
+                'a': 'Azoria AI génère automatiquement des descriptions de produits vendeuses et adaptées aux réseaux sociaux en Afrique à partir d\'une simple photo ou de mots-clés.'
+            },
+            {
+                'q': 'Puis-je modifier le nom de ma boutique par la suite ?',
+                'a': 'Oui, vous pouvez ajuster le nom de votre boutique dans vos paramètres. Chaque modification applique un délai de 7 jours avant la suivante pour préserver vos liens et votre marque.'
+            },
+        ]
         
         return context
 
