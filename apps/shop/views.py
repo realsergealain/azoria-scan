@@ -120,7 +120,7 @@ def shop_settings(request):
                 from django.utils import timezone
                 shop.name = new_name
                 shop.name_last_changed_at = timezone.now()
-                messages.info(request, "✨ Nom de la boutique mis à jour avec succès. La prochaine modification sera possible dans 7 jours.")
+                messages.info(request, "Nom de la boutique mis à jour avec succès. La prochaine modification sera possible dans 7 jours.")
 
         shop.category = request.POST.get('category', shop.category)
         shop.description = request.POST.get('description', shop.description)

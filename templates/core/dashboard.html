@@ -54,7 +54,7 @@
             <button @click="copyLink('{{ request.scheme }}://{{ request.get_host }}{% url 'shop:detail' primary_shop.uuid primary_shop.slug %}')" 
                     class="inline-flex items-center gap-2 px-4 py-2.5 rounded-2xl bg-brand-50 dark:bg-brand-900/30 text-brand-600 dark:text-brand-400 font-bold text-xs hover:bg-brand-100 transition-all border border-brand-200 dark:border-brand-800/40 shadow-sm active:scale-95">
                 <i data-lucide="copy" class="w-4 h-4"></i>
-                <span x-text="copiedToast ? 'Lien copié ! ✨' : 'Copier mon lien boutique'"></span>
+                <span x-text="copiedToast ? 'Lien copié !' : 'Copier mon lien boutique'"></span>
             </button>
 
             <!-- Direct View Storefront -->
@@ -81,7 +81,7 @@
 
         <div class="relative z-10 max-w-2xl space-y-4">
             <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 backdrop-blur-md text-amber-300 text-xs font-bold border border-white/10">
-                <i data-lucide="sparkles" class="w-3.5 h-3.5"></i>
+                <i data-lucide="zap" class="w-3.5 h-3.5"></i>
                 <span>Prêt en 30 secondes chrono</span>
             </div>
 
@@ -126,7 +126,7 @@
         <!-- Share Store Card -->
         <div id="tour-qr" class="bg-gradient-to-br from-brand-600 to-indigo-700 rounded-3xl p-6 text-white shadow-xl space-y-4">
             <div class="flex items-center gap-2 text-white/90 font-extrabold text-xs uppercase tracking-wider">
-                <i data-lucide="sparkles" class="w-4 h-4 text-amber-300"></i>
+                <i data-lucide="trending-up" class="w-4 h-4 text-amber-300"></i>
                 <span>Boostez vos ventes</span>
             </div>
             <h4 class="font-heading font-extrabold text-lg leading-tight">Glissez votre lien dans votre bio TikTok & Instagram</h4>
@@ -163,7 +163,7 @@
 
     {% if not primary_shop %}
     <!-- ═══════════════════════════════════════════════════════════════════ -->
-    <!-- ✨ ENHANCED ULTRA-PREMIUM SHOP CREATION MODAL                       -->
+    <!-- ENHANCED SHOP CREATION MODAL                                        -->
     <!-- ═══════════════════════════════════════════════════════════════════ -->
     <div x-show="showCreateModal" style="display: none;" 
          class="fixed inset-0 z-[100] flex items-end sm:items-center justify-center p-0 sm:p-4" 
@@ -226,7 +226,7 @@
                             Nom de la boutique <span class="text-rose-500">*</span>
                         </label>
                         <input type="text" name="name" x-model="shopName" required
-                               placeholder="Ex : Fatou Fashion Chic ✨"
+                               placeholder="Ex : Fatou Fashion Chic"
                                class="w-full px-4 py-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 text-sm font-bold text-slate-900 dark:text-white focus:ring-2 focus:ring-brand-500 focus:bg-white dark:focus:bg-slate-900 outline-none transition-all">
                     </div>
 

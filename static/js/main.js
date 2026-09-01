@@ -159,7 +159,7 @@ function storeSimulator() {
       // Simulate a brief loading delay for realism
       setTimeout(() => {
         this.aiGenerated = true;
-        this.aiTitle = `✨ ${name} — Élégance & Coupe Premium`;
+        this.aiTitle = `${name} — Élégance & Coupe Premium`;
         this.aiDesc  = `Sublimez votre style avec notre ${name}. Confection artisanale de haute qualité, tissu respirant et coupe ajustée idéale pour toutes vos sorties chic. Catégorie : ${cat}. Disponible en plusieurs tailles avec livraison rapide à Abidjan et partout en Côte d'Ivoire.`;
 
         // Re-init lucide icons for the newly rendered content

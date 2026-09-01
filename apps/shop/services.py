@@ -212,7 +212,7 @@ def generate_ai_product_description(name: str, category: str = "", image_file=No
     api_key = getattr(settings, 'OPENAI_API_KEY', None) or os.environ.get('OPENAI_API_KEY')
     if not api_key:
         return {
-            'title': f"{name} ✨ Tendance & Qualité",
+            'title': f"{name} — Tendance & Qualité",
             'description': f"Découvrez notre {name} ! Qualité premium et design élégant. Commandez dès maintenant avec paiement à la livraison.",
             'badge': '🔥 Meilleure Vente'
         }
@@ -294,13 +294,13 @@ def generate_ai_product_description(name: str, category: str = "", image_file=No
     except Exception as e:
         print(f"[Azoria AI] Erreur OpenAI Vision: {e}")
         description = (
-            f"✨ Découvrez notre magnifique {name} !\n"
+            f"Découvrez notre magnifique {name} !\n"
             f"Un article d'exception sélectionné pour sa qualité premium et son design élégant.\n"
             f"⚡ Quantités limitées. Profitez du paiement à la livraison et commandez dès aujourd'hui !"
         )
 
     return {
-        'title': f"{name} ✨ Tendance & Qualité",
+        'title': f"{name} — Tendance & Qualité",
         'description': description,
         'badge': '🔥 Meilleure Vente'
     }
