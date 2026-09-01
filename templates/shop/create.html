@@ -95,7 +95,7 @@
             </div>
 
             <!-- FORM WIZARD BODY (2 COLUMNS DESKTOP: Form left, Live Preview right) -->
-            <form method="post" enctype="multipart/form-data" @submit.prevent="submitFinalForm($event)" class="flex-1 flex flex-col lg:flex-row divide-y lg:divide-y-0 lg:divide-x divide-slate-100 dark:divide-slate-800 overflow-y-auto">
+            <form id="shop-wizard-form" method="post" enctype="multipart/form-data" @submit.prevent="submitFinalForm()" class="flex-1 flex flex-col lg:flex-row divide-y lg:divide-y-0 lg:divide-x divide-slate-100 dark:divide-slate-800 overflow-y-auto">
                 {% csrf_token %}
 
                 <!-- Left Column: Step Fields -->
@@ -318,7 +318,7 @@
                 </button>
                 <div x-show="step === 1"></div>
 
-                <!-- Next or Final Submit Button with HTMX Spinner Indicator -->
+                <!-- Next or Final Submit Button -->
                 <div>
                     <button type="button" @click="nextStep()" x-show="step < 3"
                             :disabled="!isStepValid"
@@ -326,10 +326,11 @@
                         <span>Étape suivante →</span>
                     </button>
 
-                    <button type="submit" x-show="step === 3" :disabled="isSubmitting || !isStepValid"
+                    <button type="button" @click="submitFinalForm()" x-show="step === 3" :disabled="isSubmitting || !isStepValid"
                             class="py-3.5 px-7 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white font-heading font-extrabold text-xs shadow-xl shadow-emerald-500/25 flex items-center gap-2 transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed disabled:pointer-events-none disabled:shadow-none">
-                        <span class="htmx-indicator w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
-                        <span>🎉 Créer ma boutique maintenant</span>
+                        <span x-show="isSubmitting" class="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
+                        <i x-show="!isSubmitting" data-lucide="store" class="w-4 h-4"></i>
+                        <span>Créer ma boutique maintenant</span>
                     </button>
                 </div>
             </div>
@@ -376,7 +377,7 @@
                 },
                 get isStepValid() {
                     if (this.step === 1) {
-                        return !!(this.formData.name && this.formData.name.trim().length > 0 && this.formData.phone && this.formData.phone.trim().length >= 8 && this.formData.city);
+                        return !!(this.formData.name && this.formData.name.trim().length > 0 && this.formData.phone && this.formData.phone.trim().length >= 4 && this.formData.city);
                     }
                     if (this.step === 2) {
                         return !!(this.formData.primary_color);
@@ -417,9 +418,11 @@
                     if (this.step > 1) this.step--;
                 },
 
-                async submitFinalForm(e) {
+                async submitFinalForm() {
+                    if (this.isSubmitting) return;
                     this.isSubmitting = true;
-                    const formEl = e.target;
+                    
+                    const formEl = document.getElementById("shop-wizard-form");
                     const fd = new FormData(formEl);
                     fd.set("name", this.formData.name);
                     const dialCode = this.countryData ? this.countryData.dialCode : '+225';
@@ -430,29 +433,34 @@
                     fd.set("primary_color", this.formData.primary_color);
                     fd.set("delivery_fee", this.formData.delivery_fee);
                     
+                    if (this.formData.accepted_payments && this.formData.accepted_payments.length > 0) {
+                        fd.delete("accepted_payments");
+                        this.formData.accepted_payments.forEach(p => fd.append("accepted_payments", p));
+                    }
+                    
                     try {
                         const response = await fetch("{% url 'shop:create' %}", {
                             method: "POST",
                             headers: {
-                                "X-CSRFToken": "{{ csrf_token }}",
-                                "HX-Request": "true"
+                                "X-CSRFToken": "{{ csrf_token }}"
                             },
                             body: fd
                         });
 
                         if (response.ok || response.redirected) {
-                            // 🎉 Celebrate with confetti + chime audio
                             if (window.AzoriaUI) {
                                 AzoriaUI.celebrate();
                             }
                             setTimeout(() => {
                                 window.location.href = "{% url 'core:dashboard' %}?created=true";
-                            }, 600);
+                            }, 500);
                         } else {
-                            alert("Une erreur est survenue lors de la création.");
+                            // En cas de non redirection, soumettre le formulaire classiquement
+                            formEl.submit();
                         }
                     } catch (err) {
-                        alert("Erreur réseau. Veuillez réessayer.");
+                        console.warn("Erreur fetch, soumission standard...", err);
+                        formEl.submit();
                     } finally {
                         this.isSubmitting = false;
                     }
