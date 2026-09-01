@@ -2,6 +2,20 @@
     <div x-data="{ 
             show: true, 
             isAiGenerating: false,
+            nameVal: '{{ form.name.value|default:''|escapejs }}',
+            priceVal: '{{ form.price.value|default:''|escapejs }}',
+            get isValid() {
+                return this.nameVal.trim().length > 0 && String(this.priceVal).trim().length > 0;
+            },
+            init() {
+                this.$nextTick(() => {
+                    const n = document.getElementById('{{ form.name.id_for_label }}') || document.getElementById('product_name_input');
+                    const p = document.getElementById('{{ form.price.id_for_label }}');
+                    if (n) { this.nameVal = n.value; n.addEventListener('input', (e) => { this.nameVal = e.target.value; }); }
+                    if (p) { this.priceVal = p.value; p.addEventListener('input', (e) => { this.priceVal = e.target.value; }); }
+                    if (typeof lucide !== 'undefined') lucide.createIcons();
+                });
+            },
             async generateWithAI() {
                 const nameInput = document.getElementById('product_name_input');
                 const catInput = document.getElementById('product_category_input');
@@ -230,7 +244,7 @@
                         <button type="button" @click="show = false; setTimeout(() => $el.closest('#modal-container').innerHTML = '', 300)" class="px-5 py-2.5 text-xs font-bold text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-colors">
                             Annuler
                         </button>
-                        <button type="submit" class="px-7 py-3 bg-brand-600 hover:bg-brand-700 text-white text-xs font-bold rounded-2xl shadow-lg shadow-brand-500/25 transition-all active:scale-95 flex items-center gap-2 font-heading">
+                        <button type="submit" :disabled="!isValid" class="px-7 py-3 bg-brand-600 hover:bg-brand-700 text-white text-xs font-bold rounded-2xl shadow-lg shadow-brand-500/25 transition-all active:scale-95 flex items-center gap-2 font-heading disabled:opacity-50 disabled:cursor-not-allowed disabled:pointer-events-none disabled:shadow-none">
                             <i data-lucide="check" class="h-4 w-4"></i>
                             <span>{% if is_update %}Enregistrer les modifications{% else %}Publier mon article{% endif %}</span>
                         </button>
