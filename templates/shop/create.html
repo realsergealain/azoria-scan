@@ -128,14 +128,9 @@
                                     <label class="block text-xs font-extrabold text-slate-900 dark:text-white uppercase tracking-wider mb-1.5">Pays :</label>
                                     <select x-model="formData.country" @change="onCountryChange()"
                                             class="w-full px-3.5 py-3 rounded-2xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-xs font-bold focus:ring-2 focus:ring-brand-500 outline-none">
-                                        <option value="CI">🇨🇮 Côte d'Ivoire</option>
-                                        <option value="SN">🇸🇳 Sénégal</option>
-                                        <option value="ML">🇲🇱 Mali</option>
-                                        <option value="BF">🇧🇫 Burkina Faso</option>
-                                        <option value="BJ">🇧🇯 Bénin</option>
-                                        <option value="TG">🇹🇬 Togo</option>
-                                        <option value="GN">🇬🇳 Guinée</option>
-                                        <option value="NE">🇳🇪 Niger</option>
+                                        <template x-for="c in allCountriesList" :key="c.code">
+                                            <option :value="c.code" x-text="c.flag + ' ' + c.name" :selected="c.code === formData.country"></option>
+                                        </template>
                                     </select>
                                 </div>
 
@@ -366,8 +361,11 @@
                     accepted_payments: ["livraison", "mobile_money"]
                 },
 
+                get allCountriesList() {
+                    return window.getAllCountriesList ? window.getAllCountriesList() : [];
+                },
                 get countryData() {
-                    return window.WEST_AFRICA_LOCATIONS ? window.WEST_AFRICA_LOCATIONS[this.formData.country] : null;
+                    return window.AZORIA_COUNTRIES ? window.AZORIA_COUNTRIES[this.formData.country] : (window.WEST_AFRICA_LOCATIONS ? window.WEST_AFRICA_LOCATIONS[this.formData.country] : null);
                 },
                 get citiesList() {
                     return this.countryData ? Object.keys(this.countryData.cities) : ['Abidjan'];
