@@ -51,3 +51,25 @@ class User(AbstractBaseUser, PermissionsMixin):
         if self.first_name and self.last_name:
             return f"{self.first_name} {self.last_name}"
         return self.first_name or self.last_name or self.email.split('@')[0]
+
+
+class PushSubscription(models.Model):
+    """
+    Abonnement Web Push du navigateur pour recevoir des alertes hors-ligne.
+    """
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='push_subscriptions')
+    endpoint = models.TextField(unique=True, verbose_name=_('Endpoint Push'))
+    p256dh = models.CharField(max_length=255, verbose_name=_('Clé publique p256dh'))
+    auth = models.CharField(max_length=255, verbose_name=_('Clé auth'))
+    user_agent = models.CharField(max_length=500, blank=True, null=True, verbose_name=_('User Agent'))
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name=_('Date de création'))
+    updated_at = models.DateTimeField(auto_now=True, verbose_name=_('Dernière mise à jour'))
+
+    class Meta:
+        verbose_name = _('Abonnement Web Push')
+        verbose_name_plural = _('Abonnements Web Push')
+        ordering = ['-created_at']
+
+    def __str__(self):
+        return f"Push {self.user.email} ({self.created_at.strftime('%d/%m/%Y %H:%M')})"

@@ -13,7 +13,57 @@
         showDangerModal: false,
         notifWhatsapp: true,
         notifEmail: true,
-        notifWeeklyReport: true
+        notifWeeklyReport: true,
+        pushSupported: false,
+        pushSubscribed: false,
+        pushLoading: false,
+        testLoading: false,
+        async init() {
+            if (window.AzoriaPush && window.AzoriaPush.isSupported()) {
+                this.pushSupported = true;
+                this.pushSubscribed = await window.AzoriaPush.isSubscribed();
+            }
+        },
+        async togglePush() {
+            if (!this.pushSupported) return;
+            this.pushLoading = true;
+            try {
+                if (this.pushSubscribed) {
+                    await window.AzoriaPush.unsubscribe();
+                    this.pushSubscribed = false;
+                    window.dispatchEvent(new CustomEvent('notify', {
+                        detail: { type: 'info', message: 'Notifications push désactivées sur cet appareil.' }
+                    }));
+                } else {
+                    await window.AzoriaPush.subscribe();
+                    this.pushSubscribed = true;
+                    window.dispatchEvent(new CustomEvent('notify', {
+                        detail: { type: 'success', message: '🎉 Notifications push activées ! Vous recevrez vos alertes de commandes.' }
+                    }));
+                }
+            } catch (e) {
+                window.dispatchEvent(new CustomEvent('notify', {
+                    detail: { type: 'error', message: e.message || 'Impossible d\'activer les notifications.' }
+                }));
+            } finally {
+                this.pushLoading = false;
+            }
+        },
+        async sendTestPush() {
+            this.testLoading = true;
+            try {
+                const res = await window.AzoriaPush.sendTestPush();
+                window.dispatchEvent(new CustomEvent('notify', {
+                    detail: { type: res.status === 'success' ? 'success' : 'error', message: res.message }
+                }));
+            } catch (e) {
+                window.dispatchEvent(new CustomEvent('notify', {
+                    detail: { type: 'error', message: 'Erreur lors de l\'envoi du test.' }
+                }));
+            } finally {
+                this.testLoading = false;
+            }
+        }
      }">
     
     <!-- Top Header Profile Banner -->
@@ -234,14 +284,86 @@
                     </div>
 
                     <!-- Notification Toggles -->
-                    <div class="pt-4 border-t border-slate-100 dark:border-slate-800 space-y-3">
-                        <h3 class="font-heading font-bold text-sm text-slate-900 dark:text-white">Alertes & Notifications Vendeur</h3>
+                    <div class="pt-4 border-t border-slate-100 dark:border-slate-800 space-y-4">
+                        <h3 class="font-heading font-bold text-sm text-slate-900 dark:text-white flex items-center gap-2">
+                            <i data-lucide="bell-ring" class="w-4 h-4 text-brand-600"></i>
+                            <span>Alertes & Notifications Vendeur</span>
+                        </h3>
                         
+                        <!-- Web Push Native Notification Card -->
+                        <div class="p-5 rounded-3xl bg-gradient-to-br from-brand-50/80 to-purple-50/50 dark:from-slate-800/80 dark:to-brand-950/40 border border-brand-200/80 dark:border-brand-900/50 shadow-sm space-y-4">
+                            <div class="flex items-start justify-between gap-4">
+                                <div class="flex items-start gap-3.5">
+                                    <div class="w-10 h-10 rounded-2xl bg-brand-600 text-white flex items-center justify-center shadow-md shadow-brand-500/20 shrink-0 mt-0.5">
+                                        <i data-lucide="bell" class="w-5 h-5"></i>
+                                    </div>
+                                    <div>
+                                        <div class="flex items-center gap-2 flex-wrap">
+                                            <span class="text-sm font-extrabold text-slate-900 dark:text-white">Notifications Push sur cet appareil</span>
+                                            <template x-if="pushSubscribed">
+                                                <span class="px-2 py-0.5 rounded-full bg-emerald-100 dark:bg-emerald-900/40 text-emerald-700 dark:text-emerald-400 text-[10px] font-extrabold flex items-center gap-1">
+                                                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                                                    Actif sur ce navigateur
+                                                </span>
+                                            </template>
+                                            <template x-if="!pushSubscribed">
+                                                <span class="px-2 py-0.5 rounded-full bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-300 text-[10px] font-bold">
+                                                    Non activé
+                                                </span>
+                                            </template>
+                                        </div>
+                                        <p class="text-xs text-slate-600 dark:text-slate-400 mt-1 leading-relaxed">
+                                            Fait sonner et vibrer votre téléphone/PC instantanément à chaque nouvelle commande reçue, même lorsque l'application ou l'onglet est fermé.
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="pt-2 flex flex-wrap items-center gap-3 border-t border-brand-100 dark:border-slate-700/60">
+                                <button type="button"
+                                        @click="togglePush()"
+                                        :disabled="pushLoading"
+                                        :class="pushSubscribed ? 'bg-slate-200 dark:bg-slate-700 text-slate-800 dark:text-slate-200 hover:bg-slate-300' : 'bg-brand-600 text-white hover:bg-brand-700 shadow-md shadow-brand-500/20'"
+                                        class="px-4 py-2.5 rounded-xl font-bold text-xs transition-all flex items-center gap-2 active:scale-95 disabled:opacity-50">
+                                    <template x-if="pushLoading">
+                                        <i data-lucide="loader-2" class="w-4 h-4 animate-spin"></i>
+                                    </template>
+                                    <template x-if="!pushLoading && !pushSubscribed">
+                                        <span class="flex items-center gap-1.5">
+                                            <i data-lucide="bell" class="w-4 h-4"></i>
+                                            <span>Activer les notifications push</span>
+                                        </span>
+                                    </template>
+                                    <template x-if="!pushLoading && pushSubscribed">
+                                        <span class="flex items-center gap-1.5">
+                                            <i data-lucide="bell-off" class="w-4 h-4 text-slate-500"></i>
+                                            <span>Désactiver sur cet appareil</span>
+                                        </span>
+                                    </template>
+                                </button>
+
+                                <template x-if="pushSubscribed">
+                                    <button type="button"
+                                            @click="sendTestPush()"
+                                            :disabled="testLoading"
+                                            class="px-4 py-2.5 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-50 font-bold text-xs transition-all flex items-center gap-1.5 active:scale-95 disabled:opacity-50 shadow-sm">
+                                        <template x-if="testLoading">
+                                            <i data-lucide="loader-2" class="w-4 h-4 animate-spin text-brand-600"></i>
+                                        </template>
+                                        <template x-if="!testLoading">
+                                            <i data-lucide="send" class="w-4 h-4 text-brand-600"></i>
+                                        </template>
+                                        <span>Tester la notification (Démo) 🚀</span>
+                                    </button>
+                                </template>
+                            </div>
+                        </div>
+
                         <label class="flex items-center justify-between p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-700 cursor-pointer">
                             <div class="flex items-center gap-3">
                                 <span class="text-lg">💬</span>
                                 <div>
-                                    <span class="text-xs font-bold text-slate-900 dark:text-white block">Alertes WhatsApp instantanées</span>
+                                    <span class="text-xs font-bold text-slate-900 dark:text-white block">Alertes WhatsApp directes</span>
                                     <span class="text-[11px] text-slate-400 block">Recevoir une notification directe à chaque nouvelle commande client.</span>
                                 </div>
                             </div>

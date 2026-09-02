@@ -126,33 +126,90 @@
                                 <!-- 1. PAYS -->
                                 <div>
                                     <label class="block text-xs font-extrabold text-slate-900 dark:text-white uppercase tracking-wider mb-1.5">Pays :</label>
-                                    <select x-model="formData.country" @change="onCountryChange()"
-                                            class="w-full px-3.5 py-3 rounded-2xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-xs font-bold focus:ring-2 focus:ring-brand-500 outline-none">
-                                        <template x-for="c in allCountriesList" :key="c.code">
-                                            <option :value="c.code" x-text="c.flag + ' ' + c.name" :selected="c.code === formData.country"></option>
-                                        </template>
+                                    <select x-model="formData.country" @change="onCountryChange()" id="wizard-country-select"
+                                            class="w-full px-3.5 py-3 rounded-2xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-xs font-bold focus:ring-2 focus:ring-brand-500 outline-none text-slate-900 dark:text-white">
+                                        <optgroup label="── Afrique de l'Ouest ──">
+                                            <option value="CI" selected>🇨🇮 Côte d'Ivoire</option>
+                                            <option value="SN">🇸🇳 Sénégal</option>
+                                            <option value="ML">🇲🇱 Mali</option>
+                                            <option value="BF">🇧🇫 Burkina Faso</option>
+                                            <option value="BJ">🇧🇯 Bénin</option>
+                                            <option value="TG">🇹🇬 Togo</option>
+                                            <option value="GN">🇬🇳 Guinée</option>
+                                            <option value="NE">🇳🇪 Niger</option>
+                                            <option value="GH">🇬🇭 Ghana</option>
+                                            <option value="NG">🇳🇬 Nigeria</option>
+                                            <option value="MR">🇲🇷 Mauritanie</option>
+                                            <option value="CV">🇨🇻 Cap-Vert</option>
+                                        </optgroup>
+                                        <optgroup label="── Afrique Centrale ──">
+                                            <option value="CM">🇨🇲 Cameroun</option>
+                                            <option value="GA">🇬🇦 Gabon</option>
+                                            <option value="CD">🇨🇩 RD Congo</option>
+                                            <option value="CG">🇨🇬 Congo-Brazzaville</option>
+                                            <option value="TD">🇹🇩 Tchad</option>
+                                            <option value="GQ">🇬🇶 Guinée Équatoriale</option>
+                                            <option value="CF">🇨🇫 Centrafrique</option>
+                                        </optgroup>
+                                        <optgroup label="── Afrique du Nord & Autres ──">
+                                            <option value="MA">🇲🇦 Maroc</option>
+                                            <option value="DZ">🇩🇿 Algérie</option>
+                                            <option value="TN">🇹🇳 Tunisie</option>
+                                            <option value="EG">🇪🇬 Égypte</option>
+                                            <option value="RW">🇷🇼 Rwanda</option>
+                                            <option value="KE">🇰🇪 Kenya</option>
+                                            <option value="ZA">🇿🇦 Afrique du Sud</option>
+                                            <option value="MG">🇲🇬 Madagascar</option>
+                                            <option value="MU">🇲🇺 Maurice</option>
+                                            <option value="KM">🇰🇲 Comores</option>
+                                            <option value="DJ">🇩🇯 Djibouti</option>
+                                            <option value="ET">🇪🇹 Éthiopie</option>
+                                            <option value="UG">🇺🇬 Ouganda</option>
+                                            <option value="TZ">🇹🇿 Tanzanie</option>
+                                            <option value="AO">🇦🇴 Angola</option>
+                                            <option value="MZ">🇲🇿 Mozambique</option>
+                                        </optgroup>
+                                        <optgroup label="── International & Diaspora ──">
+                                            <option value="FR">🇫🇷 France</option>
+                                            <option value="BE">🇧🇪 Belgique</option>
+                                            <option value="CH">🇨🇭 Suisse</option>
+                                            <option value="CA">🇨🇦 Canada</option>
+                                            <option value="US">🇺🇸 États-Unis</option>
+                                            <option value="GB">🇬🇧 Royaume-Uni</option>
+                                            <option value="DE">🇩🇪 Allemagne</option>
+                                            <option value="IT">🇮🇹 Italie</option>
+                                            <option value="ES">🇪🇸 Espagne</option>
+                                            <option value="PT">🇵🇹 Portugal</option>
+                                            <option value="NL">🇳🇱 Pays-Bas</option>
+                                            <option value="LU">🇱🇺 Luxembourg</option>
+                                            <option value="AE">🇦🇪 Émirats Arabes Unis</option>
+                                            <option value="CN">🇨🇳 Chine</option>
+                                            <option value="TR">🇹🇷 Turquie</option>
+                                            <option value="HT">🇭🇹 Haïti</option>
+                                            <option value="BR">🇧🇷 Brésil</option>
+                                            <option value="IN">🇮🇳 Inde</option>
+                                            <option value="JP">🇯🇵 Japon</option>
+                                            <option value="LB">🇱🇧 Liban</option>
+                                            <option value="SA">🇸🇦 Arabie Saoudite</option>
+                                            <option value="QA">🇶🇦 Qatar</option>
+                                            <option value="KW">🇰🇼 Koweït</option>
+                                        </optgroup>
                                     </select>
                                 </div>
 
                                 <!-- 2. VILLE / RÉGION -->
                                 <div>
                                     <label class="block text-xs font-extrabold text-slate-900 dark:text-white uppercase tracking-wider mb-1.5">Région / Ville :</label>
-                                    <select x-model="formData.city" @change="onCityChange()"
-                                            class="w-full px-3.5 py-3 rounded-2xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-xs font-bold focus:ring-2 focus:ring-brand-500 outline-none">
-                                        <template x-for="c in citiesList" :key="c">
-                                            <option :value="c" x-text="c" :selected="c === formData.city"></option>
-                                        </template>
+                                    <select x-model="formData.city" @change="onCityChange()" id="wizard-city-select"
+                                            class="w-full px-3.5 py-3 rounded-2xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-xs font-bold focus:ring-2 focus:ring-brand-500 outline-none text-slate-900 dark:text-white">
                                     </select>
                                 </div>
 
                                 <!-- 3. COMMUNE / QUARTIER -->
                                 <div>
                                     <label class="block text-xs font-extrabold text-slate-900 dark:text-white uppercase tracking-wider mb-1.5">Commune / Quartier :</label>
-                                    <select x-model="formData.zone"
-                                            class="w-full px-3.5 py-3 rounded-2xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-xs font-bold focus:ring-2 focus:ring-brand-500 outline-none">
-                                        <template x-for="z in zonesList" :key="z">
-                                            <option :value="z" x-text="z" :selected="z === formData.zone"></option>
-                                        </template>
+                                    <select x-model="formData.zone" id="wizard-zone-select"
+                                            class="w-full px-3.5 py-3 rounded-2xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-xs font-bold focus:ring-2 focus:ring-brand-500 outline-none text-slate-900 dark:text-white">
                                     </select>
                                 </div>
                             </div>
@@ -361,6 +418,43 @@
                     accepted_payments: ["livraison", "mobile_money"]
                 },
 
+                init() {
+                    this.$nextTick(() => {
+                        if (typeof lucide !== 'undefined') {
+                            lucide.createIcons();
+                        }
+                        this.renderCityOptions();
+                        this.renderZoneOptions();
+                    });
+                    this.$watch('step', () => {
+                        this.$nextTick(() => {
+                            if (typeof lucide !== 'undefined') {
+                                lucide.createIcons();
+                            }
+                        });
+                    });
+                },
+
+                renderCityOptions() {
+                    const cityEl = document.getElementById('wizard-city-select');
+                    if (!cityEl) return;
+                    const cities = this.citiesList;
+                    cityEl.innerHTML = cities.map(c => `<option value="${c}" ${c === this.formData.city ? 'selected' : ''}>${c}</option>`).join('');
+                    if (!cities.includes(this.formData.city) && cities.length > 0) {
+                        this.formData.city = cities[0];
+                    }
+                },
+
+                renderZoneOptions() {
+                    const zoneEl = document.getElementById('wizard-zone-select');
+                    if (!zoneEl) return;
+                    const zones = this.zonesList;
+                    zoneEl.innerHTML = zones.map(z => `<option value="${z}" ${z === this.formData.zone ? 'selected' : ''}>${z}</option>`).join('');
+                    if (!zones.includes(this.formData.zone) && zones.length > 0) {
+                        this.formData.zone = zones[0];
+                    }
+                },
+
                 get allCountriesList() {
                     return window.getAllCountriesList ? window.getAllCountriesList() : [];
                 },
@@ -387,12 +481,15 @@
                 },
                 onCountryChange() {
                     if (this.countryData) {
-                        this.formData.city = this.countryData.defaultCity || this.citiesList[0];
+                        this.formData.city = this.countryData.defaultCity || this.citiesList[0] || 'Centre-ville';
+                        this.renderCityOptions();
                         this.formData.zone = this.zonesList[0] || '';
+                        this.renderZoneOptions();
                     }
                 },
                 onCityChange() {
                     this.formData.zone = this.zonesList[0] || '';
+                    this.renderZoneOptions();
                 },
 
                 handleLogoUpload(event) {

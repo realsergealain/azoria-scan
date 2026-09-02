@@ -90,3 +90,67 @@ self.addEventListener('fetch', (event) => {
         })
     );
 });
+
+// ==========================================
+// 🔔 WEB PUSH NOTIFICATIONS (OFFLINE & BACKGROUND)
+// ==========================================
+
+self.addEventListener('push', (event) => {
+    let payload = {
+        title: '🔔 Nouvelle notification Azoria',
+        body: 'Vous avez reçu une nouvelle alerte.',
+        icon: '/static/images/logo-icon.png',
+        badge: '/static/images/logo-icon.png',
+        data: { url: '/boutique/commandes/' }
+    };
+
+    if (event.data) {
+        try {
+            payload = event.data.json();
+        } catch (e) {
+            payload.body = event.data.text();
+        }
+    }
+
+    const options = {
+        body: payload.body,
+        icon: payload.icon || '/static/images/logo-icon.png',
+        badge: payload.badge || '/static/images/logo-icon.png',
+        tag: payload.tag || 'azoria-notification',
+        renotify: true,
+        vibrate: [200, 100, 200, 100, 200],
+        requireInteraction: true,
+        data: payload.data || { url: '/boutique/commandes/' },
+        actions: [
+            {
+                action: 'open_order',
+                title: 'Voir la commande 📦'
+            }
+        ]
+    };
+
+    event.waitUntil(
+        self.registration.showNotification(payload.title, options)
+    );
+});
+
+self.addEventListener('notificationclick', (event) => {
+    event.notification.close();
+    const targetUrl = (event.notification.data && event.notification.data.url) ? event.notification.data.url : '/boutique/commandes/';
+
+    event.waitUntil(
+        clients.matchAll({ type: 'window', includeUncontrolled: true }).then((clientList) => {
+            // Si un onglet Azoria est déjà ouvert, lui donner le focus et naviguer
+            for (const client of clientList) {
+                if (client.url && 'focus' in client) {
+                    client.navigate(targetUrl);
+                    return client.focus();
+                }
+            }
+            // Sinon ouvrir un nouvel onglet vers la commande
+            if (clients.openWindow) {
+                return clients.openWindow(targetUrl);
+            }
+        })
+    );
+});

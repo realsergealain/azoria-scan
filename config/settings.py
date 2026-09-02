@@ -334,3 +334,16 @@ UNFOLD = {
     },
 }
 
+# ─────────────────────────────────────────────────────────────
+# WEB PUSH & VAPID SETTINGS
+# ─────────────────────────────────────────────────────────────
+VAPID_PUBLIC_KEY = os.environ.get(
+    'VAPID_PUBLIC_KEY',
+    'BFu4_HcRDqiqr8mb6GPJm05xOkGNdDtuwpq-oC0glQaio-d-ZzbZjvr-RNpqYRUaUj96hSrZAN9hosypHTCo2c8'
+)
+VAPID_PRIVATE_KEY = os.environ.get(
+    'VAPID_PRIVATE_KEY',
+    '-----BEGIN PRIVATE KEY-----\nMIGHAgEAMBMGByqGSM49AgEGCCqGSM49AwEHBG0wawIBAQQgOYkWrmqP20Br8IL1\nLVG5XMEpCis4lScnhx2gAb8KVlChRANCAARbuPx3EQ6oqq/Jm+hjyZtOcTpBjXQ7\nbsKavqAtIJUGoqPnfmc22Y76/kTaamEVGlI/eoUq2QDfYaLMqR0wqNnP\n-----END PRIVATE KEY-----'
+).replace('\\n', '\n').strip('\"')
+VAPID_ADMIN_EMAIL = os.environ.get('VAPID_ADMIN_EMAIL', 'mailto:admin@azoria.shop')
+

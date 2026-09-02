@@ -16,6 +16,7 @@ from .services import (
     generate_ai_product_description,
     get_shop_dashboard_analytics
 )
+from .services_push import send_order_web_push
 
 
 # ==========================================
@@ -620,6 +621,9 @@ def checkout_view(request, shop_uuid, shop_slug):
         notification_type='new_order',
         order=order,
     )
+
+    # 🚀 Envoi de la notification WebPush instantanée au vendeur (Hors-Ligne / Smartphone)
+    send_order_web_push(order)
 
     # Lien direct WhatsApp
     whatsapp_url = generate_whatsapp_order_link(order)
