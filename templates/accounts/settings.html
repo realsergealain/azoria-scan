@@ -4,73 +4,7 @@
 {% block header_title %}Paramètres du Compte{% endblock %}
 
 {% block content %}
-<div class="space-y-6 max-w-5xl mx-auto pb-16" 
-     x-data="{ 
-        activeTab: 'profile', 
-        themeChoice: localStorage.theme || 'system',
-        twoFactorEnabled: false,
-        show2FAModal: false,
-        showDangerModal: false,
-        notifWhatsapp: true,
-        notifEmail: true,
-        notifWeeklyReport: true,
-        pushSupported: false,
-        pushSubscribed: false,
-        pushLoading: false,
-        testLoading: false,
-        async init() {
-            if (window.AzoriaPush && window.AzoriaPush.isSupported()) {
-                this.pushSupported = true;
-                this.pushSubscribed = await window.AzoriaPush.isSubscribed();
-            }
-        },
-        async togglePush() {
-            if (!window.AzoriaPush || !window.AzoriaPush.isSupported()) {
-                window.dispatchEvent(new CustomEvent('notify', {
-                    detail: { type: 'error', message: 'Votre navigateur ou connexion actuelle ne supporte pas les notifications Web Push (nécessite HTTPS ou localhost).' }
-                }));
-                return;
-            }
-            this.pushLoading = true;
-            try {
-                if (this.pushSubscribed) {
-                    await window.AzoriaPush.unsubscribe();
-                    this.pushSubscribed = false;
-                    window.dispatchEvent(new CustomEvent('notify', {
-                        detail: { type: 'info', message: 'Notifications push désactivées sur cet appareil.' }
-                    }));
-                } else {
-                    await window.AzoriaPush.subscribe();
-                    this.pushSubscribed = true;
-                    window.dispatchEvent(new CustomEvent('notify', {
-                        detail: { type: 'success', message: '🎉 Notifications push activées ! Votre appareil recevra les alertes de commandes.' }
-                    }));
-                }
-            } catch (e) {
-                console.error("Erreur activation push:", e);
-                window.dispatchEvent(new CustomEvent('notify', {
-                    detail: { type: 'error', message: e.message || 'Impossible d\'activer les notifications.' }
-                }));
-            } finally {
-                this.pushLoading = false;
-            }
-        },
-        async sendTestPush() {
-            this.testLoading = true;
-            try {
-                const res = await window.AzoriaPush.sendTestPush();
-                window.dispatchEvent(new CustomEvent('notify', {
-                    detail: { type: res.status === 'success' ? 'success' : 'error', message: res.message }
-                }));
-            } catch (e) {
-                window.dispatchEvent(new CustomEvent('notify', {
-                    detail: { type: 'error', message: 'Erreur lors de l\'envoi du test.' }
-                }));
-            } finally {
-                this.testLoading = false;
-            }
-        }
-     }">
+<div class="space-y-6 max-w-5xl mx-auto pb-16" x-data="settingsPageApp()">
     
     <!-- Top Header Profile Banner -->
     <div class="bg-white dark:bg-slate-900 p-5 sm:p-6 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-sm">
@@ -486,4 +420,78 @@
     </div>
 
 </div>
+
+<script>
+function settingsPageApp() {
+    return {
+        activeTab: 'profile',
+        themeChoice: localStorage.theme || 'system',
+        twoFactorEnabled: false,
+        show2FAModal: false,
+        showDangerModal: false,
+        notifWhatsapp: true,
+        notifEmail: true,
+        notifWeeklyReport: true,
+        pushSupported: false,
+        pushSubscribed: false,
+        pushLoading: false,
+        testLoading: false,
+
+        async init() {
+            if (window.AzoriaPush && window.AzoriaPush.isSupported()) {
+                this.pushSupported = true;
+                this.pushSubscribed = await window.AzoriaPush.isSubscribed();
+            }
+        },
+
+        async togglePush() {
+            if (!window.AzoriaPush || !window.AzoriaPush.isSupported()) {
+                window.dispatchEvent(new CustomEvent('notify', {
+                    detail: { type: 'error', message: "Votre navigateur ou connexion actuelle ne supporte pas les notifications Web Push (nécessite HTTPS ou localhost)." }
+                }));
+                return;
+            }
+            this.pushLoading = true;
+            try {
+                if (this.pushSubscribed) {
+                    await window.AzoriaPush.unsubscribe();
+                    this.pushSubscribed = false;
+                    window.dispatchEvent(new CustomEvent('notify', {
+                        detail: { type: 'info', message: "Notifications push désactivées sur cet appareil." }
+                    }));
+                } else {
+                    await window.AzoriaPush.subscribe();
+                    this.pushSubscribed = true;
+                    window.dispatchEvent(new CustomEvent('notify', {
+                        detail: { type: 'success', message: "🎉 Notifications push activées ! Votre appareil recevra les alertes de commandes." }
+                    }));
+                }
+            } catch (e) {
+                console.error("Erreur activation push:", e);
+                window.dispatchEvent(new CustomEvent('notify', {
+                    detail: { type: 'error', message: e.message || "Impossible d'activer les notifications." }
+                }));
+            } finally {
+                this.pushLoading = false;
+            }
+        },
+
+        async sendTestPush() {
+            this.testLoading = true;
+            try {
+                const res = await window.AzoriaPush.sendTestPush();
+                window.dispatchEvent(new CustomEvent('notify', {
+                    detail: { type: res.status === 'success' ? 'success' : 'error', message: res.message }
+                }));
+            } catch (e) {
+                window.dispatchEvent(new CustomEvent('notify', {
+                    detail: { type: 'error', message: "Erreur lors de l'envoi du test." }
+                }));
+            } finally {
+                this.testLoading = false;
+            }
+        }
+    };
+}
+</script>
 {% endblock %}
