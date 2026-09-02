@@ -594,7 +594,9 @@
         document.addEventListener("DOMContentLoaded", function () { 
             if (typeof lucide !== 'undefined') lucide.createIcons(); 
             if ('serviceWorker' in navigator) {
-                navigator.serviceWorker.register('/static/js/sw.js').catch(function() {});
+                navigator.serviceWorker.register('/sw.js', { scope: '/' }).catch(function(err) {
+                    console.warn("Service Worker registration error:", err);
+                });
             }
         });
     </script>

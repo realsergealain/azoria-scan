@@ -253,3 +253,24 @@ def dashboard_live_stats(request):
     })
     response['X-Dashboard-Hash'] = state_hash
     return response
+
+
+def service_worker_view(request):
+    """
+    Sert le Service Worker à la racine /sw.js avec l'en-tête Service-Worker-Allowed: /
+    pour permettre le contrôle de l'ensemble du site et des notifications Push.
+    """
+    import os
+    from django.conf import settings
+    sw_path = os.path.join(settings.BASE_DIR, 'static', 'js', 'sw.js')
+    
+    if os.path.exists(sw_path):
+        with open(sw_path, 'r', encoding='utf-8') as f:
+            content = f.read()
+    else:
+        content = "// Service worker non trouvé"
+
+    response = HttpResponse(content, content_type='application/javascript')
+    response['Service-Worker-Allowed'] = '/'
+    response['Cache-Control'] = 'no-cache, no-store, must-revalidate'
+    return response

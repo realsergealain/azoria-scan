@@ -25,7 +25,12 @@
             }
         },
         async togglePush() {
-            if (!this.pushSupported) return;
+            if (!window.AzoriaPush || !window.AzoriaPush.isSupported()) {
+                window.dispatchEvent(new CustomEvent('notify', {
+                    detail: { type: 'error', message: 'Votre navigateur ou connexion actuelle ne supporte pas les notifications Web Push (nécessite HTTPS ou localhost).' }
+                }));
+                return;
+            }
             this.pushLoading = true;
             try {
                 if (this.pushSubscribed) {
@@ -38,10 +43,11 @@
                     await window.AzoriaPush.subscribe();
                     this.pushSubscribed = true;
                     window.dispatchEvent(new CustomEvent('notify', {
-                        detail: { type: 'success', message: '🎉 Notifications push activées ! Vous recevrez vos alertes de commandes.' }
+                        detail: { type: 'success', message: '🎉 Notifications push activées ! Votre appareil recevra les alertes de commandes.' }
                     }));
                 }
             } catch (e) {
+                console.error("Erreur activation push:", e);
                 window.dispatchEvent(new CustomEvent('notify', {
                     detail: { type: 'error', message: e.message || 'Impossible d\'activer les notifications.' }
                 }));
